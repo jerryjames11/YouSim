@@ -1,0 +1,2363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="color-scheme" content="light only">
+<title>YouSim</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Caveat:wght@500;700&display=swap');
+
+  :root{
+    --paper:#F7F4ED;
+    --paper-dim:#EFEADD;
+    --ink:#2B2A28;
+    --ink-soft:#5B5852;
+    --rule:#D9D2C0;
+    --health:#8B3A2F;
+    --money:#3C5E4C;
+    --happy:#C98A3E;
+    --rel:#445C8C;
+    --energy:#6B5B95;
+    --skill:#7A6238;
+    --card-border-w:1px;
+    --card-radius:4px;
+    --card-bg:#FFFFFF;
+    --card-shadow:none;
+  }
+
+  /* ================= NURSERY THEME (ages 0-5) ================= */
+  body.theme-nursery{
+    --paper:#E8F7FC;
+    --paper-dim:#FFFFFF;
+    --ink:#1A3A4A;
+    --ink-soft:#3D6B7D;
+    --rule:#1A3A4A;
+    --health:#FF6B6B;
+    --money:#4CAF7D;
+    --happy:#FFD23F;
+    --rel:#A06CD5;
+    --energy:#FF9F4A;
+    --skill:#3DBDD9;
+    --motif-a:#FFD23F;
+    --motif-b:#5BC8E8;
+    --card-border-w:1.5px;
+    --card-radius:22px;
+    --card-shadow:0 3px 0 rgba(0,0,0,0.08);
+  }
+  body.theme-nursery.gender-girl{
+    --paper:#FDEAF1;
+    --rel:#D44FA0;
+    --energy:#A06CD5;
+    --motif-a:#FF8FB3;
+    --motif-b:#FFD23F;
+  }
+  body.theme-nursery.gender-boy{
+    --paper:#E9F2FB;
+    --rel:#2E86C1;
+    --energy:#3DBDD9;
+    --motif-a:#4FA8E8;
+    --motif-b:#FFD23F;
+  }
+
+  /* ================= SCHOOL THEME (ages 5-18) ================= */
+  body.theme-school{
+    --paper:#FFF7E0;
+    --paper-dim:#FFFFFF;
+    --ink:#1A2B3D;
+    --ink-soft:#3D5266;
+    --rule:#1A2B3D;
+    --health:#E8442F;
+    --money:#3DA35D;
+    --happy:#FF9F1C;
+    --rel:#3D6FE8;
+    --energy:#9B4FE8;
+    --skill:#D9852E;
+    --card-border-w:1.5px;
+    --card-radius:20px;
+    --card-shadow:0 3px 0 rgba(0,0,0,0.08);
+  }
+  body.theme-school.gender-girl{
+    --paper:#FEEAF2;
+    --health:#E8316F;
+    --rel:#9B4FE8;
+  }
+  body.theme-school.gender-boy{
+    --paper:#E9F2FB;
+    --health:#E8442F;
+    --rel:#2E5FE8;
+  }
+
+  html{
+    color-scheme: light;
+    background:#E8F7FC;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    transition:background-color .5s ease, color .5s ease;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      radial-gradient(ellipse at top left, rgba(0,0,0,0.025), transparent 60%),
+      radial-gradient(ellipse at bottom right, rgba(0,0,0,0.02), transparent 60%);
+    pointer-events:none;
+  }
+
+  /* Nursery motif: soft repeating stars/moons/clouds band along the top */
+  body.theme-nursery::after{
+    content:"✦  ☁  ✧  ☾  ✦  ☁  ✧  ☾  ✦  ☁  ✧  ☾  ✦  ☁  ✧  ☾";
+    position:fixed;
+    top:0; left:0; right:0;
+    text-align:center;
+    letter-spacing:14px;
+    font-size:13px;
+    color:var(--motif-a);
+    opacity:0.8;
+    padding:8px 0;
+    pointer-events:none;
+    overflow:hidden;
+    white-space:nowrap;
+  }
+  body.theme-nursery #app{ padding-top:40px; }
+
+  /* School motif: notebook margin rule down the left edge of #app itself,
+     so it tracks the real content column instead of assuming a fixed
+     viewport width (which broke on phones narrower than 480px). */
+  body.theme-school #app{
+    position:relative;
+  }
+  body.theme-school #app::before{
+    content:"";
+    position:absolute;
+    top:0; bottom:0; left:8px;
+    width:2px;
+    background:var(--health);
+    opacity:0.45;
+    pointer-events:none;
+  }
+
+  #app{
+    width:100%;
+    max-width:480px;
+    min-height:100vh;
+    padding:20px 18px 100px;
+    position:relative;
+  }
+
+  /* ---------- Home button (visible during any in-progress life phase) ---------- */
+  #homeBtn{
+    position:fixed;
+    top:14px; right:14px;
+    width:36px; height:36px;
+    border-radius:50%;
+    border:var(--card-border-w) solid var(--rule);
+    background:var(--card-bg);
+    color:var(--ink);
+    font-size:16px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    z-index:50;
+    padding:0;
+  }
+  #homeBtn:active{transform:scale(0.92);}
+
+  /* ---------- Header / masthead ---------- */
+  .masthead{
+    text-align:center;
+    padding:6px 0 16px;
+    border-bottom:var(--card-border-w) solid var(--rule);
+    margin-bottom:18px;
+  }
+  .masthead .kicker{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .masthead h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:28px;
+    margin:4px 0 2px;
+    letter-spacing:-0.01em;
+  }
+  body.theme-school .masthead h1{
+    font-family:'Caveat',cursive;
+    font-weight:700;
+    font-size:38px;
+  }
+  body.theme-nursery .masthead h1{
+    font-weight:500;
+    letter-spacing:0;
+  }
+  .masthead .dateline{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+
+  /* ---------- Stat ledger ---------- */
+  .ledger{
+    display:flex;
+    justify-content:space-between;
+    gap:6px;
+    margin-bottom:20px;
+  }
+  .stat{
+    flex:1;
+    background:var(--paper-dim);
+    border:var(--card-border-w) solid var(--rule);
+    border-radius:var(--card-radius);
+    box-shadow:var(--card-shadow);
+    padding:8px 4px 7px;
+    text-align:center;
+  }
+  .stat .icon{
+    display:block;
+    margin:0 auto 4px;
+    width:18px; height:18px;
+    color:var(--ink-soft);
+  }
+  .stat .icon svg{ width:100%; height:100%; display:block; }
+  .stat.health .icon{ color:var(--health); }
+  .stat.money .icon{ color:var(--money); }
+  .stat.happy .icon{ color:var(--happy); }
+  .stat.rel .icon{ color:var(--rel); }
+  .stat.energy .icon{ color:var(--energy); }
+  .stat.skill .icon{ color:var(--skill); }
+  .stat .label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:block;
+    margin-bottom:3px;
+  }
+  .stat .value{
+    font-family:'JetBrains Mono',monospace;
+    font-size:16px;
+    font-weight:700;
+  }
+  .stat .bar{
+    height:3px;
+    margin-top:5px;
+    border-radius:2px;
+    background:rgba(0,0,0,0.08);
+    overflow:hidden;
+  }
+  .stat .bar i{
+    display:block; height:100%; border-radius:2px;
+    transition:width .4s ease;
+  }
+  .stat.health .value{color:var(--health);}
+  .stat.money .value{color:var(--money);}
+  .stat.happy .value{color:var(--happy);}
+  .stat.rel .value{color:var(--rel);}
+  .stat.energy .value{color:var(--energy);}
+  .stat.skill .value{color:var(--skill);}
+  .stat.health .bar i{background:var(--health);}
+  .stat.money .bar i{background:var(--money);}
+  .stat.happy .bar i{background:var(--happy);}
+  .stat.rel .bar i{background:var(--rel);}
+  .stat.energy .bar i{background:var(--energy);}
+  .stat.skill .bar i{background:var(--skill);}
+  .stat.money .value.negative{color:#A8392A;}
+
+  /* ---------- Budget meter ---------- */
+  .budget-row{
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:16px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+  }
+  .budget-track{
+    flex:1; height:8px; background:var(--paper-dim);
+    border:1px solid var(--rule); border-radius:5px; overflow:hidden;
+  }
+  .budget-fill{
+    height:100%; background:var(--ink); border-radius:5px;
+    transition:width .25s ease;
+  }
+  .budget-fill.over{background:var(--health);}
+
+  /* ---------- Section headers ---------- */
+  .section-title{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin:22px 0 8px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .section-title::after{
+    content:""; flex:1; height:1px; background:var(--rule);
+  }
+
+  /* ---------- Activity cards ---------- */
+  .activity{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:11px 12px;
+    border:var(--card-border-w) solid var(--rule);
+    border-radius:var(--card-radius);
+    box-shadow:var(--card-shadow);
+    margin-bottom:7px;
+    background:var(--card-bg);
+    cursor:pointer;
+    user-select:none;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .activity:active{transform:scale(0.99);}
+  .activity.selected{
+    border-color:var(--ink);
+    background:var(--paper-dim);
+  }
+  .activity.disabled{
+    opacity:0.4;
+    cursor:not-allowed;
+  }
+  .activity.locked{
+    opacity:0.5;
+    cursor:not-allowed;
+    background:repeating-linear-gradient(135deg, #fff, #fff 8px, var(--paper-dim) 8px, var(--paper-dim) 16px);
+  }
+  .activity .lock-tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    flex-shrink:0;
+  }
+  .activity .check{
+    width:18px; height:18px;
+    border:1.5px solid var(--ink-soft);
+    border-radius:3px;
+    flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:11px;
+    color:var(--paper);
+  }
+  .activity.selected .check{
+    background:var(--ink);
+    border-color:var(--ink);
+  }
+  .activity .info{flex:1; min-width:0;}
+  .activity .name{
+    font-weight:600;
+    font-size:14px;
+    margin-bottom:1px;
+  }
+  .activity .effects{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--ink-soft);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .effect-tag{
+    display:inline-flex;
+    align-items:center;
+    gap:3px;
+  }
+  .effect-tag .eicon{
+    width:13px; height:13px;
+    flex-shrink:0;
+  }
+  .effect-tag .eicon svg{ width:100%; height:100%; display:block; }
+  .effect-tag.eff-health .eicon{ color:var(--health); }
+  .effect-tag.eff-money .eicon{ color:var(--money); }
+  .effect-tag.eff-happy .eicon{ color:var(--happy); }
+  .effect-tag.eff-rel .eicon{ color:var(--rel); }
+  .effect-tag.eff-energy .eicon{ color:var(--energy); }
+  .effect-tag.eff-skill .eicon{ color:var(--skill); }
+  .activity .cost{
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    font-weight:700;
+    color:var(--ink-soft);
+    flex-shrink:0;
+  }
+
+  /* ---------- Submit button ---------- */
+  .submit-bar{
+    position:fixed;
+    bottom:0; left:0; right:0;
+    display:flex; justify-content:center;
+    padding:14px 18px;
+    background:linear-gradient(to top, var(--paper) 70%, transparent);
+  }
+  .submit-bar .inner{width:100%; max-width:480px;}
+  .sim-turn-btn{
+    width:100%;
+    padding:11px;
+    margin-bottom:8px;
+    background:var(--card-bg);
+    color:var(--ink-soft);
+    border:var(--card-border-w) solid var(--rule);
+    border-radius:var(--card-radius);
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    letter-spacing:0.01em;
+    cursor:pointer;
+  }
+  .sim-turn-btn:disabled{
+    opacity:0.5;
+    cursor:not-allowed;
+  }
+  #endWeekBtn{
+    width:100%;
+    padding:14px;
+    background:var(--ink);
+    color:var(--paper-dim);
+    border:none;
+    border-radius:var(--card-radius);
+    font-family:'Inter',sans-serif;
+    font-weight:700;
+    font-size:15px;
+    letter-spacing:0.01em;
+    cursor:pointer;
+  }
+  #endWeekBtn:disabled{
+    background:var(--rule);
+    color:var(--ink-soft);
+    cursor:not-allowed;
+    opacity:0.6;
+  }
+
+  /* ---------- Diary entry / recap ---------- */
+  .recap{
+    background:var(--paper-dim);
+    border-left:3px solid var(--ink);
+    padding:12px 14px;
+    margin-bottom:16px;
+    font-family:'Fraunces',serif;
+    font-size:15px;
+    font-style:italic;
+    line-height:1.5;
+    color:var(--ink);
+    border-radius:0 4px 4px 0;
+  }
+  .sim-history{
+    max-height:280px;
+    overflow-y:auto;
+    margin-bottom:16px;
+    border-radius:4px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .sim-history .recap{
+    margin-bottom:0;
+    border-radius:0;
+  }
+  .sim-history .recap:not(:last-child){
+    border-bottom:1px dashed var(--rule);
+  }
+  .recap .events{
+    margin-top:8px;
+    font-family:'Inter',sans-serif;
+    font-style:normal;
+    font-size:12.5px;
+    color:var(--ink-soft);
+  }
+  .recap .events div{margin-top:3px;}
+  .recap .events .pos{color:var(--money);}
+  .recap .events .neg{color:var(--health);}
+
+  /* ---------- Birth / parent reveal screen ---------- */
+  .birth-screen{
+    padding:40px 6px 20px;
+  }
+
+  /* ---------- Landing page decorative background icons ---------- */
+  #landingScreen{
+    position:relative;
+    overflow:hidden;
+    min-height:calc(100vh - 60px);
+  }
+  .landing-deco{
+    position:absolute;
+    pointer-events:none;
+    user-select:none;
+    line-height:1;
+    filter:drop-shadow(0 4px 10px rgba(0,0,0,0.08));
+    z-index:0;
+  }
+  .landing-deco.d1{ top:6%;  left:-4%;  font-size:64px; opacity:0.5;  transform:rotate(-14deg); }
+  .landing-deco.d2{ top:4%;  right:-6%; font-size:78px; opacity:0.45; transform:rotate(12deg); }
+  .landing-deco.d3{ top:24%; left:78%;  font-size:46px; opacity:0.4;  transform:rotate(8deg); }
+  .landing-deco.d4{ top:30%; left:-8%;  font-size:58px; opacity:0.4;  transform:rotate(10deg); }
+  .landing-deco.d5{ top:58%; right:-7%; font-size:70px; opacity:0.45; transform:rotate(-10deg); }
+  .landing-deco.d6{ top:66%; left:-6%;  font-size:60px; opacity:0.4;  transform:rotate(16deg); }
+  .landing-deco.d7{ top:80%; right:6%;  font-size:42px; opacity:0.35; transform:rotate(-6deg); }
+  .landing-deco.d8{ top:88%; left:10%;  font-size:38px; opacity:0.35; transform:rotate(14deg); }
+
+  .birth-screen .kicker{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    text-align:center;
+    display:block;
+    margin-bottom:8px;
+  }
+  .birth-screen h2{
+    font-family:'Fraunces',serif;
+    font-size:26px;
+    text-align:center;
+    margin:0 0 24px;
+  }
+  .birth-card{
+    background:var(--card-bg);
+    border:var(--card-border-w) solid var(--rule);
+    border-radius:var(--card-radius);
+    box-shadow:var(--card-shadow);
+    padding:16px 16px 14px;
+    margin-bottom:12px;
+  }
+  .birth-card .row-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+  }
+  .birth-card .row-value{
+    font-family:'Fraunces',serif;
+    font-size:17px;
+    font-weight:600;
+    margin-bottom:4px;
+  }
+  .birth-card .row-detail{
+    font-size:13px;
+    color:var(--ink-soft);
+    line-height:1.45;
+  }
+
+  /* ---------- Landing page ---------- */
+  #landingScreen > .kicker,
+  #landingScreen > .landing-title,
+  #landingScreen > .landing-tagline,
+  #landingScreen > .landing-btn{
+    position:relative;
+    z-index:1;
+  }
+  .landing-title{
+    font-size:40px !important;
+    line-height:1.1;
+    margin-bottom:10px !important;
+  }
+  .landing-tagline{
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:14px;
+    margin:0 0 36px;
+    padding:0 10px;
+  }
+  .landing-btn{
+    width:100%;
+    padding:15px;
+    border-radius:var(--card-radius);
+    font-weight:700;
+    font-size:15px;
+    cursor:pointer;
+    margin-bottom:12px;
+    border:var(--card-border-w) solid var(--rule);
+  }
+  .landing-btn.primary{
+    background:var(--ink);
+    color:var(--paper-dim);
+    border:none;
+  }
+  .landing-btn.secondary{
+    background:var(--card-bg);
+    color:var(--ink);
+  }
+  .landing-btn.small{
+    width:auto;
+    padding:9px 16px;
+    font-size:13px;
+    margin:10px auto 6px;
+    display:block;
+  }
+  .landing-btn:disabled{
+    opacity:0.4;
+    cursor:not-allowed;
+  }
+
+  /* ---------- Setup screen section labels ---------- */
+  .setup-section-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin:14px 0 6px;
+    text-align:center;
+  }
+  .setup-section-label:first-of-type{
+    margin-top:4px;
+  }
+
+  /* Big color-coded Boy/Girl buttons */
+  #genderChoiceList{
+    display:flex;
+    gap:10px;
+    margin:18px 0 10px;
+  }
+  #genderChoiceList .choice-card{
+    flex:1;
+    text-align:center;
+    margin-bottom:0;
+    padding:30px 8px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+  }
+  #genderChoiceList .choice-card .gicon{
+    width:36px; height:36px;
+  }
+  #genderChoiceList .choice-card .gicon svg{ width:100%; height:100%; display:block; }
+  #genderChoiceList .choice-card .name{
+    font-size:17px;
+  }
+  #genderChoiceList .choice-card[data-id="boy"]{
+    background:#E9F2FB;
+    border-color:#3D6FE8;
+    color:#1A3A6B;
+  }
+  #genderChoiceList .choice-card[data-id="boy"] .gicon{ color:#3D6FE8; }
+  #genderChoiceList .choice-card[data-id="girl"]{
+    background:#FDEAF1;
+    border-color:#E8316F;
+    color:#6B1A3D;
+  }
+  #genderChoiceList .choice-card[data-id="girl"] .gicon{ color:#E8316F; }
+  #genderChoiceList .choice-card.picked{
+    box-shadow:0 0 0 3px var(--ink) inset;
+  }
+
+  .gender-neutral-link{
+    display:block;
+    width:100%;
+    text-align:center;
+    background:none;
+    border:none;
+    color:var(--ink-soft);
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    text-decoration:underline;
+    padding:6px 0 18px;
+    cursor:pointer;
+  }
+  .gender-neutral-link.picked{
+    color:var(--ink);
+    font-weight:700;
+    text-decoration:none;
+  }
+
+  /* Combined, compact parents box at the bottom of setup */
+  #parentsBoxWrap{
+    margin-top:6px;
+  }
+  .parents-compact{
+    background:var(--card-bg);
+    border:var(--card-border-w) solid var(--rule);
+    border-radius:var(--card-radius);
+    box-shadow:var(--card-shadow);
+    padding:12px 14px;
+    margin-bottom:10px;
+  }
+  .parents-compact .pc-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:8px;
+    margin-bottom:4px;
+  }
+  .parents-compact .pc-row:last-of-type{ margin-bottom:6px; }
+  .parents-compact .pc-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    flex-shrink:0;
+  }
+  .parents-compact .pc-value{
+    font-weight:700;
+    font-size:13.5px;
+    text-align:right;
+  }
+  .parents-compact .pc-detail{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    line-height:1.4;
+  }
+
+  /* ---------- Infancy / childhood choice screen ---------- */
+  .phase-banner{
+    text-align:center;
+    margin-bottom:14px;
+  }
+  .phase-banner .kicker{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .phase-banner h2{
+    font-family:'Fraunces',serif;
+    font-size:22px;
+    margin:3px 0 0;
+  }
+  .choice-card{
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+    padding:13px 14px;
+    border:var(--card-border-w) solid var(--rule);
+    border-radius:var(--card-radius);
+    box-shadow:var(--card-shadow);
+    margin-bottom:9px;
+    background:var(--card-bg);
+    cursor:pointer;
+    transition:transform .1s ease;
+  }
+  .choice-card:active{transform:scale(0.97);}
+  .choice-card.picked{
+    border-color:var(--ink);
+    box-shadow:0 0 0 2px var(--ink) inset, var(--card-shadow);
+  }
+  .choice-card .name{font-weight:700; font-size:15px;}
+  .choice-card .desc{font-size:12.5px; color:var(--ink-soft);}
+  .sim-through-row{
+    text-align:center;
+    margin:18px 0 4px;
+  }
+  .sim-through-row button{
+    background:none;
+    border:var(--card-border-w) solid var(--rule);
+    color:var(--ink-soft);
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    padding:8px 14px;
+    border-radius:20px;
+    cursor:pointer;
+  }
+
+  /* ---------- Game over screen ---------- */
+  .gameover{
+    text-align:center;
+    padding:60px 10px 20px;
+  }
+  .gameover h2{
+    font-family:'Fraunces',serif;
+    font-size:30px;
+    margin-bottom:6px;
+  }
+  .gameover p{
+    color:var(--ink-soft);
+    font-size:14px;
+    margin-bottom:24px;
+  }
+  .gameover .final-stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    text-align:left;
+    margin-bottom:24px;
+  }
+  .gameover .final-stats div{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    background:var(--paper-dim);
+    border:1px solid var(--rule);
+    padding:8px 10px;
+    border-radius:3px;
+  }
+  #restartBtn{
+    padding:12px 28px;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:4px;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+  }
+
+  .hidden{display:none !important;}
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <button id="homeBtn" class="hidden" title="Back to menu">⌂</button>
+
+  <!-- LANDING PAGE -->
+  <div id="landingScreen" class="birth-screen">
+    <span class="landing-deco d1">👶</span>
+    <span class="landing-deco d2">🧸</span>
+    <span class="landing-deco d3">🎒</span>
+    <span class="landing-deco d4">📚</span>
+    <span class="landing-deco d5">💼</span>
+    <span class="landing-deco d6">❤️</span>
+    <span class="landing-deco d7">🏡</span>
+    <span class="landing-deco d8">✨</span>
+
+    <span class="kicker">YouSim</span>
+    <h2 class="landing-title">YouSim</h2>
+    <p class="landing-tagline">How would you sim?</p>
+    <button id="startNewLifeBtn" class="landing-btn primary">Start New Life</button>
+    <button id="continueLifeBtn" class="landing-btn secondary" disabled>Continue Life</button>
+  </div>
+
+  <!-- SETUP SCREEN: gender picker + randomizable parents -->
+  <div id="setupScreen" class="birth-screen hidden">
+    <span class="kicker">YouSim</span>
+    <h2>Who will you be?</h2>
+
+    <div id="genderChoiceList"></div>
+    <button id="genderNeutralBtn" class="gender-neutral-link">Prefer not to say</button>
+
+    <div id="parentsBoxWrap">
+      <div class="setup-section-label">Your Family</div>
+      <div id="birthDetails"></div>
+      <button id="randomizeParentsBtn" class="landing-btn secondary small">🎲 Randomize Parents</button>
+    </div>
+  </div>
+
+  <!-- INFANCY / CHILDHOOD PHASE (ages 0-17) -->
+  <div id="youngLifeScreen" class="hidden">
+    <div class="phase-banner">
+      <div class="kicker" id="youngKicker">Age 0</div>
+      <h2 id="youngHeader">Infancy</h2>
+    </div>
+
+    <div class="ledger">
+      <div class="stat health">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
+        <span class="label">Health</span>
+        <span class="value" id="youngStatHealth">100</span>
+        <div class="bar"><i id="youngBarHealth" style="width:100%"></i></div>
+      </div>
+      <div class="stat money">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9.5a2.8 2.8 0 0 0-2.8-1.5c-1.7 0-3 1-3 2.3 0 3 5.8 1.5 5.8 4.5 0 1.3-1.3 2.3-3 2.3a2.8 2.8 0 0 1-2.8-1.5M12 6.5v1.3M12 16.2v1.3"/></svg></span>
+        <span class="label">Money</span>
+        <span class="value" id="youngStatMoney">50</span>
+        <div class="bar"><i id="youngBarMoney" style="width:50%"></i></div>
+      </div>
+      <div class="stat happy">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 13.5s1.5 2 4 2 4-2 4-2"/><path d="M8.5 9.5h.01M15.5 9.5h.01"/></svg></span>
+        <span class="label">Mood</span>
+        <span class="value" id="youngStatHappy">60</span>
+        <div class="bar"><i id="youngBarHappy" style="width:60%"></i></div>
+      </div>
+      <div class="stat rel">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="9" r="3"/><circle cx="15.5" cy="9" r="3"/><path d="M3 19c0-2.8 2.5-5 5.5-5 1.4 0 2.6.4 3.5 1.2M21 19c0-2.8-2.5-5-5.5-5-1.4 0-2.6.4-3.5 1.2"/></svg></span>
+        <span class="label">Rel.</span>
+        <span class="value" id="youngStatRel">60</span>
+        <div class="bar"><i id="youngBarRel" style="width:60%"></i></div>
+      </div>
+      <div class="stat energy">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
+        <span class="label">Energy</span>
+        <span class="value" id="youngStatEnergy">100</span>
+        <div class="bar"><i id="youngBarEnergy" style="width:100%"></i></div>
+      </div>
+      <div class="stat skill">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2 9l10 5 10-5-10-5z"/><path d="M6 11.5V16c0 1 2.5 3 6 3s6-2 6-3v-4.5"/></svg></span>
+        <span class="label">Smarts</span>
+        <span class="value" id="youngStatSkill">0</span>
+        <div class="bar"><i id="youngBarSkill" style="width:0%"></i></div>
+      </div>
+    </div>
+
+    <div id="youngRecapBox"></div>
+    <div id="youngChoiceList"></div>
+  </div>
+
+  <!-- SCHOOL-AGE PHASE (ages 5-18, monthly) -->
+  <div id="schoolScreen" class="hidden">
+
+    <div class="masthead">
+      <div class="kicker">YouSim</div>
+      <h1 id="schoolAgeHeader">Age 5</h1>
+      <div class="dateline" id="schoolMonthHeader">Month 1</div>
+    </div>
+
+    <div class="budget-row" id="summerTimelineRow">
+      <span id="summerTimelineLabel">School year: month 1 of 10</span>
+      <div class="budget-track"><div class="budget-fill" id="summerTimelineFill" style="width:0%"></div></div>
+    </div>
+
+    <div class="ledger">
+      <div class="stat health">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
+        <span class="label">Health</span>
+        <span class="value" id="schoolStatHealth">100</span>
+        <div class="bar"><i id="schoolBarHealth" style="width:100%"></i></div>
+      </div>
+      <div class="stat happy">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 13.5s1.5 2 4 2 4-2 4-2"/><path d="M8.5 9.5h.01M15.5 9.5h.01"/></svg></span>
+        <span class="label">Mood</span>
+        <span class="value" id="schoolStatHappy">100</span>
+        <div class="bar"><i id="schoolBarHappy" style="width:100%"></i></div>
+      </div>
+      <div class="stat rel">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="9" r="3"/><circle cx="15.5" cy="9" r="3"/><path d="M3 19c0-2.8 2.5-5 5.5-5 1.4 0 2.6.4 3.5 1.2M21 19c0-2.8-2.5-5-5.5-5-1.4 0-2.6.4-3.5 1.2"/></svg></span>
+        <span class="label">Rel.</span>
+        <span class="value" id="schoolStatRel">100</span>
+        <div class="bar"><i id="schoolBarRel" style="width:100%"></i></div>
+      </div>
+      <div class="stat energy">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
+        <span class="label">Energy</span>
+        <span class="value" id="schoolStatEnergy">100</span>
+        <div class="bar"><i id="schoolBarEnergy" style="width:100%"></i></div>
+      </div>
+      <div class="stat skill">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2 9l10 5 10-5-10-5z"/><path d="M6 11.5V16c0 1 2.5 3 6 3s6-2 6-3v-4.5"/></svg></span>
+        <span class="label">Smarts</span>
+        <span class="value" id="schoolStatSkill">0</span>
+        <div class="bar"><i id="schoolBarSkill" style="width:0%"></i></div>
+      </div>
+    </div>
+
+    <div id="schoolRecapBox"></div>
+
+    <div class="budget-row">
+      <span id="schoolBudgetLabel">0 / 100 hrs used</span>
+      <div class="budget-track"><div class="budget-fill" id="schoolBudgetFill" style="width:0%"></div></div>
+    </div>
+
+    <div id="schoolActivityList"></div>
+
+  </div>
+
+  <!-- ADULT PHASE (existing weekly game) -->
+  <div id="adultScreen" class="hidden">
+
+    <div class="masthead">
+      <div class="kicker">YouSim</div>
+      <h1 id="ageHeader">Age 18</h1>
+      <div class="dateline" id="weekHeader">Week 1</div>
+    </div>
+
+    <div class="ledger">
+      <div class="stat health">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
+        <span class="label">Health</span>
+        <span class="value" id="statHealth">100</span>
+        <div class="bar"><i id="barHealth" style="width:100%"></i></div>
+      </div>
+      <div class="stat money">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9.5a2.8 2.8 0 0 0-2.8-1.5c-1.7 0-3 1-3 2.3 0 3 5.8 1.5 5.8 4.5 0 1.3-1.3 2.3-3 2.3a2.8 2.8 0 0 1-2.8-1.5M12 6.5v1.3M12 16.2v1.3"/></svg></span>
+        <span class="label">Money</span>
+        <span class="value" id="statMoney">100</span>
+        <div class="bar"><i id="barMoney" style="width:100%"></i></div>
+      </div>
+      <div class="stat happy">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 13.5s1.5 2 4 2 4-2 4-2"/><path d="M8.5 9.5h.01M15.5 9.5h.01"/></svg></span>
+        <span class="label">Mood</span>
+        <span class="value" id="statHappy">100</span>
+        <div class="bar"><i id="barHappy" style="width:100%"></i></div>
+      </div>
+      <div class="stat rel">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="9" r="3"/><circle cx="15.5" cy="9" r="3"/><path d="M3 19c0-2.8 2.5-5 5.5-5 1.4 0 2.6.4 3.5 1.2M21 19c0-2.8-2.5-5-5.5-5-1.4 0-2.6.4-3.5 1.2"/></svg></span>
+        <span class="label">Rel.</span>
+        <span class="value" id="statRel">100</span>
+        <div class="bar"><i id="barRel" style="width:100%"></i></div>
+      </div>
+      <div class="stat energy">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
+        <span class="label">Energy</span>
+        <span class="value" id="statEnergy">100</span>
+        <div class="bar"><i id="barEnergy" style="width:100%"></i></div>
+      </div>
+    </div>
+
+    <div id="recapBox"></div>
+
+    <div class="budget-row">
+      <span id="budgetLabel">0 / 100 hrs used</span>
+      <div class="budget-track"><div class="budget-fill" id="budgetFill" style="width:0%"></div></div>
+    </div>
+
+    <div id="activityList"></div>
+
+  </div>
+
+  <div id="gameOverScreen" class="gameover hidden">
+    <h2 id="gameOverTitle">Game Over</h2>
+    <p id="gameOverSub">Your story ends here.</p>
+    <div class="final-stats" id="finalStats"></div>
+    <button id="restartBtn">Start a New Life</button>
+  </div>
+
+</div>
+
+<div class="submit-bar" id="submitBar">
+  <div class="inner">
+    <button id="simTurnBtn" class="sim-turn-btn">Sim Month</button>
+    <button id="endWeekBtn">End Week</button>
+  </div>
+</div>
+
+<script>
+(function(){
+
+  // ---------------- Game data ----------------
+
+  const ACTIVITIES = [
+    // Work
+    { id:'office', category:'Work', name:'Office Job', cost:40,
+      effects:{money:14, energy:-12, happy:-2},
+      eventChance:0.10, eventPool:'work' },
+    { id:'hustle', category:'Work', name:'Side Hustle', cost:25,
+      effects:{money:8, energy:-10},
+      eventChance:0.15, eventPool:'hustle' },
+    { id:'jobhunt', category:'Work', name:'Job Hunting', cost:30,
+      effects:{energy:-8, happy:-3},
+      eventChance:0.18, eventPool:'jobhunt' },
+
+    // Health & Fitness
+    { id:'exercise', category:'Health & Fitness', name:'Exercise', cost:20,
+      effects:{health:8, energy:-8, happy:4},
+      eventChance:0.05, eventPool:'exercise' },
+    { id:'doctor', category:'Health & Fitness', name:'Doctor Visit', cost:15,
+      effects:{health:12, money:-10, energy:-3},
+      eventChance:0.08, eventPool:'doctor' },
+    { id:'rest', category:'Health & Fitness', name:'Sleep In / Rest', cost:15,
+      effects:{energy:14, health:3},
+      eventChance:0.03, eventPool:'rest' },
+
+    // Social
+    { id:'friends', category:'Social', name:'Hang Out with Friends', cost:20,
+      effects:{happy:8, rel:8, energy:-6},
+      eventChance:0.12, eventPool:'friends' },
+    { id:'date', category:'Social', name:'Date Night', cost:25,
+      effects:{rel:10, happy:8, money:-12, energy:-4},
+      eventChance:0.12, eventPool:'date' },
+    { id:'family', category:'Social', name:'Family Time', cost:15,
+      effects:{rel:7, happy:5, energy:2},
+      eventChance:0.06, eventPool:'family' },
+
+    // Personal Growth
+    { id:'study', category:'Personal Growth', name:'Study / Learn Skill', cost:30,
+      effects:{energy:-8},
+      eventChance:0.10, eventPool:'study' },
+    { id:'hobby', category:'Personal Growth', name:'Hobby Time', cost:15,
+      effects:{happy:6, energy:-4},
+      eventChance:0.05, eventPool:'hobby' },
+    { id:'meditate', category:'Personal Growth', name:'Meditate', cost:10,
+      effects:{happy:4, energy:3},
+      eventChance:0.04, eventPool:'meditate' },
+
+    // Chores / Life Admin
+    { id:'bills', category:'Life Admin', name:'Pay Bills / Budget', cost:15,
+      effects:{energy:-2},
+      eventChance:0.04, eventPool:'bills', isAdmin:true },
+    { id:'errands', category:'Life Admin', name:'Errands', cost:10,
+      effects:{energy:-3},
+      eventChance:0.04, eventPool:'errands', isAdmin:true },
+  ];
+
+  const EVENT_POOLS = {
+    work:[
+      {text:"You got a small bonus.", effects:{money:10}, tone:'pos'},
+      {text:"Tense moment with your boss.", effects:{happy:-6}, tone:'neg'},
+      {text:"You stayed late and burned out a little.", effects:{energy:-10, health:-4}, tone:'neg'},
+      {text:"A coworker covered for you on a rough day.", effects:{happy:4}, tone:'pos'},
+    ],
+    hustle:[
+      {text:"A side gig paid off better than expected.", effects:{money:15}, tone:'pos'},
+      {text:"A client flaked and you wasted the week.", effects:{happy:-4}, tone:'neg'},
+      {text:"You're stretched thin juggling it all.", effects:{energy:-8}, tone:'neg'},
+    ],
+    jobhunt:[
+      {text:"You landed an interview!", effects:{happy:6}, tone:'pos'},
+      {text:"Rejection email. Stings a little.", effects:{happy:-8}, tone:'neg'},
+      {text:"A friend referred you somewhere promising.", effects:{happy:5, rel:2}, tone:'pos'},
+    ],
+    exercise:[
+      {text:"You hit a personal best.", effects:{happy:5, health:3}, tone:'pos'},
+      {text:"Minor tweak in your knee.", effects:{health:-4}, tone:'neg'},
+    ],
+    doctor:[
+      {text:"Clean bill of health.", effects:{happy:4}, tone:'pos'},
+      {text:"Unexpected extra cost for tests.", effects:{money:-15}, tone:'neg'},
+    ],
+    rest:[
+      {text:"You woke up feeling completely renewed.", effects:{energy:6}, tone:'pos'},
+    ],
+    friends:[
+      {text:"A night out turned into a great memory.", effects:{happy:6}, tone:'pos'},
+      {text:"A small argument with a friend.", effects:{rel:-6, happy:-3}, tone:'neg'},
+      {text:"Split a surprise bar tab.", effects:{money:-8}, tone:'neg'},
+    ],
+    date:[
+      {text:"A genuinely great date.", effects:{happy:6, rel:5}, tone:'pos'},
+      {text:"Awkward silence over dinner.", effects:{rel:-4}, tone:'neg'},
+    ],
+    family:[
+      {text:"A relative needed help — you stepped up.", effects:{money:-10, rel:5}, tone:'neg'},
+      {text:"A warm, easy visit home.", effects:{happy:5}, tone:'pos'},
+    ],
+    study:[
+      {text:"You're starting to really understand this.", effects:{happy:3}, tone:'pos'},
+      {text:"Frustrating plateau in your progress.", effects:{happy:-3}, tone:'neg'},
+    ],
+    hobby:[
+      {text:"You lost yourself in it for hours, in a good way.", effects:{happy:4}, tone:'pos'},
+    ],
+    meditate:[
+      {text:"A rare moment of real clarity.", effects:{happy:3, energy:2}, tone:'pos'},
+    ],
+    bills:[
+      {text:"Bills handled. One less thing weighing on you.", effects:{happy:2}, tone:'pos'},
+    ],
+    errands:[
+      {text:"Everything got done — small win.", effects:{}, tone:'pos'},
+    ],
+  };
+
+  const RANDOM_EVENTS = [
+    {text:"You found $20 in an old jacket pocket.", effects:{money:5}, chance:0.04, tone:'pos'},
+    {text:"Car trouble ate into your week.", effects:{money:-15, happy:-3}, chance:0.05, tone:'neg'},
+    {text:"You caught a cold.", effects:{health:-8, energy:-5}, chance:0.06, tone:'neg'},
+    {text:"An old friend reached out out of nowhere.", effects:{happy:5, rel:3}, chance:0.04, tone:'pos'},
+    {text:"Rent or a bill went up unexpectedly.", effects:{money:-10}, chance:0.05, tone:'neg'},
+    {text:"You had a genuinely good week for no particular reason.", effects:{happy:5}, chance:0.04, tone:'pos'},
+    {text:"A minor injury slowed you down.", effects:{health:-6, energy:-4}, chance:0.04, tone:'neg'},
+  ];
+
+  // ---------------- Parent / Birth Generator ----------------
+
+  const WEALTH_TIERS = [
+    { id:'poor', label:'Poor', weight:20, startMoney:[-20,10],
+      detail:'Money was tight, always. There wasn\'t a lot of room for extras.' },
+    { id:'working', label:'Working-Class', weight:35, startMoney:[10,35],
+      detail:'Your family worked hard and got by, paycheck to paycheck most months.' },
+    { id:'middle', label:'Middle-Class', weight:32, startMoney:[35,65],
+      detail:'Comfortable enough. Not rich, but you rarely worried about the basics.' },
+    { id:'wealthy', label:'Wealthy', weight:13, startMoney:[65,100],
+      detail:'Money was rarely a source of stress in your house growing up.' },
+  ];
+
+  const HOUSEHOLDS = [
+    { id:'two_present', label:'Two Parents, Present', weight:40, startRel:[10,25], startHappy:[5,15],
+      detail:'Both parents were around and engaged in your day-to-day life.' },
+    { id:'single_present', label:'Single Parent, Present', weight:22, startRel:[5,18], startHappy:[0,10],
+      detail:'One parent raised you, doing the work of two as best they could.' },
+    { id:'two_distant', label:'Two Parents, Emotionally Distant', weight:18, startRel:[-10,5], startHappy:[-8,2],
+      detail:'Your parents were physically there, but rarely emotionally present.' },
+    { id:'one_absent', label:'One Parent Absent', weight:13, startRel:[-15,0], startHappy:[-10,0],
+      detail:'One parent was gone for most of your childhood — by distance or by choice.' },
+    { id:'both_absent', label:'Raised by Others', weight:7, startRel:[-20,-5], startHappy:[-15,-3],
+      detail:'Neither parent was really able to raise you. Someone else stepped in.' },
+  ];
+
+  function weightedPick(list){
+    const total = list.reduce((s,x)=>s+x.weight,0);
+    let r = Math.random()*total;
+    for (const item of list){
+      if (r < item.weight) return item;
+      r -= item.weight;
+    }
+    return list[list.length-1];
+  }
+
+  function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+  function generateParents(){
+    const wealth = weightedPick(WEALTH_TIERS);
+    const household = weightedPick(HOUSEHOLDS);
+    // Asset flag — more likely with higher wealth tiers
+    const assetChanceByWealth = { poor:0.03, working:0.12, middle:0.30, wealthy:0.65 };
+    const hasAssets = Math.random() < assetChanceByWealth[wealth.id];
+    let assetType = null;
+    if (hasAssets){
+      const pool = wealth.id === 'wealthy'
+        ? ['a family business', 'a second property', 'a sizeable investment portfolio']
+        : ['their home, mostly paid off', 'a small family business'];
+      assetType = pool[randInt(0,pool.length-1)];
+    }
+
+    // Can the player ever ask parents for money? Only if present-ish AND not poor.
+    const presentEnough = ['two_present','single_present','two_distant'].includes(household.id);
+    const canAskForMoney = presentEnough && (wealth.id === 'middle' || wealth.id === 'wealthy');
+
+    // Will parents eventually need care from the player? More likely if poor/working and present.
+    const mayNeedCare = presentEnough && (wealth.id === 'poor' || wealth.id === 'working');
+
+    return {
+      wealthTier: wealth.id,
+      wealthLabel: wealth.label,
+      wealthDetail: wealth.detail,
+      household: household.id,
+      householdLabel: household.label,
+      householdDetail: household.detail,
+      hasAssets,
+      assetType,
+      canAskForMoney,
+      mayNeedCare,
+      startMoney: randInt(wealth.startMoney[0], wealth.startMoney[1]),
+      startRel: randInt(household.startRel[0], household.startRel[1]),
+      startHappy: randInt(household.startHappy[0], household.startHappy[1]),
+      // Tracks if player has already leaned on parents financially / parents already helped this game
+      timesAskedForMoney: 0,
+      careBurdenActive: false,
+    };
+  }
+
+  // ---------------- Childhood (ages 0-5, yearly) data ----------------
+
+  const INFANCY_CHOICES = [
+    {
+      id:'structured',
+      name:'Pushed Into Activities',
+      desc:'Lessons, structure, early achievement.',
+      effects:{ happy:-2, energy:-2, rel:1, skill:2 },
+      eventChance:0.35, eventPool:'structured',
+      note:'You were kept busy — classes, structure, expectations, even this young.'
+    },
+    {
+      id:'free_play',
+      name:'Left to Be a Kid',
+      desc:'Free play, few schedules, room to wander.',
+      effects:{ happy:3, energy:2, rel:0, health:1 },
+      eventChance:0.30, eventPool:'free_play',
+      note:'Mostly unstructured time. You figured out how to entertain yourself.'
+    },
+    {
+      id:'sheltered',
+      name:'Closely Watched',
+      desc:'Cautious, protective, rarely out of sight.',
+      effects:{ happy:0, energy:-1, rel:2, health:1 },
+      eventChance:0.30, eventPool:'sheltered',
+      note:'You were rarely out of arm\'s reach. Safe, but a little stifled.'
+    },
+  ];
+
+  const INFANCY_EVENT_POOLS = {
+    structured:[
+      {text:"A relative started a small college fund for you.", effects:{money:15}, tone:'pos'},
+      {text:"You picked up an early reading habit.", effects:{skill:3}, tone:'pos'},
+      {text:"All the structure wore you out this year.", effects:{energy:-4, happy:-2}, tone:'neg'},
+      {text:"A minor tumble at practice or class.", effects:{health:-3}, tone:'neg'},
+    ],
+    free_play:[
+      {text:"You made a best friend at the park.", effects:{rel:4, happy:3}, tone:'pos'},
+      {text:"Scraped knees and a wild imagination — a good year.", effects:{happy:2, health:-2}, tone:'pos'},
+      {text:"An unsupervised mishap led to a costly trip to urgent care.", effects:{money:-12, health:-4}, tone:'neg'},
+      {text:"You got sick more than usual this year.", effects:{health:-5}, tone:'neg'},
+    ],
+    sheltered:[
+      {text:"A grandparent quietly set aside an inheritance for you.", effects:{money:20}, tone:'pos'},
+      {text:"Careful watching kept you safe and steady.", effects:{health:3}, tone:'pos'},
+      {text:"Being so closely watched left you a little withdrawn.", effects:{rel:-3, happy:-2}, tone:'neg'},
+      {text:"An overprotective year meant missed chances to learn things.", effects:{skill:-2}, tone:'neg'},
+    ],
+  };
+
+  function rollInfancyEvent(pool){
+    const list = INFANCY_EVENT_POOLS[pool];
+    if (!list) return null;
+    return list[Math.floor(Math.random()*list.length)];
+  }
+
+  // ---------------- School-age (5-18, monthly) data ----------------
+
+  const SCHOOL_ACTIVITIES = [
+    { id:'school', category:'School', name:'Attend School', cost:50,
+      effects:{ skill:3, energy:-6 },
+      eventChance:0.10, eventPool:'school', mandatory:true },
+    { id:'homework', category:'School', name:'Homework / Study', cost:20,
+      effects:{ skill:4, energy:-5, happy:-1 },
+      eventChance:0.08, eventPool:'homework' },
+    { id:'tutoring', category:'School', name:'Private Tutoring', cost:15,
+      effects:{ skill:6, energy:-3 },
+      eventChance:0.05, eventPool:'tutoring', wealthGate:['middle','wealthy'] },
+
+    { id:'play', category:'Free Time', name:'Play / Hang Out with Friends', cost:25,
+      effects:{ happy:8, rel:6, energy:-5 },
+      eventChance:0.12, eventPool:'play' },
+    { id:'sports', category:'Free Time', name:'Sports / Team Practice', cost:25,
+      effects:{ health:7, happy:4, energy:-8 },
+      eventChance:0.10, eventPool:'sports' },
+    { id:'hobby_school', category:'Free Time', name:'Hobby / Creative Time', cost:15,
+      effects:{ happy:5, skill:1, energy:2 },
+      eventChance:0.05, eventPool:'hobby_school' },
+
+    { id:'chores', category:'Home', name:'Chores', cost:10,
+      effects:{ rel:2, energy:-2 },
+      eventChance:0.03, eventPool:'chores' },
+    { id:'family_school', category:'Home', name:'Family Time', cost:15,
+      effects:{ rel:7, happy:4, energy:2 },
+      eventChance:0.05, eventPool:'family_school' },
+    { id:'rest_school', category:'Home', name:'Rest / Sleep In', cost:15,
+      effects:{ energy:12, health:2 },
+      eventChance:0.02, eventPool:'rest_school' },
+
+    { id:'parttime', category:'Work', name:'Part-Time Job', cost:30,
+      effects:{ money:12, energy:-8, happy:-2 },
+      eventChance:0.12, eventPool:'parttime', minAge:14 },
+  ];
+
+  const SCHOOL_EVENT_POOLS = {
+    school:[
+      {text:"You aced a test you were worried about.", effects:{happy:5, skill:2}, tone:'pos'},
+      {text:"Got in trouble for talking in class.", effects:{happy:-3}, tone:'neg'},
+      {text:"A teacher noticed your effort and said so.", effects:{happy:4}, tone:'pos'},
+      {text:"A pop quiz didn't go well.", effects:{happy:-4}, tone:'neg'},
+    ],
+    homework:[
+      {text:"Something finally clicked while studying.", effects:{skill:3}, tone:'pos'},
+      {text:"You stayed up too late finishing an assignment.", effects:{energy:-6}, tone:'neg'},
+    ],
+    tutoring:[
+      {text:"Your tutor says you're ahead of grade level.", effects:{skill:4, happy:2}, tone:'pos'},
+    ],
+    play:[
+      {text:"One of those perfect, carefree afternoons.", effects:{happy:5}, tone:'pos'},
+      {text:"A falling-out with a friend stung.", effects:{rel:-6, happy:-4}, tone:'neg'},
+    ],
+    sports:[
+      {text:"You scored / performed well and felt great.", effects:{happy:5}, tone:'pos'},
+      {text:"Took a hard fall during practice.", effects:{health:-6}, tone:'neg'},
+    ],
+    hobby_school:[
+      {text:"You made something you're genuinely proud of.", effects:{happy:4}, tone:'pos'},
+    ],
+    chores:[
+      {text:"Got it done without being asked twice.", effects:{rel:2}, tone:'pos'},
+    ],
+    family_school:[
+      {text:"A really warm, easy night at home.", effects:{happy:4}, tone:'pos'},
+      {text:"An argument at home left things tense.", effects:{rel:-5, happy:-3}, tone:'neg'},
+    ],
+    rest_school:[
+      {text:"You woke up actually feeling rested.", effects:{energy:5}, tone:'pos'},
+    ],
+    parttime:[
+      {text:"Your manager said you're a quick learner.", effects:{skill:2, happy:2}, tone:'pos'},
+      {text:"A difficult customer/shift wore you out.", effects:{energy:-6, happy:-3}, tone:'neg'},
+    ],
+  };
+
+  const SCHOOL_RANDOM_EVENTS = [
+    {text:"You caught a cold going around school.", effects:{health:-6, energy:-4}, chance:0.05, tone:'neg'},
+    {text:"You made a new friend out of nowhere.", effects:{happy:4, rel:3}, chance:0.04, tone:'pos'},
+    {text:"A family trip or outing lifted your mood.", effects:{happy:5, rel:2}, chance:0.03, tone:'pos'},
+    {text:"Something at home was stressful this month.", effects:{happy:-4, rel:-2}, chance:0.04, tone:'neg'},
+  ];
+
+  // ---------------- State ----------------
+
+  let state = {
+    phase: 'birth',       // 'birth' | 'gender' | 'infancy' | 'school' | 'adult'
+    parents: null,
+    gender: 'neutral',    // 'girl' | 'boy' | 'neutral'
+    week:1,
+    month:1,
+    age:0,
+    infancyYear: 0,       // 0-5
+    selectedInfancyChoice: null,
+    stats:{ health:100, money:50, happy:60, rel:60, energy:100, skill:0 },
+    selected:[],
+    gameOver:false,
+  };
+
+
+  const BUDGET_MAX = 100;
+
+  // ---------------- Rendering ----------------
+
+  const els = {
+    homeBtn:document.getElementById('homeBtn'),
+    landingScreen:document.getElementById('landingScreen'),
+    startNewLifeBtn:document.getElementById('startNewLifeBtn'),
+    continueLifeBtn:document.getElementById('continueLifeBtn'),
+    setupScreen:document.getElementById('setupScreen'),
+    birthDetails:document.getElementById('birthDetails'),
+    randomizeParentsBtn:document.getElementById('randomizeParentsBtn'),
+    genderChoiceList:document.getElementById('genderChoiceList'),
+    genderNeutralBtn:document.getElementById('genderNeutralBtn'),
+    youngLifeScreen:document.getElementById('youngLifeScreen'),
+    youngKicker:document.getElementById('youngKicker'),
+    youngHeader:document.getElementById('youngHeader'),
+    youngRecapBox:document.getElementById('youngRecapBox'),
+    youngChoiceList:document.getElementById('youngChoiceList'),
+    schoolScreen:document.getElementById('schoolScreen'),
+    schoolActivityList:document.getElementById('schoolActivityList'),
+    schoolRecapBox:document.getElementById('schoolRecapBox'),
+    adultScreen:document.getElementById('adultScreen'),
+    ageHeader:document.getElementById('ageHeader'),
+    weekHeader:document.getElementById('weekHeader'),
+    activityList:document.getElementById('activityList'),
+    recapBox:document.getElementById('recapBox'),
+    budgetLabel:document.getElementById('budgetLabel'),
+    budgetFill:document.getElementById('budgetFill'),
+    endWeekBtn:document.getElementById('endWeekBtn'),
+    simTurnBtn:document.getElementById('simTurnBtn'),
+    gameOverScreen:document.getElementById('gameOverScreen'),
+    gameOverTitle:document.getElementById('gameOverTitle'),
+    gameOverSub:document.getElementById('gameOverSub'),
+    finalStats:document.getElementById('finalStats'),
+    submitBar:document.getElementById('submitBar'),
+    restartBtn:document.getElementById('restartBtn'),
+  };
+
+  // ---------------- Shared stat icons (simple line-art SVGs) ----------------
+
+  const STAT_ICONS = {
+    health: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>`,
+    money: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9.5a2.8 2.8 0 0 0-2.8-1.5c-1.7 0-3 1-3 2.3 0 3 5.8 1.5 5.8 4.5 0 1.3-1.3 2.3-3 2.3a2.8 2.8 0 0 1-2.8-1.5M12 6.5v1.3M12 16.2v1.3"/></svg>`,
+    happy: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 13.5s1.5 2 4 2 4-2 4-2"/><path d="M8.5 9.5h.01M15.5 9.5h.01"/></svg>`,
+    rel: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="9" r="3"/><circle cx="15.5" cy="9" r="3"/><path d="M3 19c0-2.8 2.5-5 5.5-5 1.4 0 2.6.4 3.5 1.2M21 19c0-2.8-2.5-5-5.5-5-1.4 0-2.6.4-3.5 1.2"/></svg>`,
+    energy: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>`,
+    skill: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2 9l10 5 10-5-10-5z"/><path d="M6 11.5V16c0 1 2.5 3 6 3s6-2 6-3v-4.5"/></svg>`,
+  };
+
+  const STAT_LABELS = { health:'Health', money:'Money', happy:'Mood', rel:'Rel.', energy:'Energy', skill:'Smarts' };
+
+  function effectTag(key, value){
+    const sign = value>0?'+':'';
+    return `<span class="effect-tag eff-${key}"><span class="eicon">${STAT_ICONS[key]}</span>${sign}${value}</span>`;
+  }
+
+  function clamp(v){ return Math.max(0, Math.min(100, v)); }
+
+
+
+  // ---------------- Phase router ----------------
+
+  function showPhase(phase){
+    state.phase = phase;
+    els.landingScreen.classList.toggle('hidden', phase !== 'landing');
+    els.setupScreen.classList.toggle('hidden', phase !== 'setup');
+    els.youngLifeScreen.classList.toggle('hidden', phase !== 'infancy');
+    els.schoolScreen.classList.toggle('hidden', phase !== 'school');
+    els.adultScreen.classList.toggle('hidden', phase !== 'adult');
+    els.gameOverScreen.classList.add('hidden');
+    const showSubmitBar = (phase === 'adult' || phase === 'school' || phase === 'infancy' || phase === 'setup');
+    els.submitBar.classList.toggle('hidden', !showSubmitBar);
+    els.simTurnBtn.classList.toggle('hidden', phase === 'setup');
+    if (phase === 'setup'){
+      els.endWeekBtn.textContent = 'Begin Life';
+      els.endWeekBtn.disabled = false;
+    } else if (phase === 'infancy'){
+      els.endWeekBtn.textContent = 'End Year';
+      els.simTurnBtn.textContent = 'Sim through childhood →';
+    } else if (phase === 'school'){
+      els.endWeekBtn.textContent = 'End Month';
+      els.simTurnBtn.textContent = 'Sim Year';
+    } else if (phase === 'adult'){
+      els.endWeekBtn.textContent = 'End Week';
+      els.simTurnBtn.textContent = 'Sim Month';
+    }
+    // "Continue Life" only makes sense once a life is actually underway
+    const lifeInProgress = ['infancy','school','adult'].includes(phase);
+    if (lifeInProgress) state.hasLifeInProgress = true;
+    els.continueLifeBtn.disabled = !state.hasLifeInProgress;
+    els.homeBtn.classList.toggle('hidden', !lifeInProgress);
+    applyTheme();
+  }
+
+  function applyTheme(){
+    document.body.classList.remove('theme-nursery','theme-school','theme-adult','gender-girl','gender-boy','gender-neutral');
+    if (state.phase === 'infancy' || state.phase === 'setup' || state.phase === 'landing'){
+      document.body.classList.add('theme-nursery');
+    } else if (state.phase === 'school'){
+      document.body.classList.add('theme-school');
+    } else {
+      document.body.classList.add('theme-adult');
+    }
+    document.body.classList.add('gender-' + (state.gender || 'neutral'));
+  }
+
+  function currentEndTurnHandler(){
+    if (state.phase === 'setup') beginLife();
+    else if (state.phase === 'infancy') endInfancyYear();
+    else if (state.phase === 'school') endSchoolMonth();
+    else endWeek();
+  }
+
+  function beginLife(){
+    showPhase('infancy');
+    renderYoungLife();
+  }
+
+  function currentSimTurnHandler(){
+    if (state.phase === 'infancy') simThroughInfancy();
+    else if (state.phase === 'school') simSchoolYear();
+    else simAdultMonth();
+  }
+
+  // ---------------- Setup screen (gender + parents) ----------------
+
+  const GENDER_OPTIONS = [
+    { id:'boy', label:'Boy', icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="14" r="6"/><path d="M14.5 9.5 20 4M14 4h6v6"/></svg>` },
+    { id:'girl', label:'Girl', icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M12 15v7M8.5 19h7"/></svg>` },
+  ];
+
+  function renderGenderPicker(){
+    let html = '';
+    GENDER_OPTIONS.forEach(g=>{
+      const picked = state.gender === g.id;
+      html += `<div class="choice-card ${picked?'picked':''}" data-id="${g.id}"><span class="gicon">${g.icon}</span><div class="name">${g.label}</div></div>`;
+    });
+    els.genderChoiceList.innerHTML = html;
+
+    els.genderChoiceList.querySelectorAll('.choice-card').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        state.gender = el.dataset.id;
+        applyTheme();
+        renderGenderPicker();
+        renderGenderNeutralLink();
+      });
+    });
+
+    renderGenderNeutralLink();
+  }
+
+  function renderGenderNeutralLink(){
+    els.genderNeutralBtn.classList.toggle('picked', state.gender === 'neutral');
+    els.genderNeutralBtn.textContent = state.gender === 'neutral' ? '✓ Prefer not to say' : 'Prefer not to say';
+  }
+
+  function renderParentsCard(){
+    const p = state.parents;
+    let assetLine = p.hasAssets
+      ? `They also have ${p.assetType}.`
+      : `No major assets beyond day-to-day living.`;
+
+    els.birthDetails.innerHTML = `
+      <div class="parents-compact">
+        <div class="pc-row">
+          <span class="pc-label">Wealth</span>
+          <span class="pc-value">${p.wealthLabel}</span>
+        </div>
+        <div class="pc-row">
+          <span class="pc-label">Family</span>
+          <span class="pc-value">${p.householdLabel}</span>
+        </div>
+        <div class="pc-detail">${p.wealthDetail} ${assetLine} ${p.householdDetail}</div>
+      </div>
+    `;
+  }
+
+  function renderSetupScreen(){
+    renderGenderPicker();
+    renderParentsCard();
+  }
+
+  function randomizeParents(){
+    state.parents = generateParents();
+    // Re-apply starting stats tied to the new parent roll
+    state.stats.money = 50 + state.parents.startMoney;
+    state.stats.happy = clamp(60 + state.parents.startHappy);
+    state.stats.rel = clamp(60 + state.parents.startRel);
+    renderParentsCard();
+  }
+
+  // ---------------- Infancy phase (ages 0-5, yearly) ----------------
+
+  function renderYoungStats(){
+    document.getElementById('youngStatHealth').textContent = Math.round(state.stats.health);
+    document.getElementById('youngStatMoney').textContent = Math.round(state.stats.money);
+    document.getElementById('youngStatHappy').textContent = Math.round(state.stats.happy);
+    document.getElementById('youngStatRel').textContent = Math.round(state.stats.rel);
+    document.getElementById('youngStatEnergy').textContent = Math.round(state.stats.energy);
+    document.getElementById('youngStatSkill').textContent = Math.round(state.stats.skill);
+
+    document.getElementById('youngBarHealth').style.width = clamp(state.stats.health)+'%';
+    document.getElementById('youngBarHappy').style.width = clamp(state.stats.happy)+'%';
+    document.getElementById('youngBarRel').style.width = clamp(state.stats.rel)+'%';
+    document.getElementById('youngBarEnergy').style.width = clamp(state.stats.energy)+'%';
+    document.getElementById('youngBarSkill').style.width = clamp(state.stats.skill)+'%';
+
+    // money bar: can go negative, so scale differently (clamp display 0-100 against a -100..200 range)
+    const moneyPct = clamp(((state.stats.money + 100) / 300) * 100);
+    document.getElementById('youngBarMoney').style.width = moneyPct + '%';
+
+    const moneyEl = document.getElementById('youngStatMoney');
+    moneyEl.classList.toggle('negative', state.stats.money < 0);
+  }
+
+  function renderYoungLife(){
+    els.youngKicker.textContent = `Age ${state.infancyYear}`;
+    els.youngHeader.textContent = state.infancyYear === 0 ? 'Infancy' : `Early Childhood`;
+    renderYoungStats();
+
+    let html = '';
+    INFANCY_CHOICES.forEach(c=>{
+      const isSelected = state.selectedInfancyChoice === c.id;
+      html += `
+        <div class="choice-card ${isSelected?'picked':''}" data-id="${c.id}">
+          <div class="name">${c.name}</div>
+          <div class="desc">${c.desc}</div>
+        </div>`;
+    });
+    els.youngChoiceList.innerHTML = html;
+
+    els.youngChoiceList.querySelectorAll('.choice-card').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        state.selectedInfancyChoice = el.dataset.id;
+        renderYoungLife();
+      });
+    });
+
+    els.endWeekBtn.disabled = !state.selectedInfancyChoice;
+    els.simTurnBtn.disabled = false;
+  }
+
+  function endInfancyYear(){
+    if (!state.selectedInfancyChoice) return;
+    const choice = INFANCY_CHOICES.find(c=>c.id===state.selectedInfancyChoice);
+    applyEffects(state.stats, choice.effects);
+
+    let recapHtml = `<div class="recap">${choice.note}`;
+    if (Math.random() < choice.eventChance){
+      const ev = rollInfancyEvent(choice.eventPool);
+      if (ev){
+        applyEffects(state.stats, ev.effects);
+        recapHtml += `<div class="events"><div class="${ev.tone}">${ev.tone==='pos'?'+':'–'} ${ev.text}</div></div>`;
+      }
+    }
+    recapHtml += `</div>`;
+    els.youngRecapBox.innerHTML = recapHtml;
+
+    state.selectedInfancyChoice = null;
+    advanceInfancyYear();
+  }
+
+  function advanceInfancyYear(){
+    state.infancyYear += 1;
+    state.age = state.infancyYear;
+    if (state.infancyYear >= 5){
+      finishInfancy();
+    } else {
+      renderYoungLife();
+    }
+  }
+
+  function simThroughInfancy(){
+    const recapHistory = [];
+    while (state.infancyYear < 5){
+      const choice = INFANCY_CHOICES[randInt(0, INFANCY_CHOICES.length-1)];
+      applyEffects(state.stats, choice.effects);
+
+      let recapHtml = `<div class="recap">${choice.note}`;
+      if (Math.random() < choice.eventChance){
+        const ev = rollInfancyEvent(choice.eventPool);
+        if (ev){
+          applyEffects(state.stats, ev.effects);
+          recapHtml += `<div class="events"><div class="${ev.tone}">${ev.tone==='pos'?'+':'–'} ${ev.text}</div></div>`;
+        }
+      }
+      recapHtml += `</div>`;
+      recapHistory.push(recapHtml);
+
+      state.infancyYear += 1;
+    }
+    state.age = 5;
+    state.selectedInfancyChoice = null;
+    if (recapHistory.length){
+      els.youngRecapBox.innerHTML = `<div class="sim-history">${recapHistory.join('')}</div>`;
+    }
+    finishInfancy();
+  }
+
+  function finishInfancy(){
+    state.month = 1;
+    state.selected = ['school'];
+    state.truancyMisses = 0;
+    state.suspended = false;
+    showPhase('school');
+    renderSchoolAll();
+  }
+
+  // ---------------- School-age phase (5-18, monthly) ----------------
+
+  function schoolSpentSoFar(){
+    return state.selected.reduce((sum,id)=>{
+      const a = SCHOOL_ACTIVITIES.find(x=>x.id===id);
+      return sum + (a ? a.cost : 0);
+    },0);
+  }
+
+  function isWealthGated(activity){
+    if (!activity.wealthGate) return false;
+    return !activity.wealthGate.includes(state.parents.wealthTier);
+  }
+
+  function isAgeGated(activity){
+    if (!activity.minAge) return false;
+    return state.age < activity.minAge;
+  }
+
+  // School year = 10 school months + 2 summer months (months 11 & 12 of each year)
+  function monthOfYear(){
+    return ((state.month-1) % 12) + 1; // 1-12
+  }
+  function isSummerMonth(){
+    return monthOfYear() > 10;
+  }
+  function isSummerLocked(activity){
+    return activity.id === 'school' && isSummerMonth();
+  }
+
+  function renderSchoolStats(){
+    document.getElementById('schoolStatHealth').textContent = Math.round(state.stats.health);
+    document.getElementById('schoolStatHappy').textContent = Math.round(state.stats.happy);
+    document.getElementById('schoolStatRel').textContent = Math.round(state.stats.rel);
+    document.getElementById('schoolStatEnergy').textContent = Math.round(state.stats.energy);
+    document.getElementById('schoolStatSkill').textContent = Math.round(state.stats.skill);
+
+    document.getElementById('schoolBarHealth').style.width = clamp(state.stats.health)+'%';
+    document.getElementById('schoolBarHappy').style.width = clamp(state.stats.happy)+'%';
+    document.getElementById('schoolBarRel').style.width = clamp(state.stats.rel)+'%';
+    document.getElementById('schoolBarEnergy').style.width = clamp(state.stats.energy)+'%';
+    document.getElementById('schoolBarSkill').style.width = clamp(state.stats.skill)+'%';
+  }
+
+  function renderSchoolHeader(){
+    document.getElementById('schoolAgeHeader').textContent = `Age ${state.age}`;
+    document.getElementById('schoolMonthHeader').textContent = `Month ${((state.month-1) % 12) + 1} of Grade Year ${Math.floor((state.month-1)/12)+1}`;
+    renderSummerTimeline();
+  }
+
+  function renderSummerTimeline(){
+    const moy = monthOfYear(); // 1-12
+    const label = document.getElementById('summerTimelineLabel');
+    const fill = document.getElementById('summerTimelineFill');
+    if (isSummerMonth()){
+      const summerMonth = moy - 10; // 1 or 2
+      label.textContent = `Summer break — month ${summerMonth} of 2`;
+      fill.style.width = (summerMonth/2*100) + '%';
+    } else {
+      label.textContent = `School year: month ${moy} of 10`;
+      fill.style.width = (moy/10*100) + '%';
+    }
+  }
+
+  function renderSchoolBudget(){
+    const spent = schoolSpentSoFar();
+    document.getElementById('schoolBudgetLabel').textContent = `${spent} / ${BUDGET_MAX} hrs used`;
+    const pct = Math.min(100, (spent/BUDGET_MAX)*100);
+    document.getElementById('schoolBudgetFill').style.width = pct + '%';
+    document.getElementById('schoolBudgetFill').classList.toggle('over', spent > BUDGET_MAX);
+    els.endWeekBtn.disabled = spent === 0 || spent > BUDGET_MAX;
+    els.endWeekBtn.textContent = spent > BUDGET_MAX ? 'Over budget — remove something' : 'End Month';
+    els.simTurnBtn.disabled = spent === 0 || spent > BUDGET_MAX || isSummerMonth();
+  }
+
+  function renderSchoolActivities(){
+    const spent = schoolSpentSoFar();
+    const categories = [...new Set(SCHOOL_ACTIVITIES.map(a=>a.category))];
+    let html = '';
+    categories.forEach(cat=>{
+      html += `<div class="section-title">${cat}</div>`;
+      SCHOOL_ACTIVITIES.filter(a=>a.category===cat).forEach(a=>{
+        const isSelected = state.selected.includes(a.id);
+        const gatedByWealth = isWealthGated(a);
+        const gatedByAge = isAgeGated(a);
+        const gatedBySummer = isSummerLocked(a);
+        const locked = gatedByWealth || gatedByAge || gatedBySummer;
+        const wouldExceed = !isSelected && !locked && (spent + a.cost) > BUDGET_MAX;
+
+        let lockTag = '';
+        if (gatedBySummer) lockTag = '<span class="lock-tag">School\'s out</span>';
+        else if (gatedByWealth) lockTag = '<span class="lock-tag">Not available</span>';
+        else if (gatedByAge) lockTag = `<span class="lock-tag">Age ${a.minAge}+</span>`;
+
+        html += `
+          <div class="activity ${isSelected?'selected':''} ${wouldExceed?'disabled':''} ${locked?'locked':''}" data-id="${a.id}">
+            <div class="check">${isSelected?'✓':''}</div>
+            <div class="info">
+              <div class="name">${a.name}${a.mandatory?' (required)':''}</div>
+              <div class="effects">${effectsString(a.effects)}</div>
+            </div>
+            ${lockTag || `<div class="cost">${a.cost}h</div>`}
+          </div>`;
+      });
+    });
+    els.schoolActivityList.innerHTML = html;
+
+    els.schoolActivityList.querySelectorAll('.activity').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        if (el.classList.contains('disabled') || el.classList.contains('locked')) return;
+        const id = el.dataset.id;
+        const idx = state.selected.indexOf(id);
+        if (idx >= 0) state.selected.splice(idx,1);
+        else state.selected.push(id);
+        renderSchoolActivities();
+        renderSchoolBudget();
+      });
+    });
+  }
+
+  function renderSchoolAll(){
+    renderSchoolHeader();
+    renderSchoolStats();
+    renderSchoolBudget();
+    renderSchoolActivities();
+  }
+
+  function rollSchoolEvent(pool){
+    const list = SCHOOL_EVENT_POOLS[pool];
+    if (!list) return null;
+    return list[Math.floor(Math.random()*list.length)];
+  }
+
+  function endSchoolMonth(){
+    const spent = schoolSpentSoFar();
+    if (spent === 0 || spent > BUDGET_MAX) return;
+
+    let logLines = [];
+    let eventLines = [];
+
+    // Truancy check — only matters during actual school months (not summer)
+    const skippedSchool = !isSummerMonth() && !state.selected.includes('school');
+    if (skippedSchool){
+      state.truancyMisses += 1;
+      applyEffects(state.stats, { skill:-5 });
+      eventLines.push({
+        text:`You missed school this month. (${state.truancyMisses}/5 misses this year)`,
+        tone:'neg'
+      });
+      if (state.truancyMisses >= 5 && !state.suspended){
+        state.suspended = true;
+        eventLines.push({
+          text:`Five misses — you've been suspended for the rest of the school year.`,
+          tone:'neg'
+        });
+      }
+    }
+
+    // Suspension penalty — applies every remaining month this year once suspended
+    if (state.suspended && !isSummerMonth()){
+      applyEffects(state.stats, { happy:-4, rel:-3 });
+    }
+
+    state.selected.forEach(id=>{
+      const a = SCHOOL_ACTIVITIES.find(x=>x.id===id);
+      applyEffects(state.stats, a.effects);
+      logLines.push(a.name);
+
+      if (Math.random() < a.eventChance){
+        const ev = rollSchoolEvent(a.eventPool);
+        if (ev){
+          applyEffects(state.stats, ev.effects);
+          eventLines.push({text:ev.text, tone:ev.tone});
+        }
+      }
+    });
+
+    // Passive monthly decay
+    state.stats.energy = clamp(state.stats.energy - 2);
+
+    // Pure random events
+    SCHOOL_RANDOM_EVENTS.forEach(ev=>{
+      if (Math.random() < ev.chance){
+        applyEffects(state.stats, ev.effects);
+        eventLines.push({text:ev.text, tone:ev.tone});
+      }
+    });
+
+    const summary = logLines.length ? `This month: ${logLines.join(', ')}.` : `A quiet month.`;
+    let html = `<div class="recap">${summary}`;
+    if (eventLines.length){
+      html += `<div class="events">`;
+      eventLines.forEach(e=>{
+        html += `<div class="${e.tone}">${e.tone==='pos'?'+':'–'} ${e.text}</div>`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`;
+    els.schoolRecapBox.innerHTML = html;
+
+    // Advance time
+    state.month += 1;
+    if ((state.month-1) % 12 === 0){
+      state.age += 1;
+      // New school year — truancy record wipes clean
+      state.truancyMisses = 0;
+      state.suspended = false;
+    }
+    carryOverSchoolSelections();
+
+    if (state.stats.health <= 0){
+      triggerGameOver();
+      return;
+    }
+
+    if (state.age >= 18){
+      finishSchool();
+      return;
+    }
+
+    renderSchoolAll();
+  }
+
+  // Auto-plays up to 10 school months (stopping right at summer), reusing
+  // whatever is currently selected each turn via the normal carryover rules.
+  // Stops immediately if health hits 0 or the player ages into adulthood.
+  function simSchoolYear(){
+    const spent = schoolSpentSoFar();
+    if (spent === 0 || spent > BUDGET_MAX) return;
+
+    const recapHistory = [];
+    let turns = 0;
+
+    while (turns < 10){
+      const wasSummer = isSummerMonth();
+      if (wasSummer) break; // Sim Year stops at summer, doesn't play through it
+
+      endSchoolMonth();
+      turns += 1;
+      recapHistory.push(els.schoolRecapBox.innerHTML);
+
+      if (state.gameOver) break;
+      if (state.phase !== 'school') break; // graduated to adulthood mid-sim
+      if (isSummerMonth()) break; // just crossed into summer — stop here
+    }
+
+    if (recapHistory.length && state.phase === 'school' && !state.gameOver){
+      els.schoolRecapBox.innerHTML = `<div class="sim-history">${recapHistory.join('')}</div>`;
+    }
+  }
+
+  // Keep prior month's picks selected for the next month, dropping only
+  // whatever is now locked (wealth/age/summer gate) or no longer fits the budget.
+  // School auto-checks itself back on whenever a new school month begins.
+  // School auto-stays checked every school month — it's only ever removed if
+  // the player explicitly taps it off. To guarantee that, School claims its
+  // budget slot first; everything else carries over and fills in around it,
+  // dropping only whatever no longer fits or just became locked.
+  function carryOverSchoolSelections(){
+    const wasSchoolPicked = state.selected.includes('school');
+    const kept = [];
+    let runningTotal = 0;
+
+    // Reserve School's slot first, unless the player explicitly unchecked it
+    // last turn (in which case it stays off until they tap it back on) or
+    // it's now summer (locked either way).
+    if (!isSummerMonth() && wasSchoolPicked){
+      const schoolActivity = SCHOOL_ACTIVITIES.find(a=>a.id==='school');
+      kept.push('school');
+      runningTotal += schoolActivity.cost;
+    }
+
+    state.selected.forEach(id=>{
+      if (id === 'school') return; // already handled above
+      const a = SCHOOL_ACTIVITIES.find(x=>x.id===id);
+      if (!a) return;
+      if (isWealthGated(a) || isAgeGated(a) || isSummerLocked(a)) return;
+      if (runningTotal + a.cost <= BUDGET_MAX){
+        kept.push(id);
+        runningTotal += a.cost;
+      }
+    });
+
+    // If School wasn't already picked (fresh month, or player had unchecked
+    // it and it's now a new month), default it back on as long as it fits.
+    if (!isSummerMonth() && !kept.includes('school')){
+      const schoolActivity = SCHOOL_ACTIVITIES.find(a=>a.id==='school');
+      if (runningTotal + schoolActivity.cost <= BUDGET_MAX){
+        kept.unshift('school');
+        runningTotal += schoolActivity.cost;
+      }
+    }
+
+    state.selected = kept;
+  }
+
+  function finishSchool(){
+    state.age = 18;
+    state.week = 1;
+    state.selected = [];
+    showPhase('adult');
+    renderAll();
+  }
+
+  function spentSoFar(){
+    return state.selected.reduce((sum,id)=>{
+      const a = ACTIVITIES.find(x=>x.id===id);
+      return sum + (a ? a.cost : 0);
+    },0);
+  }
+
+  function renderStats(){
+    document.getElementById('statHealth').textContent = Math.round(state.stats.health);
+    document.getElementById('statMoney').textContent = Math.round(state.stats.money);
+    document.getElementById('statHappy').textContent = Math.round(state.stats.happy);
+    document.getElementById('statRel').textContent = Math.round(state.stats.rel);
+    document.getElementById('statEnergy').textContent = Math.round(state.stats.energy);
+
+    document.getElementById('barHealth').style.width = clamp(state.stats.health)+'%';
+    document.getElementById('barHappy').style.width = clamp(state.stats.happy)+'%';
+    document.getElementById('barRel').style.width = clamp(state.stats.rel)+'%';
+    document.getElementById('barEnergy').style.width = clamp(state.stats.energy)+'%';
+
+    // money bar: can go negative, so scale differently (clamp display 0-100 against a -100..200 range)
+    const moneyPct = clamp(((state.stats.money + 100) / 300) * 100);
+    document.getElementById('barMoney').style.width = moneyPct + '%';
+
+    const moneyEl = document.getElementById('statMoney');
+    moneyEl.classList.toggle('negative', state.stats.money < 0);
+  }
+
+  function renderHeader(){
+    els.ageHeader.textContent = `Age ${state.age}`;
+    els.weekHeader.textContent = `Week ${((state.week-1) % 52) + 1} of Year ${Math.floor((state.week-1)/52)+1}`;
+  }
+
+  function renderBudget(){
+    const spent = spentSoFar();
+    els.budgetLabel.textContent = `${spent} / ${BUDGET_MAX} hrs used`;
+    const pct = Math.min(100, (spent/BUDGET_MAX)*100);
+    els.budgetFill.style.width = pct + '%';
+    els.budgetFill.classList.toggle('over', spent > BUDGET_MAX);
+    els.endWeekBtn.disabled = spent === 0 || spent > BUDGET_MAX;
+    els.endWeekBtn.textContent = spent > BUDGET_MAX ? 'Over budget — remove something' : 'End Week';
+    els.simTurnBtn.disabled = spent === 0 || spent > BUDGET_MAX;
+  }
+
+  function effectsString(effects){
+    const parts = Object.entries(effects).filter(([,v])=>v!==0).map(([k,v])=>effectTag(k,v));
+    return parts.length ? parts.join('') : '<span class="effect-tag">No direct effect</span>';
+  }
+
+  function renderActivities(){
+    const spent = spentSoFar();
+    const categories = [...new Set(ACTIVITIES.map(a=>a.category))];
+    let html = '';
+    categories.forEach(cat=>{
+      html += `<div class="section-title">${cat}</div>`;
+      ACTIVITIES.filter(a=>a.category===cat).forEach(a=>{
+        const isSelected = state.selected.includes(a.id);
+        const wouldExceed = !isSelected && (spent + a.cost) > BUDGET_MAX;
+        html += `
+          <div class="activity ${isSelected?'selected':''} ${wouldExceed?'disabled':''}" data-id="${a.id}">
+            <div class="check">${isSelected?'✓':''}</div>
+            <div class="info">
+              <div class="name">${a.name}</div>
+              <div class="effects">${effectsString(a.effects)}${a.isAdmin?' · prevents penalties':''}</div>
+            </div>
+            <div class="cost">${a.cost}h</div>
+          </div>`;
+      });
+    });
+    els.activityList.innerHTML = html;
+
+    els.activityList.querySelectorAll('.activity').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        if (el.classList.contains('disabled')) return;
+        const id = el.dataset.id;
+        const idx = state.selected.indexOf(id);
+        if (idx >= 0) state.selected.splice(idx,1);
+        else state.selected.push(id);
+        renderActivities();
+        renderBudget();
+      });
+    });
+  }
+
+  function renderAll(){
+    renderHeader();
+    renderStats();
+    renderBudget();
+    renderActivities();
+  }
+
+  // ---------------- Game logic ----------------
+
+  function rollEvent(pool){
+    const list = EVENT_POOLS[pool];
+    if (!list) return null;
+    return list[Math.floor(Math.random()*list.length)];
+  }
+
+  function applyEffects(target, effects){
+    Object.entries(effects).forEach(([k,v])=>{
+      if (k === 'money') target.money += v; // allowed to go negative
+      else target[k] = clamp(target[k] + v);
+    });
+  }
+
+  function endWeek(){
+    const spent = spentSoFar();
+    if (spent === 0 || spent > BUDGET_MAX) return;
+
+    let logLines = [];
+    let eventLines = [];
+
+    // Apply chosen activities
+    state.selected.forEach(id=>{
+      const a = ACTIVITIES.find(x=>x.id===id);
+      applyEffects(state.stats, a.effects);
+      logLines.push(a.name);
+
+      if (Math.random() < a.eventChance){
+        const ev = rollEvent(a.eventPool);
+        if (ev){
+          applyEffects(state.stats, ev.effects);
+          eventLines.push({text:ev.text, tone:ev.tone});
+        }
+      }
+    });
+
+    // Admin activities prevent a "neglect penalty" — small money/happy decay if NOT handled
+    const handledBills = state.selected.includes('bills');
+    const handledErrands = state.selected.includes('errands');
+    if (!handledBills){
+      state.stats.money -= 4;
+    }
+    if (!handledErrands){
+      state.stats.happy = clamp(state.stats.happy - 2);
+    }
+
+    // Passive weekly decay (life costs energy & a little money even doing nothing extra)
+    state.stats.energy = clamp(state.stats.energy - 3);
+    state.stats.money -= 3; // baseline cost of living
+
+    // Pure random events, independent of choices
+    RANDOM_EVENTS.forEach(ev=>{
+      if (Math.random() < ev.chance){
+        applyEffects(state.stats, ev.effects);
+        eventLines.push({text:ev.text, tone:ev.tone});
+      }
+    });
+
+    // Build recap
+    const summary = logLines.length
+      ? `This week: ${logLines.join(', ')}.`
+      : `A quiet week.`;
+    renderRecap(summary, eventLines);
+
+    // Advance time
+    state.week += 1;
+    if ((state.week-1) % 52 === 0){
+      state.age += 1;
+    }
+    carryOverAdultSelections();
+
+    // Check game over
+    if (state.stats.health <= 0){
+      triggerGameOver();
+      return;
+    }
+
+    renderAll();
+  }
+
+  // Auto-plays 4 weeks (1 month), reusing whatever is currently selected
+  // each turn via the normal carryover rules. Stops immediately on game over.
+  function simAdultMonth(){
+    const spent = spentSoFar();
+    if (spent === 0 || spent > BUDGET_MAX) return;
+
+    const recapHistory = [];
+    let turns = 0;
+
+    while (turns < 4){
+      endWeek();
+      turns += 1;
+      recapHistory.push(els.recapBox.innerHTML);
+
+      if (state.gameOver) break;
+    }
+
+    if (recapHistory.length && !state.gameOver){
+      els.recapBox.innerHTML = `<div class="sim-history">${recapHistory.join('')}</div>`;
+    }
+  }
+
+  // Keep prior week's picks selected for the next week, dropping only
+  // whatever no longer fits the budget on its own (adult activities have
+  // no lock conditions, so budget is the only thing that can invalidate a pick).
+  function carryOverAdultSelections(){
+    const kept = [];
+    let runningTotal = 0;
+    state.selected.forEach(id=>{
+      const a = ACTIVITIES.find(x=>x.id===id);
+      if (!a) return;
+      if (runningTotal + a.cost <= BUDGET_MAX){
+        kept.push(id);
+        runningTotal += a.cost;
+      }
+    });
+    state.selected = kept;
+  }
+
+  function renderRecap(summary, eventLines){
+    let html = `<div class="recap">${summary}`;
+    if (eventLines.length){
+      html += `<div class="events">`;
+      eventLines.forEach(e=>{
+        html += `<div class="${e.tone}">${e.tone==='pos'?'+':'–'} ${e.text}</div>`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`;
+    els.recapBox.innerHTML = html;
+  }
+
+  function triggerGameOver(){
+    state.gameOver = true;
+    els.submitBar.classList.add('hidden');
+    els.homeBtn.classList.add('hidden');
+    els.youngLifeScreen.classList.add('hidden');
+    els.schoolScreen.classList.add('hidden');
+    els.adultScreen.classList.add('hidden');
+
+    const timeLine = state.phase === 'adult'
+      ? `in week ${state.week} of your adult life`
+      : state.phase === 'school'
+        ? `partway through grade school`
+        : `in early childhood`;
+
+    els.gameOverTitle.textContent = 'Game Over';
+    els.gameOverSub.textContent = `Your health gave out at age ${state.age}, ${timeLine}.`;
+    els.finalStats.innerHTML = `
+      <div>Age reached: ${state.age}</div>
+      <div>Final Money: ${Math.round(state.stats.money)}</div>
+      <div>Final Mood: ${Math.round(state.stats.happy)}</div>
+      <div>Final Relationships: ${Math.round(state.stats.rel)}</div>
+      <div>Final Energy: ${Math.round(state.stats.energy)}</div>
+      <div>Final Smarts: ${Math.round(state.stats.skill)}</div>
+    `;
+    els.gameOverScreen.classList.remove('hidden');
+  }
+
+  function restart(){
+    const parents = generateParents();
+    state = {
+      phase:'landing',
+      parents,
+      gender:'neutral',
+      week:1, month:1, age:0, infancyYear:0,
+      selectedInfancyChoice:null,
+      stats:{
+        health:100,
+        money: 50 + parents.startMoney,
+        happy: clamp(60 + parents.startHappy),
+        rel: clamp(60 + parents.startRel),
+        energy:100,
+        skill:0,
+      },
+      selected:[], gameOver:false,
+      truancyMisses:0, suspended:false,
+    };
+
+    els.submitBar.classList.add('hidden');
+    els.youngLifeScreen.classList.add('hidden');
+    els.schoolScreen.classList.add('hidden');
+    els.adultScreen.classList.add('hidden');
+    els.gameOverScreen.classList.add('hidden');
+    els.recapBox.innerHTML = '';
+    els.youngRecapBox.innerHTML = '';
+    els.schoolRecapBox.innerHTML = '';
+
+    showPhase('landing');
+  }
+
+  // Like restart(), but skips the landing page and drops straight into
+  // gender + parents setup — used when starting a new life after death.
+  function startNewLifeSetup(){
+    const parents = generateParents();
+    state = {
+      phase:'setup',
+      parents,
+      gender:'neutral',
+      week:1, month:1, age:0, infancyYear:0,
+      selectedInfancyChoice:null,
+      stats:{
+        health:100,
+        money: 50 + parents.startMoney,
+        happy: clamp(60 + parents.startHappy),
+        rel: clamp(60 + parents.startRel),
+        energy:100,
+        skill:0,
+      },
+      selected:[], gameOver:false,
+      truancyMisses:0, suspended:false,
+    };
+
+    els.submitBar.classList.add('hidden');
+    els.youngLifeScreen.classList.add('hidden');
+    els.schoolScreen.classList.add('hidden');
+    els.adultScreen.classList.add('hidden');
+    els.gameOverScreen.classList.add('hidden');
+    els.recapBox.innerHTML = '';
+    els.youngRecapBox.innerHTML = '';
+    els.schoolRecapBox.innerHTML = '';
+
+    showPhase('setup');
+    renderSetupScreen();
+  }
+
+  // ---------------- Init ----------------
+
+  els.endWeekBtn.addEventListener('click', currentEndTurnHandler);
+  els.simTurnBtn.addEventListener('click', currentSimTurnHandler);
+  els.restartBtn.addEventListener('click', startNewLifeSetup);
+
+  els.startNewLifeBtn.addEventListener('click', ()=>{
+    startNewLifeSetup();
+  });
+
+  els.homeBtn.addEventListener('click', ()=>{
+    state.pausedPhase = state.phase;
+    showPhase('landing');
+  });
+
+  els.continueLifeBtn.addEventListener('click', ()=>{
+    if (els.continueLifeBtn.disabled) return;
+    showPhase(state.pausedPhase || state.phase);
+  });
+
+  els.randomizeParentsBtn.addEventListener('click', randomizeParents);
+
+  els.genderNeutralBtn.addEventListener('click', ()=>{
+    state.gender = 'neutral';
+    applyTheme();
+    renderGenderPicker();
+  });
+
+  restart();
+
+})();
+</script>
+</body>
+</html>

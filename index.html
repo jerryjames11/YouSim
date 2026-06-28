@@ -170,6 +170,186 @@
   }
   #homeBtn:active{transform:scale(0.92);}
 
+  /* ---------- Floating menu button (bottom-right, morphs to X) ---------- */
+  #menuFab{
+    position:fixed;
+    right:18px;
+    bottom:calc(var(--submit-bar-h, 120px) + 14px);
+    width:46px; height:46px;
+    border-radius:50%;
+    border:none;
+    background:var(--ink);
+    box-shadow:0 4px 14px rgba(0,0,0,0.2);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:4px;
+    cursor:pointer;
+    z-index:55;
+    padding:0;
+    transition:bottom .15s ease;
+  }
+  #menuFab:active{ transform:scale(0.93); }
+  #menuFab span{
+    width:18px; height:2px;
+    background:var(--card-bg);
+    border-radius:2px;
+    transition:transform .25s ease, opacity .2s ease;
+  }
+  #menuFab.open span:nth-child(1){ transform:translateY(6px) rotate(45deg); }
+  #menuFab.open span:nth-child(2){ opacity:0; }
+  #menuFab.open span:nth-child(3){ transform:translateY(-6px) rotate(-45deg); }
+
+  /* ---------- Menu backdrop + centered popup ---------- */
+  #menuBackdrop{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.4);
+    z-index:59;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease;
+  }
+  #menuBackdrop.show{ opacity:1; pointer-events:auto; }
+  #menuBackdrop.hidden{ display:block; opacity:0; pointer-events:none; }
+
+  #menuOverlay{
+    position:fixed;
+    left:5%; right:5%;
+    top:50%;
+    max-height:76vh;
+    background:var(--paper);
+    border-radius:18px;
+    z-index:60;
+    transform:translateY(-50%) scale(0.92);
+    opacity:0;
+    pointer-events:none;
+    transition:transform .2s ease, opacity .18s ease;
+    display:flex;
+    flex-direction:column;
+    box-shadow:0 16px 50px rgba(0,0,0,0.28);
+    overflow:hidden;
+  }
+  #menuOverlay.show{
+    transform:translateY(-50%) scale(1);
+    opacity:1;
+    pointer-events:auto;
+  }
+  #menuOverlay.hidden{ display:flex; opacity:0; pointer-events:none; }
+
+  .menu-head{
+    text-align:center;
+    padding:16px 16px 12px;
+    border-bottom:var(--card-border-w) solid var(--rule);
+    flex-shrink:0;
+  }
+  .menu-head h3{
+    font-family:'Fraunces',serif;
+    font-weight:700;
+    font-size:18px;
+    margin:0;
+    color:var(--ink);
+  }
+  .menu-tabs{
+    display:flex;
+    gap:6px;
+    padding:10px 14px;
+    border-bottom:var(--card-border-w) solid var(--rule);
+    flex-shrink:0;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .menu-tab{
+    flex-shrink:0;
+    padding:7px 13px;
+    border-radius:16px;
+    border:1.5px solid var(--rule);
+    background:var(--card-bg);
+    font-family:'Inter',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    color:var(--ink-soft);
+    display:flex; align-items:center; gap:5px;
+    cursor:pointer;
+  }
+  .menu-tab .ticon{ width:13px; height:13px; flex-shrink:0; }
+  .menu-tab .ticon svg{ width:100%; height:100%; display:block; }
+  .menu-tab.active{
+    background:var(--ink);
+    border-color:var(--ink);
+    color:var(--card-bg);
+  }
+  .menu-body{
+    flex:1;
+    overflow-y:auto;
+    padding:16px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .menu-pane{ display:none; }
+  .menu-pane.active{ display:block; }
+
+  .mini-card{
+    background:var(--card-bg);
+    border:var(--card-border-w) solid var(--rule);
+    border-radius:var(--card-radius);
+    padding:13px 14px;
+    margin-bottom:10px;
+  }
+  .mini-card .mc-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--ink-soft); margin-bottom:3px;
+  }
+  .mini-card .mc-value{ font-family:'Fraunces',serif; font-weight:700; font-size:17px; color:var(--ink); }
+  .mini-card .mc-sub{ font-size:11.5px; color:var(--ink-soft); margin-top:2px; line-height:1.4; }
+
+  .menu-row-line{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:9px 0; border-bottom:1px solid var(--paper-dim);
+    font-size:12.5px;
+  }
+  .menu-row-line:last-child{ border-bottom:none; }
+  .menu-row-line .rl-name{ font-weight:600; color:var(--ink); }
+  .menu-row-line .rl-sub{ font-size:10px; color:var(--ink-soft); }
+  .menu-row-line .rl-amt{ font-family:'JetBrains Mono',monospace; font-weight:700; }
+  .menu-row-line .rl-amt.pos{ color:var(--money); }
+  .menu-row-line .rl-amt.neg{ color:var(--health); }
+
+  .menu-section-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--ink-soft); margin:16px 0 8px;
+  }
+  .menu-section-label:first-child{ margin-top:0; }
+
+  .log-entry{
+    background:var(--card-bg);
+    border:var(--card-border-w) solid var(--rule);
+    border-radius:var(--card-radius);
+    padding:10px 12px;
+    margin-bottom:8px;
+  }
+  .log-entry .le-time{
+    font-family:'JetBrains Mono',monospace; font-size:9.5px; color:var(--ink-soft); margin-bottom:3px;
+  }
+  .log-entry .le-text{ font-family:'Fraunces',serif; font-style:italic; font-size:12.5px; color:var(--ink); }
+  .log-entry .le-effects{ margin-top:4px; }
+
+  .family-member{
+    display:flex; align-items:center; gap:10px;
+    background:var(--card-bg);
+    border:var(--card-border-w) solid var(--rule);
+    border-radius:var(--card-radius);
+    padding:11px 12px;
+    margin-bottom:9px;
+  }
+  .family-member .fm-icon{
+    width:36px; height:36px; border-radius:50%;
+    background:var(--paper-dim);
+    display:flex; align-items:center; justify-content:center;
+    font-size:16px; flex-shrink:0;
+  }
+  .family-member .fm-name{ font-weight:700; font-size:13px; color:var(--ink); }
+  .family-member .fm-sub{ font-size:11px; color:var(--ink-soft); }
+
   /* ---------- Header / masthead ---------- */
   .masthead{
     text-align:center;
@@ -294,76 +474,86 @@
 
   /* ---------- Section headers ---------- */
   /* ---------- Category squares (accordion) ---------- */
-  .cat-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:9px;
-    margin-bottom:6px;
-  }
-  .cat-square{
-    background:var(--card-bg);
-    border:var(--card-border-w) solid var(--cat-color);
+  /* ---------- Category rail + content pane ---------- */
+  .rail-area{
+    display:flex;
+    height:380px;
+    border:var(--card-border-w) solid var(--rule);
     border-radius:var(--card-radius);
     box-shadow:var(--card-shadow);
-    padding:13px 8px 11px;
-    text-align:center;
+    overflow:hidden;
+    margin-bottom:6px;
+    background:var(--card-bg);
+  }
+  .cat-rail{
+    width:62px;
+    flex-shrink:0;
+    border-right:var(--card-border-w) solid var(--rule);
+    overflow-y:auto;
+    padding:8px 6px;
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .cat-rail-sq{
+    width:100%;
+    aspect-ratio:1;
+    border-radius:13px;
+    border:1.5px solid var(--cat-color);
+    background:var(--card-bg);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
     cursor:pointer;
     position:relative;
-    transition:transform .1s ease;
+    flex-shrink:0;
+    padding:2px;
   }
-  .cat-square:active{ transform:scale(0.97); }
-  .cat-square.open{
-    background:var(--cat-color);
-    box-shadow:0 0 0 2px var(--cat-color) inset, var(--card-shadow);
-  }
-  .cat-square .cicon{
-    width:24px; height:24px;
-    margin:0 auto 5px;
-    color:var(--cat-color);
-  }
-  .cat-square.open .cicon{ color:var(--card-bg); }
-  .cat-square .cicon svg{ width:100%; height:100%; display:block; }
-  .cat-square .cname{
+  .cat-rail-sq.active{ background:var(--cat-color); }
+  .cat-rail-sq .cicon{ width:17px; height:17px; color:var(--cat-color); }
+  .cat-rail-sq.active .cicon{ color:var(--card-bg); }
+  .cat-rail-sq .cicon svg{ width:100%; height:100%; display:block; }
+  .cat-rail-sq .cname{
+    font-size:7px;
     font-weight:700;
-    font-size:12.5px;
+    line-height:1.1;
+    text-align:center;
     color:var(--ink);
   }
-  .cat-square.open .cname{ color:var(--card-bg); }
-  .cat-square .chevron{
-    margin-top:3px;
-    font-size:10px;
-    color:var(--ink-soft);
-    transition:transform .2s ease;
-  }
-  .cat-square.open .chevron{
-    transform:rotate(180deg);
-    color:var(--card-bg);
-    opacity:0.85;
-  }
-  .cat-square .ccount{
-    position:absolute; top:7px; right:7px;
+  .cat-rail-sq.active .cname{ color:var(--card-bg); }
+  .cat-rail-sq .ccount{
+    position:absolute; top:-4px; right:-4px;
     background:var(--cat-color);
     color:var(--card-bg);
     font-family:'JetBrains Mono',monospace;
-    font-size:9px; font-weight:700;
-    width:16px; height:16px; border-radius:50%;
+    font-size:8px; font-weight:700;
+    width:14px; height:14px; border-radius:50%;
     display:flex; align-items:center; justify-content:center;
   }
-  .cat-square.open .ccount{
+  .cat-rail-sq.active .ccount{
     background:var(--card-bg);
     color:var(--cat-color);
   }
 
-  .accordion-panel{
-    grid-column:1 / -1;
-    max-height:0;
-    overflow:hidden;
-    transition:max-height .25s ease;
+  .cat-pane{
+    flex:1;
+    overflow-y:auto;
+    padding:10px;
+    -webkit-overflow-scrolling:touch;
   }
-  .accordion-panel.open{
-    max-height:1200px;
-    padding:8px 0 2px;
+  .cat-pane-title{
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    font-weight:700;
+    color:var(--cat-color);
+    margin-bottom:8px;
   }
+
   .activity.cat-tinted{
     border-color:var(--cat-color);
     background:color-mix(in srgb, var(--cat-color) 7%, var(--card-bg));
@@ -470,6 +660,28 @@
     color:var(--ink-soft);
     flex-shrink:0;
   }
+  .repeat-minus{
+    width:22px; height:22px;
+    flex-shrink:0;
+    border:1.4px solid var(--cat-color, var(--ink));
+    color:var(--cat-color, var(--ink));
+    background:var(--card-bg);
+    border-radius:50%;
+    font-size:14px;
+    font-weight:700;
+    line-height:1;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    padding:0;
+  }
+  .repeat-minus:active{ transform:scale(0.9); }
+  .repeat-count{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    font-weight:700;
+    color:var(--cat-color, var(--ink));
+    flex-shrink:0;
+  }
 
   /* ---------- Submit button ---------- */
   .submit-bar{
@@ -480,10 +692,15 @@
     background:linear-gradient(to top, var(--paper) 70%, transparent);
   }
   .submit-bar .inner{width:100%; max-width:480px;}
-  .sim-turn-btn{
-    width:100%;
-    padding:11px;
+  .sim-row{
+    display:flex;
+    gap:8px;
     margin-bottom:8px;
+  }
+  .sim-turn-btn{
+    flex:1;
+    min-width:0;
+    padding:11px;
     background:var(--card-bg);
     color:var(--ink-soft);
     border:var(--card-border-w) solid var(--rule);
@@ -497,6 +714,13 @@
   .sim-turn-btn:disabled{
     opacity:0.5;
     cursor:not-allowed;
+  }
+  .skip-btn{
+    flex:0 0 auto;
+    color:var(--ink);
+    border-color:var(--ink);
+    font-size:12.5px;
+    padding:11px 14px;
   }
   #endWeekBtn{
     width:100%;
@@ -555,6 +779,16 @@
   .recap .events div{margin-top:3px;}
   .recap .events .pos{color:var(--money);}
   .recap .events .neg{color:var(--health);}
+  .event-effects{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:2px !important;
+    margin-left:14px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+  }
+  .event-effects .effect-tag{ font-style:normal; }
 
   /* ---------- Birth / parent reveal screen ---------- */
   .birth-screen{
@@ -1102,9 +1336,25 @@
 
 <div class="submit-bar" id="submitBar">
   <div class="inner">
-    <button id="simTurnBtn" class="sim-turn-btn">Sim Month</button>
+    <div class="sim-row">
+      <button id="simTurnBtn" class="sim-turn-btn">Sim Month</button>
+      <button id="skipToAdultBtn" class="sim-turn-btn skip-btn hidden">Skip to 18 →</button>
+    </div>
     <button id="endWeekBtn">End Week</button>
   </div>
+</div>
+
+<button id="menuFab" class="hidden" title="Menu">
+  <span></span><span></span><span></span>
+</button>
+
+<div id="menuBackdrop" class="hidden"></div>
+<div id="menuOverlay" class="hidden">
+  <div class="menu-head">
+    <h3>Menu</h3>
+  </div>
+  <div class="menu-tabs" id="menuTabs"></div>
+  <div class="menu-body" id="menuBody"></div>
 </div>
 
 <script>
@@ -1470,16 +1720,29 @@
     stats:{ health:100, money:50, happy:60, rel:60, energy:100, skill:0 },
     selected:[],
     openCategories:[],
+    journalLog:[],
+    activeMenuTab:null,
     gameOver:false,
   };
 
 
   const BUDGET_MAX = 100;
+  const MAX_REPEATS = 3; // how many times the same activity can be picked in one turn
+
+  function countOf(id){
+    return state.selected.filter(x => x === id).length;
+  }
+
 
   // ---------------- Rendering ----------------
 
   const els = {
     homeBtn:document.getElementById('homeBtn'),
+    menuFab:document.getElementById('menuFab'),
+    menuBackdrop:document.getElementById('menuBackdrop'),
+    menuOverlay:document.getElementById('menuOverlay'),
+    menuTabs:document.getElementById('menuTabs'),
+    menuBody:document.getElementById('menuBody'),
     landingScreen:document.getElementById('landingScreen'),
     startNewLifeBtn:document.getElementById('startNewLifeBtn'),
     continueLifeBtn:document.getElementById('continueLifeBtn'),
@@ -1505,6 +1768,7 @@
     budgetFill:document.getElementById('budgetFill'),
     endWeekBtn:document.getElementById('endWeekBtn'),
     simTurnBtn:document.getElementById('simTurnBtn'),
+    skipToAdultBtn:document.getElementById('skipToAdultBtn'),
     gameOverScreen:document.getElementById('gameOverScreen'),
     gameOverTitle:document.getElementById('gameOverTitle'),
     gameOverSub:document.getElementById('gameOverSub'),
@@ -1571,6 +1835,7 @@
     const showSubmitBar = (phase === 'adult' || phase === 'school' || phase === 'infancy' || phase === 'setup');
     els.submitBar.classList.toggle('hidden', !showSubmitBar);
     els.simTurnBtn.classList.toggle('hidden', phase === 'setup');
+    els.skipToAdultBtn.classList.toggle('hidden', phase !== 'school');
     if (phase === 'setup'){
       els.endWeekBtn.textContent = 'Begin Life';
       els.endWeekBtn.disabled = false;
@@ -1589,7 +1854,22 @@
     if (lifeInProgress) state.hasLifeInProgress = true;
     els.continueLifeBtn.disabled = !state.hasLifeInProgress;
     els.homeBtn.classList.toggle('hidden', !lifeInProgress);
+    els.menuFab.classList.toggle('hidden', !lifeInProgress);
+    closeMenu();
     applyTheme();
+    syncFabPosition();
+  }
+
+  // Measures the submit bar's real rendered height so the floating menu
+  // button always sits cleanly above it, never overlapping page content
+  // above or floating too far from the bar below.
+  function syncFabPosition(){
+    requestAnimationFrame(()=>{
+      const h = els.submitBar.offsetHeight;
+      if (h > 0){
+        document.documentElement.style.setProperty('--submit-bar-h', h + 'px');
+      }
+    });
   }
 
   function applyTheme(){
@@ -1745,15 +2025,18 @@
     const choice = INFANCY_CHOICES.find(c=>c.id===state.selectedInfancyChoice);
     applyEffects(state.stats, choice.effects);
 
-    let recapHtml = `<div class="recap">${choice.note}`;
+    let recapHtml = `<div class="recap">${choice.note}${eventEffectsRow(choice.effects)}`;
+    const journalEvents = [];
     if (Math.random() < choice.eventChance){
       const ev = rollInfancyEvent(choice.eventPool);
       if (ev){
         applyEffects(state.stats, ev.effects);
-        recapHtml += `<div class="events"><div class="${ev.tone}">${ev.tone==='pos'?'+':'–'} ${ev.text}</div></div>`;
+        recapHtml += `<div class="events"><div class="${ev.tone}">${ev.tone==='pos'?'+':'–'} ${ev.text}</div>${eventEffectsRow(ev.effects)}</div>`;
+        journalEvents.push({text:ev.text, tone:ev.tone, effects:ev.effects});
       }
     }
     recapHtml += `</div>`;
+    addJournalEntry(choice.note, journalEvents);
     els.youngRecapBox.innerHTML = recapHtml;
 
     state.selectedInfancyChoice = null;
@@ -1776,16 +2059,20 @@
       const choice = INFANCY_CHOICES[randInt(0, INFANCY_CHOICES.length-1)];
       applyEffects(state.stats, choice.effects);
 
-      let recapHtml = `<div class="recap">${choice.note}`;
+      let recapHtml = `<div class="recap">${choice.note}${eventEffectsRow(choice.effects)}`;
+      const journalEvents = [];
       if (Math.random() < choice.eventChance){
         const ev = rollInfancyEvent(choice.eventPool);
         if (ev){
           applyEffects(state.stats, ev.effects);
-          recapHtml += `<div class="events"><div class="${ev.tone}">${ev.tone==='pos'?'+':'–'} ${ev.text}</div></div>`;
+          recapHtml += `<div class="events"><div class="${ev.tone}">${ev.tone==='pos'?'+':'–'} ${ev.text}</div>${eventEffectsRow(ev.effects)}</div>`;
+          journalEvents.push({text:ev.text, tone:ev.tone, effects:ev.effects});
         }
       }
       recapHtml += `</div>`;
       recapHistory.push(recapHtml);
+      state.age = state.infancyYear; // keep age in sync per-iteration for correct journal timestamps
+      addJournalEntry(choice.note, journalEvents);
 
       state.infancyYear += 1;
     }
@@ -1802,6 +2089,7 @@
     state.selected = ['school'];
     state.truancyMisses = 0;
     state.suspended = false;
+    state.openCategories = [];
     showPhase('school');
     renderSchoolAll();
   }
@@ -1885,67 +2173,83 @@
     const spent = schoolSpentSoFar();
     const categories = [...new Set(SCHOOL_ACTIVITIES.map(a=>a.category))];
 
-    let html = '<div class="cat-grid">';
+    if (!state.openCategories.length) state.openCategories = [categories[0]];
+    const activeCat = state.openCategories[0];
+
+    let railHtml = '';
     categories.forEach(cat=>{
       const colorVar = CATEGORY_COLOR_VAR[cat] || '--ink';
-      const isOpen = state.openCategories.includes(cat);
-      const countSelected = SCHOOL_ACTIVITIES.filter(a=>a.category===cat && state.selected.includes(a.id)).length;
-
-      html += `
-        <div class="cat-square ${isOpen?'open':''}" data-cat="${cat}" style="--cat-color:var(${colorVar})">
+      const isActive = cat === activeCat;
+      const countSelected = SCHOOL_ACTIVITIES.filter(a=>a.category===cat).reduce((sum,a)=>sum+countOf(a.id),0);
+      railHtml += `
+        <div class="cat-rail-sq ${isActive?'active':''}" data-cat="${cat}" style="--cat-color:var(${colorVar})">
           ${countSelected ? `<div class="ccount">${countSelected}</div>` : ''}
           <div class="cicon">${CATEGORY_ICONS[cat] || ''}</div>
           <div class="cname">${cat}</div>
-          <div class="chevron">▾</div>
-        </div>
-        <div class="accordion-panel ${isOpen?'open':''}" data-panel="${cat}" style="--cat-color:var(${colorVar})">`;
-
-      SCHOOL_ACTIVITIES.filter(a=>a.category===cat).forEach(a=>{
-        const isSelected = state.selected.includes(a.id);
-        const gatedByWealth = isWealthGated(a);
-        const gatedByAge = isAgeGated(a);
-        const gatedBySummer = isSummerLocked(a);
-        const locked = gatedByWealth || gatedByAge || gatedBySummer;
-        const wouldExceed = !isSelected && !locked && (spent + a.cost) > BUDGET_MAX;
-
-        let lockTag = '';
-        if (gatedBySummer) lockTag = '<span class="lock-tag">School\'s out</span>';
-        else if (gatedByWealth) lockTag = '<span class="lock-tag">Not available</span>';
-        else if (gatedByAge) lockTag = `<span class="lock-tag">Age ${a.minAge}+</span>`;
-
-        html += `
-          <div class="activity cat-tinted ${isSelected?'selected':''} ${wouldExceed?'disabled':''} ${locked?'locked':''}" data-id="${a.id}">
-            <div class="check">${isSelected?'✓':''}</div>
-            <div class="info">
-              <div class="name">${a.name}${a.mandatory?' (required)':''}</div>
-              <div class="effects">${effectsString(a.effects)}</div>
-            </div>
-            ${lockTag || `<div class="cost">${a.cost}h</div>`}
-          </div>`;
-      });
-      html += `</div>`;
+        </div>`;
     });
-    html += '</div>';
 
-    els.schoolActivityList.innerHTML = html;
+    const activeColorVar = CATEGORY_COLOR_VAR[activeCat] || '--ink';
+    let paneHtml = `<div class="cat-pane-title" style="color:var(${activeColorVar})">${activeCat}</div>`;
+    SCHOOL_ACTIVITIES.filter(a=>a.category===activeCat).forEach(a=>{
+      const n = countOf(a.id);
+      const isSelected = n > 0;
+      const gatedByWealth = isWealthGated(a);
+      const gatedByAge = isAgeGated(a);
+      const gatedBySummer = isSummerLocked(a);
+      const locked = gatedByWealth || gatedByAge || gatedBySummer;
+      const repeatCap = a.id === 'school' ? 1 : MAX_REPEATS;
+      const atRepeatCap = n >= repeatCap;
+      const wouldExceed = !locked && !atRepeatCap && (spent + a.cost) > BUDGET_MAX;
+      const disabledAdd = locked || wouldExceed || atRepeatCap;
 
-    els.schoolActivityList.querySelectorAll('.cat-square').forEach(sq=>{
+      let lockTag = '';
+      if (gatedBySummer) lockTag = '<span class="lock-tag">School\'s out</span>';
+      else if (gatedByWealth) lockTag = '<span class="lock-tag">Not available</span>';
+      else if (gatedByAge) lockTag = `<span class="lock-tag">Age ${a.minAge}+</span>`;
+
+      paneHtml += `
+        <div class="activity cat-tinted ${isSelected?'selected':''} ${disabledAdd?'disabled':''} ${locked?'locked':''}" data-id="${a.id}" style="--cat-color:var(${activeColorVar})">
+          <div class="check">${isSelected?'✓':''}</div>
+          <div class="info">
+            <div class="name">${a.name}${a.mandatory?' (required)':''}</div>
+            <div class="effects">${effectsString(a.effects)}</div>
+          </div>
+          ${n>0 ? `<button class="repeat-minus" data-id="${a.id}">−</button><span class="repeat-count">×${n}</span>` : ''}
+          ${lockTag || `<div class="cost">${a.cost}h</div>`}
+        </div>`;
+    });
+
+    els.schoolActivityList.innerHTML = `
+      <div class="rail-area">
+        <div class="cat-rail">${railHtml}</div>
+        <div class="cat-pane">${paneHtml}</div>
+      </div>`;
+
+    els.schoolActivityList.querySelectorAll('.cat-rail-sq').forEach(sq=>{
       sq.addEventListener('click', ()=>{
-        const cat = sq.dataset.cat;
-        const idx = state.openCategories.indexOf(cat);
-        if (idx >= 0) state.openCategories.splice(idx,1);
-        else state.openCategories.push(cat);
+        state.openCategories = [sq.dataset.cat];
         renderSchoolActivities();
       });
     });
 
     els.schoolActivityList.querySelectorAll('.activity').forEach(el=>{
-      el.addEventListener('click', ()=>{
+      el.addEventListener('click', (e)=>{
+        if (e.target.closest('.repeat-minus')) return;
         if (el.classList.contains('disabled') || el.classList.contains('locked')) return;
         const id = el.dataset.id;
+        state.selected.push(id);
+        renderSchoolActivities();
+        renderSchoolBudget();
+      });
+    });
+
+    els.schoolActivityList.querySelectorAll('.repeat-minus').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        const id = btn.dataset.id;
         const idx = state.selected.indexOf(id);
         if (idx >= 0) state.selected.splice(idx,1);
-        else state.selected.push(id);
         renderSchoolActivities();
         renderSchoolBudget();
       });
@@ -1976,23 +2280,32 @@
     const skippedSchool = !isSummerMonth() && !state.selected.includes('school');
     if (skippedSchool){
       state.truancyMisses += 1;
-      applyEffects(state.stats, { skill:-5 });
+      const missEffects = { skill:-5 };
+      applyEffects(state.stats, missEffects);
       eventLines.push({
         text:`You missed school this month. (${state.truancyMisses}/5 misses this year)`,
-        tone:'neg'
+        tone:'neg',
+        effects: missEffects,
       });
       if (state.truancyMisses >= 5 && !state.suspended){
         state.suspended = true;
         eventLines.push({
           text:`Five misses — you've been suspended for the rest of the school year.`,
-          tone:'neg'
+          tone:'neg',
+          effects: {},
         });
       }
     }
 
     // Suspension penalty — applies every remaining month this year once suspended
     if (state.suspended && !isSummerMonth()){
-      applyEffects(state.stats, { happy:-4, rel:-3 });
+      const suspensionEffects = { happy:-4, rel:-3 };
+      applyEffects(state.stats, suspensionEffects);
+      eventLines.push({
+        text:`Still suspended — it's weighing on you.`,
+        tone:'neg',
+        effects: suspensionEffects,
+      });
     }
 
     state.selected.forEach(id=>{
@@ -2004,7 +2317,7 @@
         const ev = rollSchoolEvent(a.eventPool);
         if (ev){
           applyEffects(state.stats, ev.effects);
-          eventLines.push({text:ev.text, tone:ev.tone});
+          eventLines.push({text:ev.text, tone:ev.tone, effects:ev.effects});
         }
       }
     });
@@ -2016,16 +2329,20 @@
     SCHOOL_RANDOM_EVENTS.forEach(ev=>{
       if (Math.random() < ev.chance){
         applyEffects(state.stats, ev.effects);
-        eventLines.push({text:ev.text, tone:ev.tone});
+        eventLines.push({text:ev.text, tone:ev.tone, effects:ev.effects});
       }
     });
 
-    const summary = logLines.length ? `This month: ${logLines.join(', ')}.` : `A quiet month.`;
+    const nameCounts = {};
+    logLines.forEach(name => nameCounts[name] = (nameCounts[name]||0) + 1);
+    const summaryParts = Object.entries(nameCounts).map(([name,n]) => n>1 ? `${name} ×${n}` : name);
+    const summary = summaryParts.length ? `This month: ${summaryParts.join(', ')}.` : `A quiet month.`;
+    addJournalEntry(summary, eventLines);
     let html = `<div class="recap">${summary}`;
     if (eventLines.length){
       html += `<div class="events">`;
       eventLines.forEach(e=>{
-        html += `<div class="${e.tone}">${e.tone==='pos'?'+':'–'} ${e.text}</div>`;
+        html += `<div class="${e.tone}">${e.tone==='pos'?'+':'–'} ${e.text}</div>${eventEffectsRow(e.effects)}`;
       });
       html += `</div>`;
     }
@@ -2039,6 +2356,9 @@
       // New school year — truancy record wipes clean
       state.truancyMisses = 0;
       state.suspended = false;
+      // Jump the active category tab back to School so it's visibly
+      // confirmed as checked right when the new year starts.
+      state.openCategories = ['School'];
     }
     carryOverSchoolSelections();
 
@@ -2083,6 +2403,80 @@
     }
   }
 
+  // Picks a balanced set of activities for one school month: School is always
+  // included (truancy-safe), then remaining budget goes toward whichever
+  // activity most improves the stat that's currently lowest, repeating until
+  // nothing more fits. This naturally rotates attention across stats instead
+  // of spamming one activity, which is what makes the result "well rounded."
+  function smartPickSchoolActivities(){
+    const picks = [];
+    let remaining = BUDGET_MAX;
+
+    if (!isSummerMonth()){
+      const school = SCHOOL_ACTIVITIES.find(a=>a.id==='school');
+      picks.push('school');
+      remaining -= school.cost;
+    }
+
+    const trackedStats = ['health','happy','rel','energy','skill'];
+    const pickCounts = {}; // per-activity count this month, respects repeat caps
+
+    while (remaining > 0){
+      // Find the currently-lowest tracked stat
+      let lowestStat = trackedStats[0];
+      trackedStats.forEach(s => { if (state.stats[s] < state.stats[lowestStat]) lowestStat = s; });
+
+      // Among activities that fit the budget and aren't locked/capped, find
+      // the one that most improves the lowest stat (falling back to overall
+      // positive impact if nothing touches that stat directly).
+      let best = null, bestScore = -Infinity;
+      SCHOOL_ACTIVITIES.forEach(a=>{
+        if (a.id === 'school') return; // already handled
+        if (isWealthGated(a) || isAgeGated(a) || isSummerLocked(a)) return;
+        if (a.cost > remaining) return;
+        const cap = MAX_REPEATS;
+        const used = pickCounts[a.id] || 0;
+        if (used >= cap) return;
+
+        const direct = a.effects[lowestStat] || 0;
+        const overall = Object.values(a.effects).reduce((s,v)=>s+v,0);
+        const score = direct * 3 + overall * 0.2; // strongly prefer fixing the weak stat
+
+        if (score > bestScore){
+          bestScore = score;
+          best = a;
+        }
+      });
+
+      if (!best) break; // nothing else fits/qualifies
+      picks.push(best.id);
+      pickCounts[best.id] = (pickCounts[best.id]||0) + 1;
+      remaining -= best.cost;
+    }
+
+    return picks;
+  }
+
+  // "Skip to 18" — smart-sims every remaining school month (and summer)
+  // using a balanced activity mix, landing the player at adulthood.
+  // Stops immediately on game over.
+  function skipToAdulthood(){
+    const recapHistory = [];
+    let safety = 0; // hard ceiling so a stray bug can't infinite-loop the tab
+
+    while (state.phase === 'school' && state.age < 18 && safety < 300){
+      safety += 1;
+      state.selected = smartPickSchoolActivities();
+      endSchoolMonth();
+      recapHistory.push(els.schoolRecapBox.innerHTML);
+      if (state.gameOver) break;
+    }
+
+    if (state.phase === 'adult' && !state.gameOver){
+      els.recapBox.innerHTML = `<div class="sim-history">${recapHistory.join('')}</div>`;
+    }
+  }
+
   // Keep prior month's picks selected for the next month, dropping only
   // whatever is now locked (wealth/age/summer gate) or no longer fits the budget.
   // School auto-checks itself back on whenever a new school month begins.
@@ -2091,14 +2485,15 @@
   // budget slot first; everything else carries over and fills in around it,
   // dropping only whatever no longer fits or just became locked.
   function carryOverSchoolSelections(){
-    const wasSchoolPicked = state.selected.includes('school');
+    const enteringSchoolYear = !isSummerMonth();
     const kept = [];
     let runningTotal = 0;
 
-    // Reserve School's slot first, unless the player explicitly unchecked it
-    // last turn (in which case it stays off until they tap it back on) or
-    // it's now summer (locked either way).
-    if (!isSummerMonth() && wasSchoolPicked){
+    // School claims its slot first whenever it's a school month — either it
+    // was already picked (continuing through the year), or this is the very
+    // first school month of a new year (right after summer), in which case
+    // it must win the budget over any summer activities trying to carry over.
+    if (enteringSchoolYear){
       const schoolActivity = SCHOOL_ACTIVITIES.find(a=>a.id==='school');
       kept.push('school');
       runningTotal += schoolActivity.cost;
@@ -2115,16 +2510,6 @@
       }
     });
 
-    // If School wasn't already picked (fresh month, or player had unchecked
-    // it and it's now a new month), default it back on as long as it fits.
-    if (!isSummerMonth() && !kept.includes('school')){
-      const schoolActivity = SCHOOL_ACTIVITIES.find(a=>a.id==='school');
-      if (runningTotal + schoolActivity.cost <= BUDGET_MAX){
-        kept.unshift('school');
-        runningTotal += schoolActivity.cost;
-      }
-    }
-
     state.selected = kept;
   }
 
@@ -2132,6 +2517,7 @@
     state.age = 18;
     state.week = 1;
     state.selected = [];
+    state.openCategories = [];
     showPhase('adult');
     renderAll();
   }
@@ -2184,61 +2570,110 @@
     return parts.length ? parts.join('') : '<span class="effect-tag">No direct effect</span>';
   }
 
+  // Like effectsString, but for recap/event lines: returns '' if there's
+  // nothing to show instead of a "No direct effect" placeholder.
+  function eventEffectsRow(effects){
+    if (!effects) return '';
+    const parts = Object.entries(effects).filter(([,v])=>v!==0).map(([k,v])=>effectTag(k,v));
+    return parts.length ? `<div class="event-effects">${parts.join('')}</div>` : '';
+  }
+
+  const JOURNAL_LOG_MAX = 200; // cap so memory doesn't grow unbounded over a long life
+
+  function currentTimeLabel(){
+    if (state.phase === 'school'){
+      return `Age ${state.age}, Month ${monthOfYear()}`;
+    }
+    if (state.phase === 'adult'){
+      return `Age ${state.age}, Week ${((state.week-1) % 52) + 1}`;
+    }
+    return `Age ${state.age}`;
+  }
+
+  // Records one turn's summary + events into the persistent journal log
+  // (separate from the on-screen recap, which only ever shows the latest turn).
+  function addJournalEntry(summary, eventLines){
+    state.journalLog.push({
+      time: currentTimeLabel(),
+      summary,
+      events: (eventLines || []).map(e => ({ text:e.text, tone:e.tone, effects:e.effects })),
+    });
+    if (state.journalLog.length > JOURNAL_LOG_MAX){
+      state.journalLog.shift();
+    }
+  }
+
   function renderActivities(){
     const spent = spentSoFar();
     const categories = [...new Set(ACTIVITIES.map(a=>a.category))];
 
-    let html = '<div class="cat-grid">';
+    // Default to the first category if none active yet
+    if (!state.openCategories.length) state.openCategories = [categories[0]];
+    const activeCat = state.openCategories[0];
+
+    let railHtml = '';
     categories.forEach(cat=>{
       const colorVar = CATEGORY_COLOR_VAR[cat] || '--ink';
-      const isOpen = state.openCategories.includes(cat);
-      const countSelected = ACTIVITIES.filter(a=>a.category===cat && state.selected.includes(a.id)).length;
-
-      html += `
-        <div class="cat-square ${isOpen?'open':''}" data-cat="${cat}" style="--cat-color:var(${colorVar})">
+      const isActive = cat === activeCat;
+      const countSelected = ACTIVITIES.filter(a=>a.category===cat).reduce((sum,a)=>sum+countOf(a.id),0);
+      railHtml += `
+        <div class="cat-rail-sq ${isActive?'active':''}" data-cat="${cat}" style="--cat-color:var(${colorVar})">
           ${countSelected ? `<div class="ccount">${countSelected}</div>` : ''}
           <div class="cicon">${CATEGORY_ICONS[cat] || ''}</div>
           <div class="cname">${cat}</div>
-          <div class="chevron">▾</div>
-        </div>
-        <div class="accordion-panel ${isOpen?'open':''}" data-panel="${cat}" style="--cat-color:var(${colorVar})">`;
-
-      ACTIVITIES.filter(a=>a.category===cat).forEach(a=>{
-        const isSelected = state.selected.includes(a.id);
-        const wouldExceed = !isSelected && (spent + a.cost) > BUDGET_MAX;
-        html += `
-          <div class="activity cat-tinted ${isSelected?'selected':''} ${wouldExceed?'disabled':''}" data-id="${a.id}">
-            <div class="check">${isSelected?'✓':''}</div>
-            <div class="info">
-              <div class="name">${a.name}</div>
-              <div class="effects">${effectsString(a.effects)}${a.isAdmin?' · prevents penalties':''}</div>
-            </div>
-            <div class="cost">${a.cost}h</div>
-          </div>`;
-      });
-      html += `</div>`;
+        </div>`;
     });
-    html += '</div>';
 
-    els.activityList.innerHTML = html;
+    const activeColorVar = CATEGORY_COLOR_VAR[activeCat] || '--ink';
+    let paneHtml = `<div class="cat-pane-title" style="color:var(${activeColorVar})">${activeCat}</div>`;
+    ACTIVITIES.filter(a=>a.category===activeCat).forEach(a=>{
+      const n = countOf(a.id);
+      const isSelected = n > 0;
+      const atRepeatCap = n >= MAX_REPEATS;
+      const wouldExceed = !atRepeatCap && (spent + a.cost) > BUDGET_MAX;
+      const disabledAdd = wouldExceed || atRepeatCap;
+      paneHtml += `
+        <div class="activity cat-tinted ${isSelected?'selected':''} ${disabledAdd?'disabled':''}" data-id="${a.id}" style="--cat-color:var(${activeColorVar})">
+          <div class="check">${isSelected?'✓':''}</div>
+          <div class="info">
+            <div class="name">${a.name}</div>
+            <div class="effects">${effectsString(a.effects)}${a.isAdmin?' · prevents penalties':''}</div>
+          </div>
+          ${n>0 ? `<button class="repeat-minus" data-id="${a.id}">−</button><span class="repeat-count">×${n}</span>` : ''}
+          <div class="cost">${a.cost}h</div>
+        </div>`;
+    });
 
-    els.activityList.querySelectorAll('.cat-square').forEach(sq=>{
+    els.activityList.innerHTML = `
+      <div class="rail-area">
+        <div class="cat-rail">${railHtml}</div>
+        <div class="cat-pane">${paneHtml}</div>
+      </div>`;
+
+    els.activityList.querySelectorAll('.cat-rail-sq').forEach(sq=>{
       sq.addEventListener('click', ()=>{
-        const cat = sq.dataset.cat;
-        const idx = state.openCategories.indexOf(cat);
-        if (idx >= 0) state.openCategories.splice(idx,1);
-        else state.openCategories.push(cat);
+        state.openCategories = [sq.dataset.cat];
         renderActivities();
       });
     });
 
     els.activityList.querySelectorAll('.activity').forEach(el=>{
-      el.addEventListener('click', ()=>{
+      el.addEventListener('click', (e)=>{
+        if (e.target.closest('.repeat-minus')) return; // handled separately below
         if (el.classList.contains('disabled')) return;
         const id = el.dataset.id;
+        state.selected.push(id);
+        renderActivities();
+        renderBudget();
+      });
+    });
+
+    els.activityList.querySelectorAll('.repeat-minus').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        const id = btn.dataset.id;
         const idx = state.selected.indexOf(id);
         if (idx >= 0) state.selected.splice(idx,1);
-        else state.selected.push(id);
         renderActivities();
         renderBudget();
       });
@@ -2284,7 +2719,7 @@
         const ev = rollEvent(a.eventPool);
         if (ev){
           applyEffects(state.stats, ev.effects);
-          eventLines.push({text:ev.text, tone:ev.tone});
+          eventLines.push({text:ev.text, tone:ev.tone, effects:ev.effects});
         }
       }
     });
@@ -2294,9 +2729,11 @@
     const handledErrands = state.selected.includes('errands');
     if (!handledBills){
       state.stats.money -= 4;
+      eventLines.push({text:'Bills piled up unpaid this week.', tone:'neg', effects:{money:-4}});
     }
     if (!handledErrands){
       state.stats.happy = clamp(state.stats.happy - 2);
+      eventLines.push({text:'Errands kept getting put off.', tone:'neg', effects:{happy:-2}});
     }
 
     // Passive weekly decay (life costs energy & a little money even doing nothing extra)
@@ -2307,13 +2744,16 @@
     RANDOM_EVENTS.forEach(ev=>{
       if (Math.random() < ev.chance){
         applyEffects(state.stats, ev.effects);
-        eventLines.push({text:ev.text, tone:ev.tone});
+        eventLines.push({text:ev.text, tone:ev.tone, effects:ev.effects});
       }
     });
 
-    // Build recap
-    const summary = logLines.length
-      ? `This week: ${logLines.join(', ')}.`
+    // Build recap (collapse repeats like "Exercise, Exercise" into "Exercise ×2")
+    const nameCounts = {};
+    logLines.forEach(name => nameCounts[name] = (nameCounts[name]||0) + 1);
+    const summaryParts = Object.entries(nameCounts).map(([name,n]) => n>1 ? `${name} ×${n}` : name);
+    const summary = summaryParts.length
+      ? `This week: ${summaryParts.join(', ')}.`
       : `A quiet week.`;
     renderRecap(summary, eventLines);
 
@@ -2373,11 +2813,12 @@
   }
 
   function renderRecap(summary, eventLines){
+    addJournalEntry(summary, eventLines);
     let html = `<div class="recap">${summary}`;
     if (eventLines.length){
       html += `<div class="events">`;
       eventLines.forEach(e=>{
-        html += `<div class="${e.tone}">${e.tone==='pos'?'+':'–'} ${e.text}</div>`;
+        html += `<div class="${e.tone}">${e.tone==='pos'?'+':'–'} ${e.text}</div>${eventEffectsRow(e.effects)}`;
       });
       html += `</div>`;
     }
@@ -2389,6 +2830,8 @@
     state.gameOver = true;
     els.submitBar.classList.add('hidden');
     els.homeBtn.classList.add('hidden');
+    els.menuFab.classList.add('hidden');
+    closeMenu();
     els.youngLifeScreen.classList.add('hidden');
     els.schoolScreen.classList.add('hidden');
     els.adultScreen.classList.add('hidden');
@@ -2428,7 +2871,7 @@
         energy:100,
         skill:0,
       },
-      selected:[], openCategories:[], gameOver:false,
+      selected:[], openCategories:[], journalLog:[], gameOver:false,
       truancyMisses:0, suspended:false,
     };
 
@@ -2462,7 +2905,7 @@
         energy:100,
         skill:0,
       },
-      selected:[], openCategories:[], gameOver:false,
+      selected:[], openCategories:[], journalLog:[], gameOver:false,
       truancyMisses:0, suspended:false,
     };
 
@@ -2479,10 +2922,170 @@
     renderSetupScreen();
   }
 
+  // ---------------- Floating menu (Finances / Assets / Family / Journal) ----------------
+
+  const MENU_ICONS = {
+    assets: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9.5 20v-6h5v6"/></svg>`,
+    journal: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2V4z"/><path d="M5 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2"/><path d="M9 9h6M9 13h4"/></svg>`,
+  };
+
+  const MENU_TABS = [
+    { id:'finances', name:'Finances', icon: STAT_ICONS.money, build: renderFinancesPane },
+    { id:'assets', name:'Assets', icon: MENU_ICONS.assets, build: renderAssetsPane },
+    { id:'family', name:'Family', icon: STAT_ICONS.rel, build: renderFamilyPane },
+    { id:'journal', name:'Journal Log', icon: MENU_ICONS.journal, build: renderJournalPane },
+  ];
+
+  function renderFinancesPane(){
+    const recentMoneyEvents = [];
+    for (let i = state.journalLog.length - 1; i >= 0 && recentMoneyEvents.length < 8; i--){
+      const entry = state.journalLog[i];
+      (entry.events || []).forEach(ev=>{
+        if (ev.effects && ev.effects.money){
+          recentMoneyEvents.push({ time: entry.time, text: ev.text, amount: ev.effects.money });
+        }
+      });
+    }
+    let html = `
+      <div class="mini-card">
+        <div class="mc-label">Current Balance</div>
+        <div class="mc-value">$${Math.round(state.stats.money)}</div>
+      </div>
+      <div class="menu-section-label">Recent Money Events</div>`;
+    if (recentMoneyEvents.length){
+      html += `<div class="mini-card" style="padding:4px 14px;">`;
+      recentMoneyEvents.forEach(e=>{
+        const cls = e.amount > 0 ? 'pos' : 'neg';
+        const sign = e.amount > 0 ? '+' : '';
+        html += `<div class="menu-row-line"><div><div class="rl-name">${e.text}</div><div class="rl-sub">${e.time}</div></div><div class="rl-amt ${cls}">${sign}$${e.amount}</div></div>`;
+      });
+      html += `</div>`;
+    } else {
+      html += `<div class="mini-card"><div class="mc-sub">No money-related events logged yet this life.</div></div>`;
+    }
+    return html;
+  }
+
+  function renderAssetsPane(){
+    const p = state.parents;
+    let html = `<div class="menu-section-label">Owned</div>
+      <div class="mini-card">
+        <div class="mc-label">Household</div>
+        <div class="mc-value">${state.phase === 'adult' ? 'Renting' : 'Living with parents'}</div>
+        <div class="mc-sub">No property owned yet.</div>
+      </div>`;
+    html += `<div class="menu-section-label">From Family</div>`;
+    if (p && p.hasAssets){
+      html += `<div class="mini-card">
+        <div class="mc-label">Family Assets</div>
+        <div class="mc-value">${p.assetType}</div>
+        <div class="mc-sub">Your parents have ${p.assetType} — may factor into a future inheritance.</div>
+      </div>`;
+    } else {
+      html += `<div class="mini-card"><div class="mc-sub">Your parents don't have significant assets beyond day-to-day living.</div></div>`;
+    }
+    return html;
+  }
+
+  function renderFamilyPane(){
+    const p = state.parents;
+    if (!p) return `<div class="mini-card"><div class="mc-sub">No family generated yet.</div></div>`;
+    let html = `
+      <div class="menu-section-label">Parents</div>
+      <div class="family-member">
+        <div class="fm-icon">👪</div>
+        <div><div class="fm-name">${p.householdLabel}</div><div class="fm-sub">${p.wealthLabel}</div></div>
+      </div>
+      <div class="mini-card">
+        <div class="mc-label">Household Wealth</div>
+        <div class="mc-value">${p.wealthLabel}</div>
+        <div class="mc-sub">${p.wealthDetail}</div>
+      </div>
+      <div class="mini-card">
+        <div class="mc-label">Family Structure</div>
+        <div class="mc-value">${p.householdLabel}</div>
+        <div class="mc-sub">${p.householdDetail}</div>
+      </div>
+      <div class="menu-section-label">Your Family (future)</div>
+      <div class="mini-card" style="opacity:0.55;">
+        <div class="mc-label">Spouse / Kids</div>
+        <div class="mc-value">—</div>
+        <div class="mc-sub">Not yet started</div>
+      </div>`;
+    return html;
+  }
+
+  function renderJournalPane(){
+    if (!state.journalLog.length){
+      return `<div class="mini-card"><div class="mc-sub">Nothing logged yet — your story starts now.</div></div>`;
+    }
+    let html = '';
+    for (let i = state.journalLog.length - 1; i >= 0; i--){
+      const entry = state.journalLog[i];
+      html += `<div class="log-entry">
+        <div class="le-time">${entry.time}</div>
+        <div class="le-text">${entry.summary}</div>`;
+      (entry.events || []).forEach(ev=>{
+        html += `<div class="le-effects"><div class="${ev.tone}" style="font-size:11.5px;">${ev.tone==='pos'?'+':'–'} ${ev.text}</div>${eventEffectsRow(ev.effects)}</div>`;
+      });
+      html += `</div>`;
+    }
+    return html;
+  }
+
+  function renderMenuTabs(activeId){
+    els.menuTabs.innerHTML = MENU_TABS.map(t => `
+      <div class="menu-tab ${t.id===activeId?'active':''}" data-tab="${t.id}">
+        <span class="ticon">${t.icon}</span>${t.name}
+      </div>`).join('');
+    els.menuTabs.querySelectorAll('.menu-tab').forEach(tabEl=>{
+      tabEl.addEventListener('click', ()=>{
+        state.activeMenuTab = tabEl.dataset.tab;
+        renderMenuTabs(state.activeMenuTab);
+        renderMenuBody(state.activeMenuTab);
+      });
+    });
+  }
+
+  function renderMenuBody(activeId){
+    const tab = MENU_TABS.find(t=>t.id===activeId) || MENU_TABS[0];
+    els.menuBody.innerHTML = tab.build();
+  }
+
+  function openMenu(){
+    if (!state.activeMenuTab) state.activeMenuTab = MENU_TABS[0].id;
+    renderMenuTabs(state.activeMenuTab);
+    renderMenuBody(state.activeMenuTab);
+    els.menuBackdrop.classList.remove('hidden');
+    els.menuOverlay.classList.remove('hidden');
+    // Force a reflow before adding .show so the CSS transition actually plays
+    void els.menuOverlay.offsetWidth;
+    els.menuBackdrop.classList.add('show');
+    els.menuOverlay.classList.add('show');
+    els.menuFab.classList.add('open');
+  }
+
+  function closeMenu(){
+    els.menuBackdrop.classList.remove('show');
+    els.menuOverlay.classList.remove('show');
+    els.menuFab.classList.remove('open');
+  }
+
+  function toggleMenu(){
+    const isOpen = els.menuOverlay.classList.contains('show');
+    if (isOpen) closeMenu();
+    else openMenu();
+  }
+
   // ---------------- Init ----------------
+
+  window.addEventListener('resize', syncFabPosition);
 
   els.endWeekBtn.addEventListener('click', currentEndTurnHandler);
   els.simTurnBtn.addEventListener('click', currentSimTurnHandler);
+  els.menuFab.addEventListener('click', toggleMenu);
+  els.menuBackdrop.addEventListener('click', closeMenu);
+  els.skipToAdultBtn.addEventListener('click', skipToAdulthood);
   els.restartBtn.addEventListener('click', startNewLifeSetup);
 
   els.startNewLifeBtn.addEventListener('click', ()=>{

@@ -446,6 +446,35 @@
   .menu-row-line .rl-amt.pos{ color:var(--money); }
   .menu-row-line .rl-amt.neg{ color:var(--health); }
 
+  .stat-pill-row{ display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+  .stat-pill{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    font-weight:700;
+    padding:3px 8px;
+    border-radius:10px;
+    background:var(--paper-dim);
+    color:var(--ink-soft);
+  }
+  .stat-pill.pos{ background:color-mix(in srgb, var(--money) 18%, var(--card-bg)); color:var(--money); }
+  .stat-pill.neg{ background:color-mix(in srgb, var(--health) 14%, var(--card-bg)); color:var(--health); }
+
+  .equity-bar-track{
+    height:6px; background:var(--paper-dim); border:1px solid var(--rule); border-radius:4px;
+    overflow:hidden; margin-top:6px;
+  }
+  .equity-bar-fill{ height:100%; background:var(--money); }
+
+  .housing-category-chip{
+    display:inline-block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px; font-weight:700;
+    padding:2px 7px; border-radius:8px; margin-bottom:6px;
+  }
+  .housing-category-chip.rent{ background:color-mix(in srgb, var(--rel) 16%, var(--card-bg)); color:var(--rel); }
+  .housing-category-chip.own{ background:color-mix(in srgb, var(--money) 16%, var(--card-bg)); color:var(--money); }
+  .housing-category-chip.free{ background:color-mix(in srgb, var(--skill) 18%, var(--card-bg)); color:var(--skill); }
+
   .menu-section-label{
     font-family:'JetBrains Mono',monospace;
     font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
@@ -2408,6 +2437,208 @@
     }
   }
 
+  // ---------------- Housing ----------------
+
+  // Real amortization: weekly payment for a given principal/annual-rate/years.
+  function weeklyMortgagePayment(principal, annualRate, years){
+    const n = years * 52;
+    const r = annualRate / 52;
+    if (r === 0) return principal / n;
+    return principal * (r * Math.pow(1+r, n)) / (Math.pow(1+r, n) - 1);
+  }
+
+  // The market base rate drifts week-to-week within a realistic band
+  // (2.5%-8%), so the same house's mortgage offers genuinely differ
+  // depending on when the player goes shopping. Mostly gentle drift, with
+  // occasional bigger moves — over a long enough stretch it can swing the
+  // full range, but slowly and unevenly, like real rate cycles.
+  function stepMortgageMarketRate(){
+    const drift = (Math.random() - 0.5) * 0.006;
+    const bigSwing = Math.random() < 0.08 ? (Math.random()-0.5) * 0.02 : 0;
+    state.mortgageMarketRate = Math.max(0.025, Math.min(0.08, state.mortgageMarketRate + drift + bigSwing));
+  }
+
+  // Four standing offers, always priced as the current market rate plus a
+  // fixed spread per term/approval-difficulty — so the *offers* are always
+  // available, but their actual numbers move with the market.
+  function currentMortgageOffers(){
+    const base = state.mortgageMarketRate;
+    return [
+      { years:15, rate: Math.max(0.01, base - 0.005), approval:'standard' },
+      { years:15, rate: Math.max(0.01, base + 0.005), approval:'easier' },
+      { years:30, rate: Math.max(0.01, base + 0.000), approval:'standard' },
+      { years:30, rate: Math.max(0.01, base + 0.010), approval:'easier' },
+    ];
+  }
+
+  const HOUSING_CATEGORIES = [
+    { id:'homeless', name:'Homeless', kind:'homeless' },
+    { id:'parents', name:'Living with Parents', kind:'free' },
+    { id:'shared', name:'Shared Room / Roommate', kind:'rent', tiers:[
+      { id:'shared_room', name:'Shared Room', price:5,
+        desc:'Splitting a place with roommates. Cheapest paid option.',
+        effects:{happy:-3} },
+    ]},
+    { id:'apartment', name:'Apartments', kind:'rent', tiers:[
+      { id:'studio', name:'Studio', price:8,
+        desc:'Small and simple, all yours.',
+        effects:{happy:-1} },
+      { id:'one_bed', name:'1-Bedroom Apartment', price:16,
+        desc:'Comfortable, modest.',
+        effects:{} },
+      { id:'luxury_apt', name:'Luxury Apartment', price:32,
+        desc:'Doorman, gym, the works — costs accordingly.',
+        effects:{happy:3, energy:2} },
+    ]},
+    { id:'condo', name:'Condo', kind:'own', tiers:[
+      { id:'condo', name:'Condo', price:900, down:90, hoa:6,
+        desc:'You own it, but no land — an HOA fee replaces repair risk.',
+        effects:{happy:2, rel:1} },
+    ]},
+    { id:'house', name:'Houses', kind:'own', tiers:[
+      { id:'starter', name:'Starter Home', price:600, down:60,
+        desc:'A modest first home. Builds equity steadily.',
+        effects:{happy:2, rel:2} },
+      { id:'family', name:'Family Home', price:1400, down:140,
+        desc:'Room to grow into. A real step up.',
+        effects:{happy:4, rel:4} },
+      { id:'luxury_home', name:'Luxury Home', price:3200, down:320,
+        desc:'The dream house — and the mortgage to match.',
+        effects:{happy:6, rel:5, energy:-1} },
+    ]},
+  ];
+
+  function findHousingTier(categoryId, tierId){
+    const cat = HOUSING_CATEGORIES.find(c=>c.id===categoryId);
+    if (!cat || !cat.tiers) return null;
+    return cat.tiers.find(t=>t.id===tierId) || null;
+  }
+
+  // Living-with-Parents effects change once the player is past 21 — still
+  // free, but it stops reading as a normal early-adulthood arrangement and
+  // starts dragging on Mood/Energy, even though the family stability still
+  // helps Health/Rel a little.
+  function parentsHousingEffects(){
+    return state.age > 21
+      ? { happy:-4, energy:-2, health:1, rel:1 }
+      : { happy:-1, rel:1 };
+  }
+
+  const HOMELESS_EFFECTS = { health:-3, energy:-3, happy:-5, rel:-2 };
+
+  // Repair-cost risk only applies to owned houses (not Condo, which has an
+  // HOA fee instead). Roughly scaled to the home's price tier.
+  const HOUSE_REPAIR_EVENTS = [
+    { text:'The water heater gave out.', costFactor:0.02 },
+    { text:'A storm damaged the roof.', costFactor:0.035 },
+    { text:'Plumbing trouble needed a repair call.', costFactor:0.015 },
+    { text:'The HVAC system needed servicing.', costFactor:0.025 },
+  ];
+
+  function currentHousingWeeklyCost(){
+    const h = state.housing;
+    if (!h) return 0;
+    if (h.kind === 'rent'){
+      const tier = findHousingTier(h.categoryId, h.tierId);
+      return tier ? tier.price : 0;
+    }
+    if (h.kind === 'own'){
+      let cost = h.mortgagePayment || 0;
+      const tier = findHousingTier(h.categoryId, h.tierId);
+      if (tier && tier.hoa) cost += tier.hoa;
+      return cost;
+    }
+    return 0; // free (parents) or homeless
+  }
+
+  function currentHousingEffects(){
+    const h = state.housing;
+    if (!h || h.kind === 'homeless') return HOMELESS_EFFECTS;
+    if (h.kind === 'free') return parentsHousingEffects();
+    const tier = findHousingTier(h.categoryId, h.tierId);
+    return tier ? tier.effects : {};
+  }
+
+  const MISSED_PAYMENTS_BEFORE_LOSS = 3;
+
+  // Runs every adult week: charges the current housing cost, tracks missed
+  // payments toward eviction/foreclosure, rolls owned-home repair risk, and
+  // applies the ongoing stat effects of wherever the player currently lives.
+  function processWeeklyHousing(eventLines){
+    if (!state.housing) initializeHousingIfNeeded();
+    const h = state.housing;
+
+    if (h.kind === 'homeless'){
+      applyEffects(state.stats, HOMELESS_EFFECTS);
+      eventLines.push({text:'Another rough week without a stable place to stay.', tone:'neg', effects:HOMELESS_EFFECTS});
+      return;
+    }
+
+    if (h.kind === 'free'){
+      const effects = parentsHousingEffects();
+      applyEffects(state.stats, effects);
+      return; // no cost, no missed-payment risk
+    }
+
+    const cost = currentHousingWeeklyCost();
+    const canAfford = state.stats.money >= cost;
+
+    if (canAfford){
+      state.stats.money -= cost;
+      state.missedHousingPayments = 0;
+    } else {
+      state.stats.money -= cost; // still goes through, but pushes them into debt
+      state.missedHousingPayments += 1;
+      const kind = h.kind === 'own' ? 'mortgage' : 'rent';
+      eventLines.push({
+        text:`You couldn't fully cover ${kind} this week. (${state.missedHousingPayments}/${MISSED_PAYMENTS_BEFORE_LOSS} missed)`,
+        tone:'neg',
+        effects:{},
+      });
+
+      if (state.missedHousingPayments >= MISSED_PAYMENTS_BEFORE_LOSS){
+        const wasOwned = h.kind === 'own';
+        state.missedHousingPayments = 0;
+        if (wasOwned){
+          eventLines.push({text:'The bank foreclosed — you lost the home and whatever equity you had in it.', tone:'neg', effects:{}});
+          state.housing = { kind:'rent', categoryId:'shared', tierId:'shared_room' };
+        } else {
+          eventLines.push({text:"You were evicted — you're without stable housing for now.", tone:'neg', effects:{}});
+          state.housing = { kind:'homeless', categoryId:'homeless', tierId:null };
+        }
+        return;
+      }
+    }
+
+    // Repair risk only for owned houses (not Condo — HOA covers that instead)
+    if (h.kind === 'own' && h.categoryId === 'house'){
+      const tier = findHousingTier(h.categoryId, h.tierId);
+      if (tier && Math.random() < 0.04){
+        const repair = HOUSE_REPAIR_EVENTS[randInt(0, HOUSE_REPAIR_EVENTS.length-1)];
+        const repairCost = Math.max(3, Math.round(tier.price * repair.costFactor));
+        state.stats.money -= repairCost;
+        eventLines.push({text:repair.text, tone:'neg', effects:{money:-repairCost}});
+      }
+    }
+
+    // Equity ticks up a little each week while paying down a mortgage
+    if (h.kind === 'own' && h.principalRemaining > 0){
+      const tier = findHousingTier(h.categoryId, h.tierId);
+      if (tier){
+        const weeklyRate = h.mortgageRate / 52;
+        const interestPortion = h.principalRemaining * weeklyRate;
+        const principalPortion = Math.max(0, h.mortgagePayment - interestPortion);
+        h.principalRemaining = Math.max(0, h.principalRemaining - principalPortion);
+        if (h.principalRemaining <= 0){
+          eventLines.push({text:`You paid off your ${tier.name}! It's fully yours now.`, tone:'pos', effects:{}});
+        }
+      }
+    }
+
+    const effects = currentHousingEffects();
+    applyEffects(state.stats, effects);
+  }
+
   // ---------------- State ----------------
 
   let state = {
@@ -2449,6 +2680,13 @@
     gradSelectedMajor:null,
     startStage:'birth',
     startStageMode:'sim',
+    // Housing
+    housing:null,            // null while a kid (implicitly "with parents"); set once adult housing begins
+    mortgageMarketRate:0.065, // current market base rate, drifts over time
+    missedHousingPayments:0,  // consecutive missed payments toward eviction/foreclosure
+    housingView:'status',     // 'status' | 'categories' | 'mortgage' — Assets tab's internal navigation
+    housingShoppingTarget:null, // { categoryId, tierId } while shopping for a house's financing
+    housingSelectedOfferIdx:0,
     gameOver:false,
   };
 
@@ -3228,7 +3466,7 @@
 
   function endSchoolMonth(){
     const spent = schoolSpentSoFar();
-    if (spent === 0 || spent > BUDGET_MAX) return;
+    if (spent > BUDGET_MAX) return;
 
     let logLines = [];
     let eventLines = [];
@@ -3336,7 +3574,6 @@
     const spent = schoolSpentSoFar();
     if (spent === 0 || spent > BUDGET_MAX) return;
 
-    const recapHistory = [];
     let turns = 0;
     const maxTurns = includeSummer ? 12 : 10;
 
@@ -3344,18 +3581,15 @@
       const wasSummer = isSummerMonth();
       if (wasSummer && !includeSummer) break; // Sim Year stops at summer unless asked to include it
 
+      const monthBefore = state.month;
       endSchoolMonth();
       turns += 1;
-      recapHistory.push(els.schoolRecapBox.innerHTML);
 
       if (state.gameOver) break;
       if (state.phase !== 'school') break; // graduated to adulthood mid-sim
       if (state.gradUltimatumShown) break; // pause for real player decision
       if (!includeSummer && isSummerMonth()) break; // just crossed into summer — stop here
-    }
-
-    if (recapHistory.length && state.phase === 'school' && !state.gameOver){
-      els.schoolRecapBox.innerHTML = `<div class="sim-history">${recapHistory.join('')}</div>`;
+      if (state.month === monthBefore) break; // safety: no progress was made this turn, stop rather than spin
     }
   }
 
@@ -3417,22 +3651,14 @@
   // using a balanced activity mix, landing the player at adulthood.
   // Stops immediately on game over.
   function skipToHighSchool(){
-    const recapHistory = [];
     let safety = 0; // hard ceiling so a stray bug can't infinite-loop the tab
 
     while (state.phase === 'school' && state.age < GPA_HIGH_SCHOOL_START_AGE && !state.gradUltimatumShown && safety < 300){
       safety += 1;
       state.selected = smartPickSchoolActivities();
       endSchoolMonth();
-      recapHistory.push(els.schoolRecapBox.innerHTML);
       if (state.gameOver) break;
       if (state.gradUltimatumShown) break; // pause for real player decision
-    }
-
-    if (state.phase === 'school' && !state.gameOver && !state.gradUltimatumShown){
-      els.schoolRecapBox.innerHTML = `<div class="sim-history">${recapHistory.join('')}</div>`;
-    } else if (state.phase === 'adult' && !state.gameOver){
-      els.recapBox.innerHTML = `<div class="sim-history">${recapHistory.join('')}</div>`;
     }
   }
 
@@ -3468,6 +3694,16 @@
         runningTotal += a.cost;
       }
     });
+
+    // Safety net: if nothing carried over (most commonly hitting summer
+    // with only "school" previously selected, which doesn't apply anymore),
+    // fall back to a sensible default rather than leaving the player with
+    // zero hours spent — that state silently blocks all progress, including
+    // automated Sim Year runs, since endSchoolMonth() no-ops at 0 spent.
+    if (kept.length === 0){
+      const fallback = SCHOOL_ACTIVITIES.find(a => a.id === 'rest_school') || SCHOOL_ACTIVITIES.find(a=>!isWealthGated(a) && !isAgeGated(a) && !isSummerLocked(a));
+      if (fallback) kept.push(fallback.id);
+    }
 
     state.selected = kept;
   }
@@ -3615,11 +3851,18 @@
     renderCollegeAll();
   }
 
+  function initializeHousingIfNeeded(){
+    if (!state.housing){
+      state.housing = { kind:'free', categoryId:'parents', tierId:null };
+    }
+  }
+
   function skipCollege(){
     state.age = 18;
     state.week = 1;
     state.selected = [];
     state.openCategories = [];
+    initializeHousingIfNeeded();
     showPhase('adult');
     renderAll();
   }
@@ -3817,7 +4060,7 @@
 
   function endCollegeMonth(){
     const spent = collegeSpentSoFar();
-    if (spent === 0 || spent > BUDGET_MAX) return;
+    if (spent > BUDGET_MAX) return;
 
     const major = currentMajor();
     let logLines = [];
@@ -3916,6 +4159,7 @@
     state.week = 1;
     state.selected = [];
     state.openCategories = [];
+    initializeHousingIfNeeded();
     showPhase('adult');
     renderAll();
   }
@@ -4133,7 +4377,7 @@
 
   function endWeek(){
     const spent = spentSoFar();
-    if (spent === 0 || spent > BUDGET_MAX) return;
+    if (spent > BUDGET_MAX) return;
 
     let logLines = [];
     let eventLines = [];
@@ -4233,6 +4477,11 @@
     state.stats.energy = clamp(state.stats.energy - 3);
     state.stats.money -= 3; // baseline cost of living
 
+    // Housing: weekly payment (rent/mortgage+HOA), missed-payment risk, and
+    // the ongoing stat effects of wherever the player currently lives.
+    processWeeklyHousing(eventLines);
+    stepMortgageMarketRate();
+
     // Passive Health decay scales with age — small reminder that health
     // needs upkeep, especially later in life, not just a reactive number.
     const healthDecay = passiveHealthDecay(state.age);
@@ -4284,19 +4533,11 @@
     const spent = spentSoFar();
     if (spent === 0 || spent > BUDGET_MAX) return;
 
-    const recapHistory = [];
     let turns = 0;
-
     while (turns < 4){
       endWeek();
       turns += 1;
-      recapHistory.push(els.recapBox.innerHTML);
-
       if (state.gameOver) break;
-    }
-
-    if (recapHistory.length && !state.gameOver){
-      els.recapBox.innerHTML = `<div class="sim-history">${recapHistory.join('')}</div>`;
     }
   }
 
@@ -4420,6 +4661,8 @@
       healthNeglectStreak:0, chronicCondition:null,
       hasHighSchoolCredential:false, gedAttempted:false, gedStudyWeeks:0,
       startStage:'birth', startStageMode:'sim',
+      housing:null, mortgageMarketRate:0.065, missedHousingPayments:0,
+      housingView:'status', housingShoppingTarget:null,
     };
 
     els.submitBar.classList.add('hidden');
@@ -4465,6 +4708,8 @@
       healthNeglectStreak:0, chronicCondition:null,
       hasHighSchoolCredential:false, gedAttempted:false, gedStudyWeeks:0,
       startStage:'birth', startStageMode:'sim',
+      housing:null, mortgageMarketRate:0.065, missedHousingPayments:0,
+      housingView:'status', housingShoppingTarget:null,
     };
 
     els.submitBar.classList.add('hidden');
@@ -4764,6 +5009,52 @@
     openSection('job');
   }
 
+  // ---------------- Housing actions ----------------
+
+  function moveToParents(){
+    state.housing = { kind:'free', categoryId:'parents', tierId:null };
+    state.missedHousingPayments = 0;
+  }
+
+  function moveToRental(categoryId, tierId){
+    const tier = findHousingTier(categoryId, tierId);
+    if (!tier) return;
+    state.housing = { kind:'rent', categoryId, tierId };
+    state.missedHousingPayments = 0;
+  }
+
+  // Down payment readiness gate — a house tier can't even be selected for
+  // financing until the player has the down payment actually saved up.
+  function canAffordDownPayment(tier){
+    return state.stats.money >= tier.down;
+  }
+
+  function buyHome(categoryId, tierId, mortgageOffer){
+    const tier = findHousingTier(categoryId, tierId);
+    if (!tier || !canAffordDownPayment(tier)) return false;
+
+    const closingCosts = Math.round(tier.price * 0.03);
+    const cashNeeded = tier.down + closingCosts;
+    if (state.stats.money < cashNeeded) return false;
+
+    const principal = tier.price - tier.down;
+    const weeklyPayment = weeklyMortgagePayment(principal, mortgageOffer.rate, mortgageOffer.years);
+
+    state.stats.money -= cashNeeded;
+    state.housing = {
+      kind:'own',
+      categoryId,
+      tierId,
+      mortgageRate: mortgageOffer.rate,
+      mortgageYears: mortgageOffer.years,
+      mortgagePayment: weeklyPayment,
+      principal, // original loan amount, for equity-percent display
+      principalRemaining: principal,
+    };
+    state.missedHousingPayments = 0;
+    return true;
+  }
+
   function renderFinancesPane(){
     const recentMoneyEvents = [];
     for (let i = state.journalLog.length - 1; i >= 0 && recentMoneyEvents.length < 8; i--){
@@ -4794,14 +5085,72 @@
     return html;
   }
 
+  function effectsPillsHtml(effects){
+    const entries = Object.entries(effects || {}).filter(([,v])=>v!==0);
+    if (!entries.length) return `<span class="stat-pill">No effect</span>`;
+    const labelMap = { health:'Health', money:'Money', happy:'Mood', rel:'Rel', energy:'Energy' };
+    return entries.map(([k,v])=>{
+      const tone = v > 0 ? 'pos' : 'neg';
+      const sign = v > 0 ? '+' : '';
+      return `<span class="stat-pill ${tone}">${labelMap[k]||k} ${sign}${v}</span>`;
+    }).join('');
+  }
+
   function renderAssetsPane(){
+    if (!state.housing) initializeHousingIfNeeded();
+    if (state.housingView === 'categories') return renderHousingCategoriesView();
+    if (state.housingView === 'mortgage') return renderMortgageShoppingView();
+    return renderHousingStatusView();
+  }
+
+  function renderHousingStatusView(){
+    const h = state.housing;
     const p = state.parents;
-    let html = `<div class="menu-section-label">Owned</div>
-      <div class="mini-card">
-        <div class="mc-label">Household</div>
-        <div class="mc-value">${state.phase === 'adult' ? 'Renting' : 'Living with parents'}</div>
-        <div class="mc-sub">No property owned yet.</div>
+    let html = `<div class="menu-section-label">Current Housing</div>`;
+
+    if (h.kind === 'homeless'){
+      html += `<div class="mini-card" style="border-color:var(--health);">
+        <div class="mc-label">Status</div>
+        <div class="mc-value">Homeless</div>
+        <div class="mc-sub">No stable place to stay right now. Search for housing as soon as you can.</div>
+        <div class="stat-pill-row">${effectsPillsHtml(HOMELESS_EFFECTS)}</div>
       </div>`;
+    } else if (h.kind === 'free'){
+      html += `<div class="mini-card">
+        <div class="mc-label">Status</div>
+        <div class="mc-value">Living with Parents</div>
+        <div class="mc-sub">No cost${state.age > 21 ? ', but it\'s starting to feel like a step backward at your age.' : '.'}</div>
+        <div class="stat-pill-row">${effectsPillsHtml(parentsHousingEffects())}</div>
+      </div>`;
+    } else if (h.kind === 'rent'){
+      const tier = findHousingTier(h.categoryId, h.tierId);
+      html += `<div class="mini-card">
+        <div class="mc-label">Renting</div>
+        <div class="mc-value">${tier ? tier.name : 'Unknown'}</div>
+        <div class="mc-sub">$${tier ? tier.price : 0}/week</div>
+        <div class="stat-pill-row">${effectsPillsHtml(tier ? tier.effects : {})}</div>
+      </div>`;
+    } else if (h.kind === 'own'){
+      const tier = findHousingTier(h.categoryId, h.tierId);
+      const equityPaid = Math.max(0, h.principal - h.principalRemaining) + (HOUSING_CATEGORIES.find(c=>c.id===h.categoryId)?.tiers.find(t=>t.id===h.tierId)?.down || 0);
+      const totalToEquity = h.principal + (findHousingTier(h.categoryId,h.tierId)?.down || 0);
+      const equityPct = totalToEquity ? Math.round((equityPaid/totalToEquity)*100) : 0;
+      html += `<div class="mini-card">
+        <div class="mc-label">Owned</div>
+        <div class="mc-value">${tier ? tier.name : 'Unknown'}</div>
+        <div class="mc-sub">$${h.mortgagePayment.toFixed(2)}/wk mortgage · ${h.mortgageYears}-year @ ${(h.mortgageRate*100).toFixed(1)}%${tier && tier.hoa ? ` · $${tier.hoa}/wk HOA` : ''}</div>
+        <div class="mc-sub">Equity: $${equityPaid.toFixed(0)} of $${totalToEquity.toFixed(0)} (${equityPct}%)</div>
+        <div class="equity-bar-track"><div class="equity-bar-fill" style="width:${equityPct}%"></div></div>
+        <div class="stat-pill-row">${effectsPillsHtml(tier ? tier.effects : {})}</div>
+      </div>`;
+    }
+
+    html += `<button class="landing-btn primary small" id="searchHousingBtn" style="margin-top:8px;">Search New Housing</button>`;
+
+    if (h.kind !== 'free'){
+      html += `<button class="landing-btn secondary small" id="moveToParentsBtn">Move Back with Parents (Free)</button>`;
+    }
+
     html += `<div class="menu-section-label">From Family</div>`;
     if (p && p.hasAssets){
       html += `<div class="mini-card">
@@ -4812,8 +5161,162 @@
     } else {
       html += `<div class="mini-card"><div class="mc-sub">Your parents don't have significant assets beyond day-to-day living.</div></div>`;
     }
+
     return html;
   }
+
+  function renderHousingCategoriesView(){
+    let html = `<button class="landing-btn secondary small" id="backToHousingStatusBtn" style="margin-bottom:10px;">‹ Back</button>`;
+
+    HOUSING_CATEGORIES.forEach(cat=>{
+      if (cat.id === 'homeless') return; // not a choosable destination
+
+      if (cat.id === 'parents'){
+        html += `<div class="choice-card" data-move-parents="1">
+          <span class="housing-category-chip free">FREE</span>
+          <div class="name">${cat.name}</div>
+          <div class="desc">No cost, but no independence either.</div>
+          <div class="stat-pill-row">${effectsPillsHtml(parentsHousingEffects())}</div>
+        </div>`;
+        return;
+      }
+
+      const chipClass = cat.kind;
+      const chipLabel = cat.kind === 'rent' ? 'RENT' : 'OWN';
+      html += `<div class="menu-section-label">${cat.name}</div>`;
+      cat.tiers.forEach(tier=>{
+        const isCurrent = state.housing && state.housing.categoryId === cat.id && state.housing.tierId === tier.id;
+        const locked = cat.kind === 'own' && !canAffordDownPayment(tier);
+        html += `<div class="choice-card ${isCurrent?'picked':''} ${locked?'locked':''}" ${locked?'':`data-cat="${cat.id}" data-tier="${tier.id}" data-kind="${cat.kind}"`}>
+          <span class="housing-category-chip ${chipClass}">${chipLabel}</span>
+          <div class="name">${tier.name}${isCurrent?' (current)':''}${locked?' 🔒':''}</div>
+          <div class="desc">${tier.desc}</div>
+          <div class="meta-row">
+            ${cat.kind==='rent' ? `<span>$${tier.price}/wk</span>` : `<span>Price: $${tier.price}</span><span>Down: $${tier.down}</span>${tier.hoa?`<span>HOA: $${tier.hoa}/wk</span>`:''}`}
+          </div>
+          <div class="stat-pill-row">${effectsPillsHtml(tier.effects)}</div>
+          ${locked ? `<div class="lock-tag" style="display:block;margin-top:6px;">Needs $${tier.down} saved for the down payment</div>` : ''}
+        </div>`;
+      });
+    });
+
+    return html;
+  }
+
+  function renderMortgageShoppingView(){
+    const target = state.housingShoppingTarget;
+    const tier = target ? findHousingTier(target.categoryId, target.tierId) : null;
+    if (!tier){
+      state.housingView = 'categories';
+      return renderHousingCategoriesView();
+    }
+
+    const principal = tier.price - tier.down;
+    const closingCosts = Math.round(tier.price * 0.03);
+    const cashNeeded = tier.down + closingCosts;
+    const offers = currentMortgageOffers();
+
+    let html = `<button class="landing-btn secondary small" id="backToHousingCategoriesBtn" style="margin-bottom:10px;">‹ Back</button>`;
+    html += `<div class="menu-section-label">${tier.name} — Financing</div>`;
+    html += `<div class="mini-card">
+      <div class="mc-label">Market Rate Right Now</div>
+      <div class="mc-value">${(state.mortgageMarketRate*100).toFixed(2)}%</div>
+      <div class="mc-sub">Rates drift over time — sometimes it pays to wait and check back later.</div>
+    </div>`;
+
+    html += `<div class="menu-section-label">Choose Your Mortgage</div>`;
+    offers.forEach((o,i)=>{
+      const weekly = weeklyMortgagePayment(principal, o.rate, o.years);
+      const totalPaid = weekly * o.years * 52;
+      const totalInterest = totalPaid - principal;
+      const isPicked = state.housingSelectedOfferIdx === i;
+      html += `<div class="choice-card ${isPicked?'picked':''}" data-offer-idx="${i}">
+        <div class="name">${o.years}-year, ${(o.rate*100).toFixed(1)}%${o.approval==='easier'?' (easier approval)':''}</div>
+        <div class="meta-row"><span>$${weekly.toFixed(2)}/wk</span><span>Total interest: $${totalInterest.toFixed(0)}</span><span>Total paid: $${totalPaid.toFixed(0)}</span></div>
+      </div>`;
+    });
+
+    html += `<div class="mini-card" style="margin-top:10px;">
+      <div class="menu-row-line"><div class="rl-name">Purchase Price</div><div class="rl-amt">$${tier.price}</div></div>
+      <div class="menu-row-line"><div class="rl-name">Down Payment</div><div class="rl-amt neg">-$${tier.down}</div></div>
+      <div class="menu-row-line"><div class="rl-name">Closing Costs</div><div class="rl-amt neg">-$${closingCosts}</div></div>
+      <div class="menu-row-line"><div class="rl-name"><b>Cash Needed Today</b></div><div class="rl-amt"><b>$${cashNeeded}</b></div></div>
+    </div>`;
+
+    const canBuy = state.stats.money >= cashNeeded;
+    html += `<button class="landing-btn primary" id="confirmBuyHomeBtn" ${canBuy?'':'disabled'} style="margin-top:8px;">${canBuy ? 'Buy This Home' : `Need $${(cashNeeded - state.stats.money).toFixed(0)} more`}</button>`;
+
+    return html;
+  }
+
+  function wireAssetsPaneListeners(){
+    // Status view
+    const searchBtn = document.getElementById('searchHousingBtn');
+    if (searchBtn) searchBtn.addEventListener('click', ()=>{
+      state.housingView = 'categories';
+      openSection('assets');
+    });
+    const moveParentsBtn = document.getElementById('moveToParentsBtn');
+    if (moveParentsBtn) moveParentsBtn.addEventListener('click', ()=>{
+      moveToParents();
+      openSection('assets');
+    });
+
+    // Categories view
+    const backToStatusBtn = document.getElementById('backToHousingStatusBtn');
+    if (backToStatusBtn) backToStatusBtn.addEventListener('click', ()=>{
+      state.housingView = 'status';
+      openSection('assets');
+    });
+    document.querySelectorAll('.choice-card[data-move-parents]').forEach(card=>{
+      card.addEventListener('click', ()=>{
+        moveToParents();
+        state.housingView = 'status';
+        openSection('assets');
+      });
+    });
+    document.querySelectorAll('.choice-card[data-cat][data-kind="rent"]').forEach(card=>{
+      card.addEventListener('click', ()=>{
+        moveToRental(card.dataset.cat, card.dataset.tier);
+        state.housingView = 'status';
+        openSection('assets');
+      });
+    });
+    document.querySelectorAll('.choice-card[data-cat][data-kind="own"]').forEach(card=>{
+      card.addEventListener('click', ()=>{
+        state.housingShoppingTarget = { categoryId: card.dataset.cat, tierId: card.dataset.tier };
+        state.housingSelectedOfferIdx = 0;
+        state.housingView = 'mortgage';
+        openSection('assets');
+      });
+    });
+
+    // Mortgage shopping view
+    const backToCatBtn = document.getElementById('backToHousingCategoriesBtn');
+    if (backToCatBtn) backToCatBtn.addEventListener('click', ()=>{
+      state.housingView = 'categories';
+      openSection('assets');
+    });
+    document.querySelectorAll('.choice-card[data-offer-idx]').forEach(card=>{
+      card.addEventListener('click', ()=>{
+        state.housingSelectedOfferIdx = parseInt(card.dataset.offerIdx, 10);
+        openSection('assets');
+      });
+    });
+    const confirmBuyBtn = document.getElementById('confirmBuyHomeBtn');
+    if (confirmBuyBtn && !confirmBuyBtn.disabled) confirmBuyBtn.addEventListener('click', ()=>{
+      const target = state.housingShoppingTarget;
+      const offers = currentMortgageOffers();
+      const offer = offers[state.housingSelectedOfferIdx || 0];
+      const success = buyHome(target.categoryId, target.tierId, offer);
+      if (success){
+        state.housingView = 'status';
+        state.housingShoppingTarget = null;
+      }
+      openSection('assets');
+    });
+  }
+
 
   function renderFamilyPane(){
     const p = state.parents;
@@ -4888,6 +5391,7 @@
     els.sectionModalTitle.textContent = tab.name;
     els.sectionModalBody.innerHTML = tab.build();
     if (tabId === 'job') wireJobPaneListeners();
+    if (tabId === 'assets') wireAssetsPaneListeners();
 
     // Reflect the active selection on the icon column
     els.menuIconColumn.querySelectorAll('.menu-icon-sq').forEach(el=>{

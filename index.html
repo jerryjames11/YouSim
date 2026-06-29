@@ -198,6 +198,45 @@
   #menuFab.open span:nth-child(2){ opacity:0; }
   #menuFab.open span:nth-child(3){ transform:translateY(-6px) rotate(-45deg); }
 
+  /* ---------- Journal Log button (sits directly above the burger FAB) ---------- */
+  #journalFab{
+    position:fixed;
+    right:18px;
+    bottom:calc(var(--submit-bar-h, 120px) + 14px + 46px + 10px);
+    width:46px; height:46px;
+    border-radius:50%;
+    border:none;
+    background:var(--ink);
+    box-shadow:0 4px 14px rgba(0,0,0,0.2);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    z-index:55;
+    padding:0;
+  }
+  #journalFab:active{ transform:scale(0.93); }
+  .journal-fab-icon{
+    width:19px; height:19px;
+    display:block;
+    background:var(--paper-dim);
+    -webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2V4z'/%3E%3Cpath d='M5 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2'/%3E%3Cpath d='M9 9h6M9 13h4'/%3E%3C/svg%3E");
+    mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2V4z'/%3E%3Cpath d='M5 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2'/%3E%3Cpath d='M9 9h6M9 13h4'/%3E%3C/svg%3E");
+    -webkit-mask-size:contain;
+    mask-size:contain;
+  }
+  .journal-fab-badge{
+    position:absolute;
+    top:-4px; right:-4px;
+    min-width:18px; height:18px;
+    border-radius:50%;
+    background:var(--health);
+    color:var(--paper-dim);
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px;
+    font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+    padding:0 3px;
+  }
+
   /* ---------- Menu backdrop + centered popup ---------- */
   #menuBackdrop{
     position:fixed;
@@ -210,6 +249,46 @@
   }
   #menuBackdrop.show{ opacity:1; pointer-events:auto; }
   #menuBackdrop.hidden{ display:block; opacity:0; pointer-events:none; }
+
+  #confirmPopup{
+    position:fixed;
+    left:8%; right:8%;
+    top:50%;
+    background:var(--paper);
+    border-radius:18px;
+    z-index:65;
+    transform:translateY(-50%) scale(0.92);
+    opacity:0;
+    pointer-events:none;
+    transition:transform .18s ease, opacity .16s ease;
+    box-shadow:0 16px 50px rgba(0,0,0,0.3);
+    padding:20px 18px;
+  }
+  #confirmPopup.show{
+    transform:translateY(-50%) scale(1);
+    opacity:1;
+    pointer-events:auto;
+  }
+  .confirm-title{
+    font-family:'Fraunces',serif;
+    font-weight:700;
+    font-size:17px;
+    color:var(--ink);
+    margin-bottom:8px;
+    text-align:center;
+  }
+  .confirm-body{
+    font-size:13px;
+    color:var(--ink-soft);
+    line-height:1.5;
+    text-align:center;
+    margin-bottom:16px;
+  }
+  .confirm-actions{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
 
   /* ---------- Icon column (vertical, docked right where the FAB is) ---------- */
   #menuIconColumn{
@@ -537,6 +616,63 @@
     flex:1; height:8px; background:var(--paper-dim);
     border:1px solid var(--rule); border-radius:5px; overflow:hidden;
   }
+  .start-stage-slider{
+    position:relative;
+    padding:14px 0 6px;
+    margin-bottom:4px;
+  }
+  .start-stage-track{
+    position:relative;
+    height:6px;
+    background:var(--paper-dim);
+    border:1px solid var(--rule);
+    border-radius:4px;
+  }
+  .start-stage-fill{
+    position:absolute;
+    top:-1px; left:-1px;
+    height:6px;
+    border:1px solid var(--ink);
+    background:var(--ink);
+    border-radius:4px;
+    width:0%;
+    transition:width .18s ease;
+  }
+  .start-stage-stops{
+    position:relative;
+    height:0;
+  }
+  .start-stage-stop{
+    position:absolute;
+    top:-19px;
+    transform:translateX(-50%);
+    width:30px; height:30px;
+    border-radius:50%;
+    background:var(--card-bg);
+    border:2px solid var(--rule);
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .start-stage-stop.active{
+    background:var(--ink);
+    border-color:var(--ink);
+  }
+  .start-stage-stop .dot{
+    width:8px; height:8px;
+    border-radius:50%;
+    background:var(--ink-soft);
+  }
+  .start-stage-stop.active .dot{ background:var(--card-bg); }
+  .start-stage-label{
+    text-align:center;
+    font-family:'Fraunces',serif;
+    font-weight:700;
+    font-size:15px;
+    margin-bottom:16px;
+    color:var(--ink);
+  }
+  #startStageModeRow .choice-card{ margin-bottom:8px; }
+
   .budget-fill{
     height:100%; background:var(--ink); border-radius:5px;
     transition:width .25s ease;
@@ -845,6 +981,18 @@
     line-height:1.5;
     color:var(--ink);
     border-radius:0 4px 4px 0;
+  }
+  .recap-scroll{
+    max-height:92px;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    margin-bottom:16px;
+    border-radius:0 4px 4px 0;
+  }
+  .recap-scroll .recap{ margin-bottom:0; }
+  .recap-scroll .recap:not(:last-child){
+    border-bottom:1px dashed var(--rule);
+    border-radius:0;
   }
   .sim-history{
     max-height:280px;
@@ -1248,6 +1396,20 @@
       <div id="birthDetails"></div>
       <button id="randomizeParentsBtn" class="landing-btn secondary small">🎲 Randomize Parents</button>
     </div>
+
+    <div class="setup-section-label">Start Game At</div>
+    <div class="start-stage-slider" id="startStageSlider">
+      <div class="start-stage-track">
+        <div class="start-stage-fill" id="startStageFill"></div>
+      </div>
+      <div class="start-stage-stops" id="startStageStops"></div>
+    </div>
+    <div class="start-stage-label" id="startStageLabel">Birth</div>
+
+    <div id="startStageModeRow" class="hidden">
+      <div class="setup-section-label">How should we get there?</div>
+      <div id="startStageModeList"></div>
+    </div>
   </div>
 
   <!-- INFANCY / CHILDHOOD PHASE (ages 0-17) -->
@@ -1530,7 +1692,21 @@
   <span></span><span></span><span></span>
 </button>
 
+<button id="journalFab" class="hidden" title="Journal Log">
+  <span class="journal-fab-icon"></span>
+  <span class="journal-fab-badge hidden" id="journalFabBadge">0</span>
+</button>
+
 <div id="menuBackdrop" class="hidden"></div>
+
+<div id="confirmPopup" class="hidden">
+  <div class="confirm-title" id="confirmPopupTitle">Sim summer too?</div>
+  <div class="confirm-body" id="confirmPopupBody">Sim Year normally stops right before summer. Want to simulate through summer as well this time?</div>
+  <div class="confirm-actions">
+    <button id="confirmPopupYes" class="landing-btn primary" style="margin:0;">Yes, include summer</button>
+    <button id="confirmPopupNo" class="landing-btn secondary" style="margin:0;">No, stop before summer</button>
+  </div>
+</div>
 
 <div id="menuIconColumn" class="hidden"></div>
 
@@ -2247,6 +2423,7 @@
     selected:[],
     openCategories:[],
     journalLog:[],
+    journalLastSeenCount:0, // how many entries existed last time the player opened the journal
     activeMenuTab:null,
     // College
     collegeTier:null,      // chosen tier object's id, once enrolled
@@ -2270,6 +2447,8 @@
     chronicCondition:null,  // { id, recoveryProgress } once diagnosed, capped at 1 active
     gradSelectedTier:null,
     gradSelectedMajor:null,
+    startStage:'birth',
+    startStageMode:'sim',
     gameOver:false,
   };
 
@@ -2287,11 +2466,18 @@
   const els = {
     homeBtn:document.getElementById('homeBtn'),
     menuFab:document.getElementById('menuFab'),
+    journalFab:document.getElementById('journalFab'),
+    journalFabBadge:document.getElementById('journalFabBadge'),
     menuBackdrop:document.getElementById('menuBackdrop'),
     menuIconColumn:document.getElementById('menuIconColumn'),
     sectionModal:document.getElementById('sectionModal'),
     sectionModalTitle:document.getElementById('sectionModalTitle'),
     sectionModalClose:document.getElementById('sectionModalClose'),
+    confirmPopup:document.getElementById('confirmPopup'),
+    confirmPopupTitle:document.getElementById('confirmPopupTitle'),
+    confirmPopupBody:document.getElementById('confirmPopupBody'),
+    confirmPopupYes:document.getElementById('confirmPopupYes'),
+    confirmPopupNo:document.getElementById('confirmPopupNo'),
     sectionModalBody:document.getElementById('sectionModalBody'),
     landingScreen:document.getElementById('landingScreen'),
     startNewLifeBtn:document.getElementById('startNewLifeBtn'),
@@ -2299,6 +2485,12 @@
     setupScreen:document.getElementById('setupScreen'),
     birthDetails:document.getElementById('birthDetails'),
     randomizeParentsBtn:document.getElementById('randomizeParentsBtn'),
+    startStageSlider:document.getElementById('startStageSlider'),
+    startStageFill:document.getElementById('startStageFill'),
+    startStageStops:document.getElementById('startStageStops'),
+    startStageLabel:document.getElementById('startStageLabel'),
+    startStageModeRow:document.getElementById('startStageModeRow'),
+    startStageModeList:document.getElementById('startStageModeList'),
     genderChoiceList:document.getElementById('genderChoiceList'),
     genderNeutralBtn:document.getElementById('genderNeutralBtn'),
     youngLifeScreen:document.getElementById('youngLifeScreen'),
@@ -2440,6 +2632,8 @@
     els.continueLifeBtn.disabled = !state.hasLifeInProgress;
     els.homeBtn.classList.toggle('hidden', !lifeInProgress);
     els.menuFab.classList.toggle('hidden', !lifeInProgress);
+    els.journalFab.classList.toggle('hidden', !lifeInProgress);
+    syncJournalBadge();
     closeMenu();
     applyTheme();
     syncFabPosition();
@@ -2480,12 +2674,53 @@
   function beginLife(){
     showPhase('infancy');
     renderYoungLife();
+    fastForwardToStartStage();
   }
 
   function currentSimTurnHandler(){
     if (state.phase === 'infancy') simThroughInfancy();
-    else if (state.phase === 'school') simSchoolYear();
+    else if (state.phase === 'school') promptSimYearSummerChoice();
     else simAdultMonth();
+  }
+
+  function promptSimYearSummerChoice(){
+    const spent = schoolSpentSoFar();
+    if (spent === 0 || spent > BUDGET_MAX) return;
+    if (isSummerMonth()){
+      // Already in summer — nothing to ask, Sim Year wouldn't do anything
+      // useful from here since the school months are already done this year.
+      simSchoolYear(false);
+      return;
+    }
+    showConfirmPopup({
+      title:'Sim summer too?',
+      body:'Sim Year normally stops right before summer. Want to simulate through summer as well this time?',
+      yesLabel:'Yes, include summer',
+      noLabel:'No, stop before summer',
+      onYes: ()=> simSchoolYear(true),
+      onNo: ()=> simSchoolYear(false),
+    });
+  }
+
+  let confirmPopupHandlers = { onYes:null, onNo:null };
+  function showConfirmPopup({ title, body, yesLabel, noLabel, onYes, onNo }){
+    els.confirmPopupTitle.textContent = title;
+    els.confirmPopupBody.textContent = body;
+    els.confirmPopupYes.textContent = yesLabel;
+    els.confirmPopupNo.textContent = noLabel;
+    confirmPopupHandlers = { onYes, onNo };
+    els.menuBackdrop.classList.remove('hidden');
+    void els.menuBackdrop.offsetWidth;
+    els.menuBackdrop.classList.add('show');
+    els.confirmPopup.classList.remove('hidden');
+    void els.confirmPopup.offsetWidth;
+    els.confirmPopup.classList.add('show');
+  }
+
+  function closeConfirmPopup(){
+    els.confirmPopup.classList.remove('show');
+    els.menuBackdrop.classList.remove('show');
+    confirmPopupHandlers = { onYes:null, onNo:null };
   }
 
   // ---------------- Setup screen (gender + parents) ----------------
@@ -2544,6 +2779,140 @@
   function renderSetupScreen(){
     renderGenderPicker();
     renderParentsCard();
+    renderStartStageSlider();
+  }
+
+  const START_STAGES = [
+    { id:'birth', name:'Birth', age:0 },
+    { id:'grade_school', name:'Grade School', age:6 },
+    { id:'high_school', name:'High School', age:14 },
+    { id:'adult', name:'Adult', age:18 },
+  ];
+
+  function renderStartStageSlider(){
+    if (!state.startStage) state.startStage = 'birth';
+    const idx = START_STAGES.findIndex(s=>s.id===state.startStage);
+    const pct = (idx / (START_STAGES.length-1)) * 100;
+    els.startStageFill.style.width = pct + '%';
+    els.startStageLabel.textContent = START_STAGES[idx].name;
+
+    els.startStageStops.innerHTML = START_STAGES.map((s,i)=>{
+      const stopPct = (i / (START_STAGES.length-1)) * 100;
+      return `<div class="start-stage-stop ${s.id===state.startStage?'active':''}" data-stage="${s.id}" style="left:${stopPct}%"><span class="dot"></span></div>`;
+    }).join('');
+
+    els.startStageStops.querySelectorAll('.start-stage-stop').forEach(stopEl=>{
+      stopEl.addEventListener('click', ()=>{
+        state.startStage = stopEl.dataset.stage;
+        renderStartStageSlider();
+      });
+    });
+
+    if (state.startStage === 'birth'){
+      els.startStageModeRow.classList.add('hidden');
+    } else {
+      els.startStageModeRow.classList.remove('hidden');
+      renderStartStageModeChoice();
+    }
+  }
+
+  function renderStartStageModeChoice(){
+    if (!state.startStageMode) state.startStageMode = 'sim';
+    const options = [
+      { id:'sim', name:'Sim Through', desc:'Auto-play the skipped years with sensible choices, so your stats and GPA build up realistically.' },
+      { id:'random', name:'Random Stats', desc:'Skip straight there with plausible randomized stats — faster, less realistic.' },
+    ];
+    els.startStageModeList.innerHTML = options.map(o=>`
+      <div class="choice-card ${state.startStageMode===o.id?'picked':''}" data-mode="${o.id}">
+        <div class="name">${o.name}</div>
+        <div class="desc">${o.desc}</div>
+      </div>`).join('');
+    els.startStageModeList.querySelectorAll('.choice-card').forEach(card=>{
+      card.addEventListener('click', ()=>{
+        state.startStageMode = card.dataset.mode;
+        renderStartStageModeChoice();
+      });
+    });
+  }
+
+  // Generates plausible randomized stats for skipping straight to a given
+  // stage, within a healthy-but-varied range rather than anything extreme.
+  function randomizedStatsForStage(stageId){
+    const r = (min,max)=>randInt(min,max);
+    const stats = {
+      health: r(50,90),
+      money: r(40,90),
+      happy: r(40,90),
+      rel: r(40,90),
+      energy: r(50,90),
+      skill: stageId === 'adult' ? r(30,80) : r(10,60),
+      gpa: r(60,95), // /25 -> 2.4-3.8, plausible spread
+    };
+    return stats;
+  }
+
+  // Fast-forwards from birth to the chosen starting stage, either by running
+  // the existing smart-pick simulations (realistic) or by jumping straight
+  // there with randomized stats (fast). Called once, right after the player
+  // taps Begin Life on the setup screen.
+  function fastForwardToStartStage(){
+    if (state.startStage === 'birth') return;
+
+    if (state.startStageMode === 'random'){
+      Object.assign(state.stats, randomizedStatsForStage(state.startStage));
+      state.age = START_STAGES.find(s=>s.id===state.startStage).age;
+      if (state.startStage === 'grade_school'){
+        state.month = 1;
+        state.selected = ['school'];
+        showPhase('school');
+        renderSchoolAll();
+      } else if (state.startStage === 'high_school'){
+        state.month = 1 + (state.age - 6) * 12;
+        state.selected = ['school'];
+        showPhase('school');
+        renderSchoolAll();
+      } else if (state.startStage === 'adult'){
+        state.hasHighSchoolCredential = true; // assume a diploma when randomly starting as an adult
+        state.week = 1;
+        state.selected = [];
+        showPhase('adult');
+        renderAll();
+      }
+      return;
+    }
+
+    // Sim-through mode: actually play out infancy, then grade school, using
+    // the same auto-pick logic as the existing Sim/Skip buttons.
+    simThroughInfancy(); // always run infancy first regardless of target
+
+    if (state.startStage === 'grade_school'){
+      // simThroughInfancy() already lands in 'school' phase at age 6 — done.
+      return;
+    }
+
+    if (state.startStage === 'high_school'){
+      // simThroughInfancy() already transitioned into school; now fast-forward
+      // through elementary/middle years the same way Skip to High School does.
+      skipToHighSchool();
+      return;
+    }
+
+    if (state.startStage === 'adult'){
+      // Keep smart-simming month by month until graduation (the ultimatum)
+      // fires, then treat it like skipping college to land in adult life.
+      let safety = 0;
+      while (state.phase === 'school' && !state.gradUltimatumShown && safety < 400){
+        safety += 1;
+        state.selected = smartPickSchoolActivities();
+        endSchoolMonth();
+        if (state.gameOver) return;
+      }
+      if (state.gradUltimatumShown){
+        renderGraduationUltimatum(); // sets hasHighSchoolCredential based on final GPA
+        skipCollege(); // skip straight to adult life rather than auto-enrolling in college
+      }
+      return;
+    }
   }
 
   function randomizeParents(){
@@ -2605,19 +2974,17 @@
     const choice = INFANCY_CHOICES.find(c=>c.id===state.selectedInfancyChoice);
     applyEffects(state.stats, choice.effects);
 
-    let recapHtml = `<div class="recap">${choice.note}${eventEffectsRow(choice.effects)}`;
     const journalEvents = [];
     if (Math.random() < choice.eventChance){
       const ev = rollInfancyEvent(choice.eventPool);
       if (ev){
         applyEffects(state.stats, ev.effects);
-        recapHtml += `<div class="events"><div class="${ev.tone}">${ev.tone==='pos'?'+':'–'} ${ev.text}</div>${eventEffectsRow(ev.effects)}</div>`;
         journalEvents.push({text:ev.text, tone:ev.tone, effects:ev.effects});
       }
     }
-    recapHtml += `</div>`;
+    const summaryWithEffects = `${choice.note}${eventEffectsRow(choice.effects)}`;
     addJournalEntry(choice.note, journalEvents);
-    els.youngRecapBox.innerHTML = recapHtml;
+    appendRecapEntry(els.youngRecapBox, summaryWithEffects, journalEvents);
 
     state.selectedInfancyChoice = null;
     advanceInfancyYear();
@@ -2928,18 +3295,9 @@
     const nameCounts = {};
     logLines.forEach(name => nameCounts[name] = (nameCounts[name]||0) + 1);
     const summaryParts = Object.entries(nameCounts).map(([name,n]) => n>1 ? `${name} ×${n}` : name);
-    const summary = summaryParts.length ? `This month: ${summaryParts.join(', ')}.` : `A quiet month.`;
+    const summary = summaryParts.length ? summaryParts.join(', ') + '.' : `A quiet month.`;
     addJournalEntry(summary, eventLines);
-    let html = `<div class="recap">${summary}`;
-    if (eventLines.length){
-      html += `<div class="events">`;
-      eventLines.forEach(e=>{
-        html += `<div class="${e.tone}">${e.tone==='pos'?'+':'–'} ${e.text}</div>${eventEffectsRow(e.effects)}`;
-      });
-      html += `</div>`;
-    }
-    html += `</div>`;
-    els.schoolRecapBox.innerHTML = html;
+    appendRecapEntry(els.schoolRecapBox, summary, eventLines);
 
     // Advance time
     state.month += 1;
@@ -2974,16 +3332,17 @@
   // Auto-plays up to 10 school months (stopping right at summer), reusing
   // whatever is currently selected each turn via the normal carryover rules.
   // Stops immediately if health hits 0 or the player ages into adulthood.
-  function simSchoolYear(){
+  function simSchoolYear(includeSummer){
     const spent = schoolSpentSoFar();
     if (spent === 0 || spent > BUDGET_MAX) return;
 
     const recapHistory = [];
     let turns = 0;
+    const maxTurns = includeSummer ? 12 : 10;
 
-    while (turns < 10){
+    while (turns < maxTurns){
       const wasSummer = isSummerMonth();
-      if (wasSummer) break; // Sim Year stops at summer, doesn't play through it
+      if (wasSummer && !includeSummer) break; // Sim Year stops at summer unless asked to include it
 
       endSchoolMonth();
       turns += 1;
@@ -2991,7 +3350,8 @@
 
       if (state.gameOver) break;
       if (state.phase !== 'school') break; // graduated to adulthood mid-sim
-      if (isSummerMonth()) break; // just crossed into summer — stop here
+      if (state.gradUltimatumShown) break; // pause for real player decision
+      if (!includeSummer && isSummerMonth()) break; // just crossed into summer — stop here
     }
 
     if (recapHistory.length && state.phase === 'school' && !state.gameOver){
@@ -3505,19 +3865,9 @@
     const nameCounts = {};
     logLines.forEach(name => nameCounts[name] = (nameCounts[name]||0) + 1);
     const summaryParts = Object.entries(nameCounts).map(([name,n]) => n>1 ? `${name} ×${n}` : name);
-    const summary = summaryParts.length ? `This month: ${summaryParts.join(', ')}.` : `A quiet month.`;
+    const summary = summaryParts.length ? summaryParts.join(', ') + '.' : `A quiet month.`;
     addJournalEntry(summary, eventLines);
-
-    let html = `<div class="recap">${summary}`;
-    if (eventLines.length){
-      html += `<div class="events">`;
-      eventLines.forEach(e=>{
-        html += `<div class="${e.tone}">${e.tone==='pos'?'+':'–'} ${e.text}</div>${eventEffectsRow(e.effects)}`;
-      });
-      html += `</div>`;
-    }
-    html += `</div>`;
-    els.collegeRecapBox.innerHTML = html;
+    appendRecapEntry(els.collegeRecapBox, summary, eventLines);
 
     carryOverCollegeSelections();
     state.collegeMonth += 1;
@@ -3536,7 +3886,7 @@
         const tier = currentTier();
         const retakeFee = tier ? tier.tuitionPerTerm : 10;
         state.stats.money -= retakeFee;
-        els.collegeRecapBox.innerHTML += `<div class="recap">You didn't pass this year — you'll need to retake it. A retake fee of $${retakeFee} was charged, but it doesn't add extra time.</div>`;
+        appendRecapEntry(els.collegeRecapBox, `You didn't pass this year — you'll need to retake it. A retake fee of $${retakeFee} was charged, but it doesn't add extra time.`, []);
         state.age += 1;
       } else {
         state.age += 1;
@@ -3634,6 +3984,25 @@
     return `Age ${state.age}`;
   }
 
+  // A compact label for the single-line on-screen recap (distinct from the
+  // fuller text used in the Journal Log itself) — e.g. "Wk1 Y1" for adult,
+  // "M2 Y1" for school/college.
+  function compactTimeLabel(){
+    if (state.phase === 'school'){
+      const gradeYear = Math.floor((state.month-1)/12) + 1;
+      return `M${monthOfYear()} Y${gradeYear}`;
+    }
+    if (state.phase === 'college'){
+      return `M${state.collegeMonth} Y${state.collegeYear}`;
+    }
+    if (state.phase === 'adult'){
+      const weekOfYear = ((state.week-1) % 52) + 1;
+      const yearsAsAdult = Math.floor((state.week-1)/52) + 1;
+      return `Wk${weekOfYear} Y${yearsAsAdult}`;
+    }
+    return `Age ${state.age}`;
+  }
+
   // Records one turn's summary + events into the persistent journal log
   // (separate from the on-screen recap, which only ever shows the latest turn).
   function addJournalEntry(summary, eventLines){
@@ -3644,7 +4013,11 @@
     });
     if (state.journalLog.length > JOURNAL_LOG_MAX){
       state.journalLog.shift();
+      // Keep the "last seen" count in sync with the cap so it doesn't drift
+      // negative once old entries roll off.
+      state.journalLastSeenCount = Math.max(0, state.journalLastSeenCount - 1);
     }
+    syncJournalBadge();
   }
 
   function renderActivities(){
@@ -3885,7 +4258,7 @@
     logLines.forEach(name => nameCounts[name] = (nameCounts[name]||0) + 1);
     const summaryParts = Object.entries(nameCounts).map(([name,n]) => n>1 ? `${name} ×${n}` : name);
     const summary = summaryParts.length
-      ? `This week: ${summaryParts.join(', ')}.`
+      ? `${summaryParts.join(', ')}.`
       : `A quiet week.`;
     renderRecap(summary, eventLines);
 
@@ -3956,18 +4329,36 @@
     state.selected = kept;
   }
 
+  const RECAP_ONSCREEN_MAX = 8; // how many recent turns stay visible in the scrollable recap box
+
+  // Builds one recap entry's HTML (compact time label + summary + events)
+  // and prepends it to the given recap box, capping how many stay on
+  // screen — older ones still live in the full Journal Log.
+  function appendRecapEntry(recapBoxEl, summary, eventLines){
+    let entryHtml = `<div class="recap"><b>${compactTimeLabel()}</b> — ${summary}`;
+    if (eventLines && eventLines.length){
+      entryHtml += `<div class="events">`;
+      eventLines.forEach(e=>{
+        entryHtml += `<div class="${e.tone}">${e.tone==='pos'?'+':'–'} ${e.text}</div>${eventEffectsRow(e.effects)}`;
+      });
+      entryHtml += `</div>`;
+    }
+    entryHtml += `</div>`;
+
+    const wrapper = recapBoxEl.querySelector('.recap-scroll');
+    if (wrapper){
+      wrapper.insertAdjacentHTML('afterbegin', entryHtml);
+      while (wrapper.children.length > RECAP_ONSCREEN_MAX){
+        wrapper.removeChild(wrapper.lastElementChild);
+      }
+    } else {
+      recapBoxEl.innerHTML = `<div class="recap-scroll">${entryHtml}</div>`;
+    }
+  }
+
   function renderRecap(summary, eventLines){
     addJournalEntry(summary, eventLines);
-    let html = `<div class="recap">${summary}`;
-    if (eventLines.length){
-      html += `<div class="events">`;
-      eventLines.forEach(e=>{
-        html += `<div class="${e.tone}">${e.tone==='pos'?'+':'–'} ${e.text}</div>${eventEffectsRow(e.effects)}`;
-      });
-      html += `</div>`;
-    }
-    html += `</div>`;
-    els.recapBox.innerHTML = html;
+    appendRecapEntry(els.recapBox, summary, eventLines);
   }
 
   function triggerGameOver(){
@@ -4020,7 +4411,7 @@
         skill:0,
         gpa:75,
       },
-      selected:[], openCategories:[], journalLog:[], gameOver:false,
+      selected:[], openCategories:[], journalLog:[], journalLastSeenCount:0, gameOver:false,
       truancyMisses:0, suspended:false, gradUltimatumShown:false,
       collegeTier:null, collegeMajor:null, collegeMonth:1, collegeYear:1, collegeTermFails:0, degree:null,
       gradSelectedTier:null, gradSelectedMajor:null,
@@ -4028,6 +4419,7 @@
       pendingApplications:[], pendingOffers:[],
       healthNeglectStreak:0, chronicCondition:null,
       hasHighSchoolCredential:false, gedAttempted:false, gedStudyWeeks:0,
+      startStage:'birth', startStageMode:'sim',
     };
 
     els.submitBar.classList.add('hidden');
@@ -4064,7 +4456,7 @@
         skill:0,
         gpa:75,
       },
-      selected:[], openCategories:[], journalLog:[], gameOver:false,
+      selected:[], openCategories:[], journalLog:[], journalLastSeenCount:0, gameOver:false,
       truancyMisses:0, suspended:false, gradUltimatumShown:false,
       collegeTier:null, collegeMajor:null, collegeMonth:1, collegeYear:1, collegeTermFails:0, degree:null,
       gradSelectedTier:null, gradSelectedMajor:null,
@@ -4072,6 +4464,7 @@
       pendingApplications:[], pendingOffers:[],
       healthNeglectStreak:0, chronicCondition:null,
       hasHighSchoolCredential:false, gedAttempted:false, gedStudyWeeks:0,
+      startStage:'birth', startStageMode:'sim',
     };
 
     els.submitBar.classList.add('hidden');
@@ -4103,7 +4496,6 @@
     { id:'job', name:'Job', icon: MENU_ICONS.job, build: renderJobPane },
     { id:'assets', name:'Assets', icon: MENU_ICONS.assets, build: renderAssetsPane },
     { id:'family', name:'Family', icon: STAT_ICONS.rel, build: renderFamilyPane },
-    { id:'journal', name:'Journal Log', icon: MENU_ICONS.journal, build: renderJournalPane },
   ];
 
   function renderHealthPane(){
@@ -4534,6 +4926,28 @@
     els.sectionModal.classList.add('show');
   }
 
+  // Journal Log gets its own dedicated floating button (above the burger
+  // menu) instead of living inside it, with a badge showing how many new
+  // entries have piled up since the player last opened it.
+  function openJournalModal(){
+    els.sectionModalTitle.textContent = 'Journal Log';
+    els.sectionModalBody.innerHTML = renderJournalPane();
+    els.menuBackdrop.classList.remove('hidden');
+    void els.menuBackdrop.offsetWidth;
+    els.menuBackdrop.classList.add('show');
+    els.sectionModal.classList.remove('hidden');
+    void els.sectionModal.offsetWidth;
+    els.sectionModal.classList.add('show');
+    state.journalLastSeenCount = state.journalLog.length;
+    syncJournalBadge();
+  }
+
+  function syncJournalBadge(){
+    const unread = Math.max(0, state.journalLog.length - state.journalLastSeenCount);
+    els.journalFabBadge.textContent = unread > 99 ? '99+' : String(unread);
+    els.journalFabBadge.classList.toggle('hidden', unread === 0);
+  }
+
   function closeSectionModal(){
     els.sectionModal.classList.remove('show');
   }
@@ -4553,6 +4967,8 @@
     els.menuBackdrop.classList.remove('show');
     els.menuIconColumn.classList.remove('show');
     closeSectionModal();
+    els.confirmPopup.classList.remove('show');
+    confirmPopupHandlers = { onYes:null, onNo:null };
     els.menuFab.classList.remove('open');
   }
 
@@ -4569,7 +4985,18 @@
   els.endWeekBtn.addEventListener('click', currentEndTurnHandler);
   els.simTurnBtn.addEventListener('click', currentSimTurnHandler);
   els.menuFab.addEventListener('click', toggleMenu);
+  els.journalFab.addEventListener('click', openJournalModal);
   els.menuBackdrop.addEventListener('click', closeMenu);
+  els.confirmPopupYes.addEventListener('click', ()=>{
+    const fn = confirmPopupHandlers.onYes;
+    closeConfirmPopup();
+    if (fn) fn();
+  });
+  els.confirmPopupNo.addEventListener('click', ()=>{
+    const fn = confirmPopupHandlers.onNo;
+    closeConfirmPopup();
+    if (fn) fn();
+  });
   els.sectionModalClose.addEventListener('click', closeSectionModal);
 
   document.querySelectorAll('.health-stat-tap').forEach(el=>{

@@ -410,7 +410,22 @@
     padding:6px 0 16px;
     border-bottom:var(--card-border-w) solid var(--rule);
     margin-bottom:18px;
+    position:relative;
   }
+  .money-box{
+    position:absolute;
+    top:0; left:0;
+    background:var(--money);
+    color:var(--card-bg);
+    border:none;
+    border-radius:var(--card-radius);
+    padding:7px 12px;
+    font-family:'Inter',sans-serif;
+    font-weight:700;
+    font-size:13px;
+    cursor:pointer;
+  }
+  .money-box:active{ transform:scale(0.96); }
   .masthead .kicker{
     font-family:'JetBrains Mono',monospace;
     font-size:10px;
@@ -456,6 +471,8 @@
     padding:8px 4px 7px;
     text-align:center;
   }
+  .health-stat-tap{ cursor:pointer; }
+  .health-stat-tap:active{ transform:scale(0.96); }
   .stat .icon{
     display:block;
     margin:0 auto 4px;
@@ -1099,22 +1116,6 @@
   }
 
   /* ---------- Infancy / childhood choice screen ---------- */
-  .phase-banner{
-    text-align:center;
-    margin-bottom:14px;
-  }
-  .phase-banner .kicker{
-    font-family:'JetBrains Mono',monospace;
-    font-size:10px;
-    letter-spacing:0.14em;
-    text-transform:uppercase;
-    color:var(--ink-soft);
-  }
-  .phase-banner h2{
-    font-family:'Fraunces',serif;
-    font-size:22px;
-    margin:3px 0 0;
-  }
   .choice-card{
     display:flex;
     flex-direction:column;
@@ -1251,23 +1252,19 @@
 
   <!-- INFANCY / CHILDHOOD PHASE (ages 0-17) -->
   <div id="youngLifeScreen" class="hidden">
-    <div class="phase-banner">
-      <div class="kicker" id="youngKicker">Age 0</div>
-      <h2 id="youngHeader">Infancy</h2>
+    <div class="masthead">
+      <button class="money-box" id="youngMoneyBox">Money: <span id="youngMoneyBoxValue">$0</span></button>
+      <div class="kicker">YouSim</div>
+      <h1 id="youngAgeHeader">Age 0</h1>
+      <div class="dateline" id="youngHeader">Infancy</div>
     </div>
 
     <div class="ledger">
-      <div class="stat health">
+      <div class="stat health health-stat-tap">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
         <span class="label">Health</span>
         <span class="value" id="youngStatHealth">100</span>
         <div class="bar"><i id="youngBarHealth" style="width:100%"></i></div>
-      </div>
-      <div class="stat money">
-        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9.5a2.8 2.8 0 0 0-2.8-1.5c-1.7 0-3 1-3 2.3 0 3 5.8 1.5 5.8 4.5 0 1.3-1.3 2.3-3 2.3a2.8 2.8 0 0 1-2.8-1.5M12 6.5v1.3M12 16.2v1.3"/></svg></span>
-        <span class="label">Money</span>
-        <span class="value" id="youngStatMoney">50</span>
-        <div class="bar"><i id="youngBarMoney" style="width:50%"></i></div>
       </div>
       <div class="stat happy">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 13.5s1.5 2 4 2 4-2 4-2"/><path d="M8.5 9.5h.01M15.5 9.5h.01"/></svg></span>
@@ -1303,6 +1300,7 @@
   <div id="schoolScreen" class="hidden">
 
     <div class="masthead">
+      <button class="money-box" id="schoolMoneyBox">Money: <span id="schoolMoneyBoxValue">$0</span></button>
       <div class="kicker">YouSim</div>
       <h1 id="schoolAgeHeader">Age 5</h1>
       <div class="dateline" id="schoolMonthHeader">Month 1</div>
@@ -1319,7 +1317,7 @@
     </div>
 
     <div class="ledger">
-      <div class="stat health">
+      <div class="stat health health-stat-tap">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
         <span class="label">Health</span>
         <span class="value" id="schoolStatHealth">100</span>
@@ -1365,25 +1363,37 @@
   <!-- GRADUATION ULTIMATUM (summer before 18) -->
   <div id="gradUltimatumScreen" class="birth-screen hidden">
     <span class="kicker">YouSim</span>
-    <h2>What's next?</h2>
-    <p class="landing-tagline" style="margin-bottom:18px;">High school's almost done. Time to decide.</p>
+    <h2 id="gradUltimatumTitle">What's next?</h2>
+    <p class="landing-tagline" style="margin-bottom:18px;" id="gradUltimatumTagline">High school's almost done. Time to decide.</p>
 
     <div id="gpaSummaryCard"></div>
 
-    <div class="setup-section-label">Eligible Colleges</div>
-    <div id="collegeTierList"></div>
+    <div id="gradGedSection" class="hidden">
+      <div class="mini-card" style="border-color:var(--health);">
+        <div class="mc-label">Your GPA fell below a D average</div>
+        <div class="mc-sub">You didn't earn your diploma. You can study for your GED now, or skip it for now — it'll stay available as a regular activity later, but most jobs above entry-level need at least a diploma or GED first.</div>
+      </div>
+      <button id="startGedBtn" class="landing-btn primary">Study for GED Now</button>
+      <button id="skipGedBtn" class="landing-btn secondary">Skip For Now — Start Adult Life</button>
+    </div>
 
-    <div class="setup-section-label">Choose a Major</div>
-    <div id="collegeMajorList"></div>
+    <div id="gradCollegeSection">
+      <div class="setup-section-label">Eligible Colleges</div>
+      <div id="collegeTierList"></div>
 
-    <button id="enrollCollegeBtn" class="landing-btn primary" disabled>Enroll Full-Time</button>
-    <button id="skipCollegeBtn" class="landing-btn secondary">Skip College — Start Adult Life</button>
+      <div class="setup-section-label">Choose a Major</div>
+      <div id="collegeMajorList"></div>
+
+      <button id="enrollCollegeBtn" class="landing-btn primary" disabled>Enroll Full-Time</button>
+      <button id="skipCollegeBtn" class="landing-btn secondary">Skip College — Start Adult Life</button>
+    </div>
   </div>
 
   <!-- COLLEGE PHASE (monthly turns, like school but with GPA/major/tuition) -->
   <div id="collegeScreen" class="hidden">
 
     <div class="masthead">
+      <button class="money-box" id="collegeMoneyBox">Money: <span id="collegeMoneyBoxValue">$0</span></button>
       <div class="kicker">YouSim</div>
       <h1 id="collegeAgeHeader">Age 18</h1>
       <div class="dateline" id="collegeMonthHeader">Year 1, Month 1</div>
@@ -1400,17 +1410,11 @@
     </div>
 
     <div class="ledger">
-      <div class="stat health">
+      <div class="stat health health-stat-tap">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
         <span class="label">Health</span>
         <span class="value" id="collegeStatHealth">100</span>
         <div class="bar"><i id="collegeBarHealth" style="width:100%"></i></div>
-      </div>
-      <div class="stat money">
-        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9.5a2.8 2.8 0 0 0-2.8-1.5c-1.7 0-3 1-3 2.3 0 3 5.8 1.5 5.8 4.5 0 1.3-1.3 2.3-3 2.3a2.8 2.8 0 0 1-2.8-1.5M12 6.5v1.3M12 16.2v1.3"/></svg></span>
-        <span class="label">Money</span>
-        <span class="value" id="collegeStatMoney">100</span>
-        <div class="bar"><i id="collegeBarMoney" style="width:100%"></i></div>
       </div>
       <div class="stat happy">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 13.5s1.5 2 4 2 4-2 4-2"/><path d="M8.5 9.5h.01M15.5 9.5h.01"/></svg></span>
@@ -1430,6 +1434,12 @@
         <span class="value" id="collegeStatEnergy">100</span>
         <div class="bar"><i id="collegeBarEnergy" style="width:100%"></i></div>
       </div>
+      <div class="stat skill">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2 9l10 5 10-5-10-5z"/><path d="M6 11.5V16c0 1 2.5 3 6 3s6-2 6-3v-4.5"/></svg></span>
+        <span class="label">Smarts</span>
+        <span class="value" id="collegeStatSkill">0</span>
+        <div class="bar"><i id="collegeBarSkill" style="width:0%"></i></div>
+      </div>
     </div>
 
     <div id="collegeRecapBox"></div>
@@ -1447,23 +1457,18 @@
   <div id="adultScreen" class="hidden">
 
     <div class="masthead">
+      <button class="money-box" id="adultMoneyBox">Money: <span id="adultMoneyBoxValue">$0</span></button>
       <div class="kicker">YouSim</div>
       <h1 id="ageHeader">Age 18</h1>
       <div class="dateline" id="weekHeader">Week 1</div>
     </div>
 
     <div class="ledger">
-      <div class="stat health">
+      <div class="stat health health-stat-tap">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
         <span class="label">Health</span>
         <span class="value" id="statHealth">100</span>
         <div class="bar"><i id="barHealth" style="width:100%"></i></div>
-      </div>
-      <div class="stat money">
-        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9.5a2.8 2.8 0 0 0-2.8-1.5c-1.7 0-3 1-3 2.3 0 3 5.8 1.5 5.8 4.5 0 1.3-1.3 2.3-3 2.3a2.8 2.8 0 0 1-2.8-1.5M12 6.5v1.3M12 16.2v1.3"/></svg></span>
-        <span class="label">Money</span>
-        <span class="value" id="statMoney">100</span>
-        <div class="bar"><i id="barMoney" style="width:100%"></i></div>
       </div>
       <div class="stat happy">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 13.5s1.5 2 4 2 4-2 4-2"/><path d="M8.5 9.5h.01M15.5 9.5h.01"/></svg></span>
@@ -1482,6 +1487,12 @@
         <span class="label">Energy</span>
         <span class="value" id="statEnergy">100</span>
         <div class="bar"><i id="barEnergy" style="width:100%"></i></div>
+      </div>
+      <div class="stat skill">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2 9l10 5 10-5-10-5z"/><path d="M6 11.5V16c0 1 2.5 3 6 3s6-2 6-3v-4.5"/></svg></span>
+        <span class="label">Smarts</span>
+        <span class="value" id="statSkill">0</span>
+        <div class="bar"><i id="barSkill" style="width:0%"></i></div>
       </div>
     </div>
 
@@ -1509,7 +1520,7 @@
   <div class="inner">
     <div class="sim-row">
       <button id="simTurnBtn" class="sim-turn-btn">Sim Month</button>
-      <button id="skipToAdultBtn" class="sim-turn-btn skip-btn hidden">Skip to 18 →</button>
+      <button id="skipToAdultBtn" class="sim-turn-btn skip-btn hidden">Skip to High School →</button>
     </div>
     <button id="endWeekBtn">End Week</button>
   </div>
@@ -1549,10 +1560,10 @@
     { id:'exercise', category:'Health & Fitness', name:'Exercise', cost:20,
       effects:{health:8, energy:-8, happy:4},
       eventChance:0.05, eventPool:'exercise' },
-    { id:'doctor', category:'Health & Fitness', name:'Doctor Visit', cost:15,
+    { id:'doctor', category:'Self-Care', name:'Doctor Visit', cost:15,
       effects:{health:12, money:-10, energy:-3},
       eventChance:0.08, eventPool:'doctor' },
-    { id:'rest', category:'Health & Fitness', name:'Sleep In / Rest', cost:15,
+    { id:'rest', category:'Self-Care', name:'Sleep In / Rest', cost:15,
       effects:{energy:14, health:3},
       eventChance:0.03, eventPool:'rest' },
 
@@ -1571,10 +1582,13 @@
     { id:'study', category:'Personal Growth', name:'Study / Learn Skill', cost:30,
       effects:{energy:-8},
       eventChance:0.10, eventPool:'study' },
+    { id:'ged_study', category:'Personal Growth', name:'Study for GED', cost:25,
+      effects:{skill:2, energy:-6},
+      eventChance:0, eventPool:null },
     { id:'hobby', category:'Personal Growth', name:'Hobby Time', cost:15,
       effects:{happy:6, energy:-4},
       eventChance:0.05, eventPool:'hobby' },
-    { id:'meditate', category:'Personal Growth', name:'Meditate', cost:10,
+    { id:'meditate', category:'Self-Care', name:'Meditate', cost:10,
       effects:{happy:4, energy:3},
       eventChance:0.04, eventPool:'meditate' },
 
@@ -1886,6 +1900,10 @@
 
   // Tiers gate by GPA + Smarts + Money. Higher tiers cost more per term but
   // give a bigger prestige bonus to job access/salary later.
+  // GPA below this (D average, on the 0.0-4.0 scale) means no diploma —
+  // matches the same threshold used for college term pass/fail.
+  const GRADUATION_GPA_THRESHOLD = 1.5;
+
   const COLLEGE_TIERS = [
     { id:'community', name:'Community College', minGpa:1.5, minSkill:0, minMoney:-9999,
       tuitionPerTerm:8, prestige:1,
@@ -2084,6 +2102,7 @@
   const TIER_RANK = { community:1, state:2, competitive:3, elite:4 };
 
   function jobIsEligible(job){
+    if (job.tier > 1 && !state.hasHighSchoolCredential) return false;
     if (!job.minDegreeTier) return true;
     if (!state.degree) return false;
     if (job.careerTrack && state.degree.careerTrack !== job.careerTrack) return false;
@@ -2236,6 +2255,9 @@
     collegeYear:1,         // which year of the major (1-based)
     collegeTermFails:0,    // count of failed terms this life (cost tracking)
     degree:null,           // { tier, major, careerTrack } once graduated
+    hasHighSchoolCredential:false, // true once diploma earned OR GED completed
+    gedAttempted:false,    // whether the player has gone through GED prep at least once
+    gedStudyWeeks:0,       // cumulative weeks of GED study toward the next pass attempt
     // Jobs
     heldJob:null,           // current job id, or null if unemployed
     jobWeeksHeld:0,         // how many weeks at the current job (for raises)
@@ -2280,14 +2302,28 @@
     genderChoiceList:document.getElementById('genderChoiceList'),
     genderNeutralBtn:document.getElementById('genderNeutralBtn'),
     youngLifeScreen:document.getElementById('youngLifeScreen'),
-    youngKicker:document.getElementById('youngKicker'),
+    youngAgeHeader:document.getElementById('youngAgeHeader'),
     youngHeader:document.getElementById('youngHeader'),
     youngRecapBox:document.getElementById('youngRecapBox'),
     youngChoiceList:document.getElementById('youngChoiceList'),
     schoolScreen:document.getElementById('schoolScreen'),
     schoolActivityList:document.getElementById('schoolActivityList'),
+    schoolMoneyBox:document.getElementById('schoolMoneyBox'),
+    schoolMoneyBoxValue:document.getElementById('schoolMoneyBoxValue'),
+    youngMoneyBox:document.getElementById('youngMoneyBox'),
+    youngMoneyBoxValue:document.getElementById('youngMoneyBoxValue'),
+    collegeMoneyBox:document.getElementById('collegeMoneyBox'),
+    collegeMoneyBoxValue:document.getElementById('collegeMoneyBoxValue'),
+    adultMoneyBox:document.getElementById('adultMoneyBox'),
+    adultMoneyBoxValue:document.getElementById('adultMoneyBoxValue'),
     gradUltimatumScreen:document.getElementById('gradUltimatumScreen'),
     gpaSummaryCard:document.getElementById('gpaSummaryCard'),
+    gradUltimatumTitle:document.getElementById('gradUltimatumTitle'),
+    gradUltimatumTagline:document.getElementById('gradUltimatumTagline'),
+    gradGedSection:document.getElementById('gradGedSection'),
+    gradCollegeSection:document.getElementById('gradCollegeSection'),
+    startGedBtn:document.getElementById('startGedBtn'),
+    skipGedBtn:document.getElementById('skipGedBtn'),
     collegeTierList:document.getElementById('collegeTierList'),
     collegeMajorList:document.getElementById('collegeMajorList'),
     enrollCollegeBtn:document.getElementById('enrollCollegeBtn'),
@@ -2332,6 +2368,7 @@
     'Work': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`,
     'Health & Fitness': STAT_ICONS.health,
     'Health': STAT_ICONS.health,
+    'Self-Care': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6.5-4.35-9-8.5C1.2 9.5 2.8 6 6.2 6c2 0 3.4 1.2 4.1 2.4M12 21s6.5-4.35 9-8.5c1.8-3 .2-6.5-3.2-6.5-2 0-3.4 1.2-4.1 2.4"/><path d="M12 4v4"/></svg>`,
     'Social': STAT_ICONS.rel,
     'Personal Growth': STAT_ICONS.skill,
     'Life Admin': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
@@ -2346,6 +2383,7 @@
     'Work': '--money',
     'Health & Fitness': '--health',
     'Health': '--health',
+    'Self-Care': '--energy',
     'Social': '--rel',
     'Personal Growth': '--skill',
     'Life Admin': '--ink',
@@ -2521,7 +2559,6 @@
 
   function renderYoungStats(){
     document.getElementById('youngStatHealth').textContent = Math.round(state.stats.health);
-    document.getElementById('youngStatMoney').textContent = Math.round(state.stats.money);
     document.getElementById('youngStatHappy').textContent = Math.round(state.stats.happy);
     document.getElementById('youngStatRel').textContent = Math.round(state.stats.rel);
     document.getElementById('youngStatEnergy').textContent = Math.round(state.stats.energy);
@@ -2533,16 +2570,11 @@
     document.getElementById('youngBarEnergy').style.width = clamp(state.stats.energy)+'%';
     document.getElementById('youngBarSkill').style.width = clamp(state.stats.skill)+'%';
 
-    // money bar: can go negative, so scale differently (clamp display 0-100 against a -100..200 range)
-    const moneyPct = clamp(((state.stats.money + 100) / 300) * 100);
-    document.getElementById('youngBarMoney').style.width = moneyPct + '%';
-
-    const moneyEl = document.getElementById('youngStatMoney');
-    moneyEl.classList.toggle('negative', state.stats.money < 0);
+    els.youngMoneyBoxValue.textContent = `$${Math.round(state.stats.money)}`;
   }
 
   function renderYoungLife(){
-    els.youngKicker.textContent = `Age ${state.infancyYear}`;
+    els.youngAgeHeader.textContent = `Age ${state.infancyYear}`;
     els.youngHeader.textContent = state.infancyYear === 0 ? 'Infancy' : `Early Childhood`;
     renderYoungStats();
 
@@ -2594,7 +2626,7 @@
   function advanceInfancyYear(){
     state.infancyYear += 1;
     state.age = state.infancyYear;
-    if (state.infancyYear >= 5){
+    if (state.infancyYear >= 6){
       finishInfancy();
     } else {
       renderYoungLife();
@@ -2603,7 +2635,7 @@
 
   function simThroughInfancy(){
     const recapHistory = [];
-    while (state.infancyYear < 5){
+    while (state.infancyYear < 6){
       const choice = INFANCY_CHOICES[randInt(0, INFANCY_CHOICES.length-1)];
       applyEffects(state.stats, choice.effects);
 
@@ -2624,7 +2656,7 @@
 
       state.infancyYear += 1;
     }
-    state.age = 5;
+    state.age = 6;
     state.selectedInfancyChoice = null;
     if (recapHistory.length){
       els.youngRecapBox.innerHTML = `<div class="sim-history">${recapHistory.join('')}</div>`;
@@ -2678,6 +2710,7 @@
     document.getElementById('schoolStatRel').textContent = Math.round(state.stats.rel);
     document.getElementById('schoolStatEnergy').textContent = Math.round(state.stats.energy);
     document.getElementById('schoolStatSkill').textContent = Math.round(state.stats.skill);
+    els.schoolMoneyBoxValue.textContent = `$${Math.round(state.stats.money)}`;
 
     document.getElementById('schoolBarHealth').style.width = clamp(state.stats.health)+'%';
     document.getElementById('schoolBarHappy').style.width = clamp(state.stats.happy)+'%';
@@ -2697,6 +2730,8 @@
     document.getElementById('schoolAgeHeader').textContent = `Age ${state.age}`;
     document.getElementById('schoolMonthHeader').textContent = `Month ${((state.month-1) % 12) + 1} of Grade Year ${Math.floor((state.month-1)/12)+1}`;
     renderSummerTimeline();
+    // The Skip to High School shortcut only makes sense before high school starts
+    els.skipToAdultBtn.classList.toggle('hidden', state.age >= GPA_HIGH_SCHOOL_START_AGE);
   }
 
   function renderSummerTimeline(){
@@ -3021,11 +3056,11 @@
   // "Skip to 18" — smart-sims every remaining school month (and summer)
   // using a balanced activity mix, landing the player at adulthood.
   // Stops immediately on game over.
-  function skipToAdulthood(){
+  function skipToHighSchool(){
     const recapHistory = [];
     let safety = 0; // hard ceiling so a stray bug can't infinite-loop the tab
 
-    while (state.phase === 'school' && state.age < 18 && !state.gradUltimatumShown && safety < 300){
+    while (state.phase === 'school' && state.age < GPA_HIGH_SCHOOL_START_AGE && !state.gradUltimatumShown && safety < 300){
       safety += 1;
       state.selected = smartPickSchoolActivities();
       endSchoolMonth();
@@ -3095,15 +3130,54 @@
     renderGraduationUltimatum();
   }
 
+  function didGraduate(){
+    return (state.stats.gpa / 25) >= GRADUATION_GPA_THRESHOLD;
+  }
+
+  // Shows the best few jobs the player currently qualifies for, given their
+  // credential/degree status at this exact moment — a concrete preview of
+  // what today's choices actually unlock, rather than an abstract GPA number.
+  function renderTopJobsPreview(){
+    const qualified = JOBS.filter(j=>jobIsEligible(j)).sort((a,b)=>b.tier-a.tier).slice(0,4);
+    if (!qualified.length){
+      return `<div class="menu-section-label">Jobs You Qualify For</div>
+        <div class="mini-card"><div class="mc-sub">Nothing beyond entry-level work right now.</div></div>`;
+    }
+    let html = `<div class="menu-section-label">Top Jobs You Qualify For</div>`;
+    qualified.forEach(j=>{
+      html += `<div class="mini-card" style="padding:8px 14px;">
+        <div class="menu-row-line"><div><div class="rl-name">${j.name}</div><div class="rl-sub">${j.hoursPerWeek}h/wk</div></div><div class="rl-amt pos">$${j.payPerCycle}/${j.payCycle}</div></div>
+      </div>`;
+    });
+    return html;
+  }
+
   function renderGraduationUltimatum(){
     const gpa = (state.stats.gpa / 25).toFixed(2);
+    const graduated = didGraduate();
+    state.hasHighSchoolCredential = graduated; // set up front so the jobs preview below is accurate
+
     els.gpaSummaryCard.innerHTML = `
       <div class="parents-compact">
         <div class="pc-row"><span class="pc-label">Final GPA</span><span class="pc-value">${gpa}</span></div>
         <div class="pc-row"><span class="pc-label">Smarts</span><span class="pc-value">${Math.round(state.stats.skill)}</span></div>
         <div class="pc-row"><span class="pc-label">Money</span><span class="pc-value">$${Math.round(state.stats.money)}</span></div>
-        <div class="pc-detail">This is what colleges will see when you apply.</div>
-      </div>`;
+        <div class="pc-detail">${graduated ? 'You graduated! This is what colleges will see when you apply.' : "This GPA wasn't enough to graduate — see your options below."}</div>
+      </div>
+      ${renderTopJobsPreview()}`;
+
+    if (!graduated){
+      els.gradUltimatumTitle.textContent = "You didn't graduate";
+      els.gradUltimatumTagline.textContent = 'Your GPA came in below a D average.';
+      els.gradGedSection.classList.remove('hidden');
+      els.gradCollegeSection.classList.add('hidden');
+      return;
+    }
+
+    els.gradUltimatumTitle.textContent = "What's next?";
+    els.gradUltimatumTagline.textContent = "High school's almost done. Time to decide.";
+    els.gradGedSection.classList.add('hidden');
+    els.gradCollegeSection.classList.remove('hidden');
 
     const eligible = eligibleCollegeTiers();
     let tierHtml = '';
@@ -3147,6 +3221,24 @@
     });
 
     els.enrollCollegeBtn.disabled = !(state.gradSelectedTier && state.gradSelectedMajor);
+  }
+
+  // Studying for the GED right at the ultimatum screen resolves it
+  // immediately based on Smarts — a believable proxy for cramming hard for
+  // a single high-stakes test, rather than running a whole mini-phase.
+  function startGedNow(){
+    state.gedAttempted = true;
+    const passChance = clamp(40 + state.stats.skill * 0.5) / 100; // higher Smarts = better odds
+    const passed = Math.random() < passChance;
+    if (passed){
+      state.hasHighSchoolCredential = true;
+      els.gpaSummaryCard.insertAdjacentHTML('beforeend',
+        `<div class="mini-card" style="border-color:var(--money);"><div class="mc-sub">You passed the GED! You now qualify for jobs that need a high school credential.</div></div>`);
+    } else {
+      els.gpaSummaryCard.insertAdjacentHTML('beforeend',
+        `<div class="mini-card" style="border-color:var(--health);"><div class="mc-sub">You didn't pass this time. The GED stays available as an activity in adult life — you can try again later.</div></div>`);
+    }
+    setTimeout(()=>{ skipCollege(); }, 1800);
   }
 
   function enrollInCollege(){
@@ -3235,18 +3327,15 @@
     document.getElementById('collegeStatHappy').textContent = Math.round(state.stats.happy);
     document.getElementById('collegeStatRel').textContent = Math.round(state.stats.rel);
     document.getElementById('collegeStatEnergy').textContent = Math.round(state.stats.energy);
+    document.getElementById('collegeStatSkill').textContent = Math.round(state.stats.skill);
     document.getElementById('collegeBarHealth').style.width = clamp(state.stats.health)+'%';
     document.getElementById('collegeBarHappy').style.width = clamp(state.stats.happy)+'%';
     document.getElementById('collegeBarRel').style.width = clamp(state.stats.rel)+'%';
     document.getElementById('collegeBarEnergy').style.width = clamp(state.stats.energy)+'%';
-
-    const moneyEl = document.getElementById('collegeStatMoney');
-    moneyEl.textContent = Math.round(state.stats.money);
-    moneyEl.classList.toggle('negative', state.stats.money < 0);
-    const moneyPct = clamp(((state.stats.money + 100) / 300) * 100);
-    document.getElementById('collegeBarMoney').style.width = moneyPct + '%';
+    document.getElementById('collegeBarSkill').style.width = clamp(state.stats.skill)+'%';
 
     document.getElementById('collegeGpaValue').textContent = (state.stats.gpa / 25).toFixed(2);
+    els.collegeMoneyBoxValue.textContent = `$${Math.round(state.stats.money)}`;
   }
 
   function renderCollegeStudyBar(){
@@ -3490,22 +3579,18 @@
 
   function renderStats(){
     document.getElementById('statHealth').textContent = Math.round(state.stats.health);
-    document.getElementById('statMoney').textContent = Math.round(state.stats.money);
     document.getElementById('statHappy').textContent = Math.round(state.stats.happy);
     document.getElementById('statRel').textContent = Math.round(state.stats.rel);
     document.getElementById('statEnergy').textContent = Math.round(state.stats.energy);
+    document.getElementById('statSkill').textContent = Math.round(state.stats.skill);
 
     document.getElementById('barHealth').style.width = clamp(state.stats.health)+'%';
     document.getElementById('barHappy').style.width = clamp(state.stats.happy)+'%';
     document.getElementById('barRel').style.width = clamp(state.stats.rel)+'%';
     document.getElementById('barEnergy').style.width = clamp(state.stats.energy)+'%';
+    document.getElementById('barSkill').style.width = clamp(state.stats.skill)+'%';
 
-    // money bar: can go negative, so scale differently (clamp display 0-100 against a -100..200 range)
-    const moneyPct = clamp(((state.stats.money + 100) / 300) * 100);
-    document.getElementById('barMoney').style.width = moneyPct + '%';
-
-    const moneyEl = document.getElementById('statMoney');
-    moneyEl.classList.toggle('negative', state.stats.money < 0);
+    els.adultMoneyBoxValue.textContent = `$${Math.round(state.stats.money)}`;
   }
 
   function renderHeader(){
@@ -3703,6 +3788,25 @@
     // Job applications progress this week only if Job Hunting was worked
     advanceJobApplications(eventLines);
 
+    // GED progress — only matters if the player doesn't already have a
+    // high school credential. A handful of weeks of real study gives a
+    // real shot at passing, weighted by Smarts.
+    if (!state.hasHighSchoolCredential && state.selected.includes('ged_study')){
+      state.gedAttempted = true;
+      state.gedStudyWeeks = (state.gedStudyWeeks || 0) + 1;
+      if (state.gedStudyWeeks >= 4){
+        const passChance = clamp(40 + state.stats.skill * 0.5) / 100;
+        const passed = Math.random() < passChance;
+        state.gedStudyWeeks = 0;
+        if (passed){
+          state.hasHighSchoolCredential = true;
+          eventLines.push({text:'You passed your GED! Better jobs are now open to you.', tone:'pos', effects:{}});
+        } else {
+          eventLines.push({text:"You didn't pass the GED this time — you can keep studying and try again.", tone:'neg', effects:{}});
+        }
+      }
+    }
+
     // Job pay cycle — only ticks if "Go to Work" was actually worked this
     // week, and only pays out on the held job's real cadence (weekly jobs
     // pay every week; biweekly jobs accumulate one extra week before paying).
@@ -3772,7 +3876,7 @@
     // Chronic condition risk + ongoing effects/recovery. "Healthy effort"
     // this week means the player actually invested in their health, not
     // just coasted — that's what recovery progress is measured against.
-    const healthyEffortThisWeek = state.selected.includes('exercise') || state.selected.includes('doctor');
+    const healthyEffortThisWeek = state.selected.includes('exercise') || state.selected.includes('doctor') || state.selected.includes('meditate');
     updateChronicConditionRisk(eventLines);
     applyChronicConditionEffects(eventLines, healthyEffortThisWeek);
 
@@ -3923,6 +4027,7 @@
       heldJob:null, jobWeeksHeld:0, performance:60, reputation:50, payCycleCounter:0,
       pendingApplications:[], pendingOffers:[],
       healthNeglectStreak:0, chronicCondition:null,
+      hasHighSchoolCredential:false, gedAttempted:false, gedStudyWeeks:0,
     };
 
     els.submitBar.classList.add('hidden');
@@ -3966,6 +4071,7 @@
       heldJob:null, jobWeeksHeld:0, performance:60, reputation:50, payCycleCounter:0,
       pendingApplications:[], pendingOffers:[],
       healthNeglectStreak:0, chronicCondition:null,
+      hasHighSchoolCredential:false, gedAttempted:false, gedStudyWeeks:0,
     };
 
     els.submitBar.classList.add('hidden');
@@ -3995,7 +4101,6 @@
   const MENU_TABS = [
     { id:'finances', name:'Finances', icon: STAT_ICONS.money, build: renderFinancesPane },
     { id:'job', name:'Job', icon: MENU_ICONS.job, build: renderJobPane },
-    { id:'health', name:'Health', icon: STAT_ICONS.health, build: renderHealthPane },
     { id:'assets', name:'Assets', icon: MENU_ICONS.assets, build: renderAssetsPane },
     { id:'family', name:'Family', icon: STAT_ICONS.rel, build: renderFamilyPane },
     { id:'journal', name:'Journal Log', icon: MENU_ICONS.journal, build: renderJournalPane },
@@ -4372,7 +4477,15 @@
       </div>`).join('');
     els.menuIconColumn.querySelectorAll('.menu-icon-sq').forEach(iconEl=>{
       iconEl.addEventListener('click', ()=>{
-        openSection(iconEl.dataset.tab);
+        const tabId = iconEl.dataset.tab;
+        const isCurrentlyOpenAndActive = state.activeMenuTab === tabId && els.sectionModal.classList.contains('show');
+        if (isCurrentlyOpenAndActive){
+          closeSectionModal();
+          state.activeMenuTab = null;
+          iconEl.classList.remove('active');
+        } else {
+          openSection(tabId);
+        }
       });
     });
   }
@@ -4394,6 +4507,33 @@
     els.sectionModal.classList.add('show');
   }
 
+  // Health opens as its own standalone modal from tapping the Health stat
+  // box directly — it intentionally skips the burger-menu icon column,
+  // since it isn't part of that flow anymore.
+  function openHealthModal(){
+    els.sectionModalTitle.textContent = 'Health';
+    els.sectionModalBody.innerHTML = renderHealthPane();
+    els.menuBackdrop.classList.remove('hidden');
+    void els.menuBackdrop.offsetWidth;
+    els.menuBackdrop.classList.add('show');
+    els.sectionModal.classList.remove('hidden');
+    void els.sectionModal.offsetWidth;
+    els.sectionModal.classList.add('show');
+  }
+
+  // Finances opens as its own standalone modal from tapping the Money box
+  // directly — same shortcut pattern as Health's stat-box tap.
+  function openFinancesModal(){
+    els.sectionModalTitle.textContent = 'Finances';
+    els.sectionModalBody.innerHTML = renderFinancesPane();
+    els.menuBackdrop.classList.remove('hidden');
+    void els.menuBackdrop.offsetWidth;
+    els.menuBackdrop.classList.add('show');
+    els.sectionModal.classList.remove('hidden');
+    void els.sectionModal.offsetWidth;
+    els.sectionModal.classList.add('show');
+  }
+
   function closeSectionModal(){
     els.sectionModal.classList.remove('show');
   }
@@ -4407,8 +4547,6 @@
     els.menuBackdrop.classList.add('show');
     els.menuIconColumn.classList.add('show');
     els.menuFab.classList.add('open');
-    // Always land on Finances first when the menu opens
-    openSection('finances');
   }
 
   function closeMenu(){
@@ -4433,9 +4571,19 @@
   els.menuFab.addEventListener('click', toggleMenu);
   els.menuBackdrop.addEventListener('click', closeMenu);
   els.sectionModalClose.addEventListener('click', closeSectionModal);
-  els.skipToAdultBtn.addEventListener('click', skipToAdulthood);
+
+  document.querySelectorAll('.health-stat-tap').forEach(el=>{
+    el.addEventListener('click', openHealthModal);
+  });
+  els.schoolMoneyBox.addEventListener('click', openFinancesModal);
+  els.youngMoneyBox.addEventListener('click', openFinancesModal);
+  els.collegeMoneyBox.addEventListener('click', openFinancesModal);
+  els.adultMoneyBox.addEventListener('click', openFinancesModal);
+  els.skipToAdultBtn.addEventListener('click', skipToHighSchool);
   els.enrollCollegeBtn.addEventListener('click', enrollInCollege);
   els.skipCollegeBtn.addEventListener('click', skipCollege);
+  els.startGedBtn.addEventListener('click', startGedNow);
+  els.skipGedBtn.addEventListener('click', skipCollege);
   els.restartBtn.addEventListener('click', startNewLifeSetup);
 
   els.startNewLifeBtn.addEventListener('click', ()=>{

@@ -211,15 +211,85 @@
   #menuBackdrop.show{ opacity:1; pointer-events:auto; }
   #menuBackdrop.hidden{ display:block; opacity:0; pointer-events:none; }
 
-  #menuOverlay{
+  /* ---------- Icon column (vertical, docked right where the FAB is) ---------- */
+  #menuIconColumn{
     position:fixed;
-    left:5%; right:5%;
-    top:50%;
-    max-height:76vh;
+    right:18px;
+    bottom:calc(var(--submit-bar-h, 120px) + 70px);
+    top:60px;
+    width:170px;
+    z-index:61;
+    overflow-y:auto;
+    overflow-x:hidden;
+    -webkit-overflow-scrolling:touch;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:10px;
+    opacity:0;
+    transform:translateY(8px) scale(0.96);
+    pointer-events:none;
+    transition:opacity .18s ease, transform .18s ease;
+  }
+  #menuIconColumn.show{
+    opacity:1;
+    transform:translateY(0) scale(1);
+    pointer-events:auto;
+  }
+  .menu-icon-sq{
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    cursor:pointer;
+    background:none;
+    border:none;
+    padding:0;
+  }
+  .menu-icon-sq .mlbl{
+    display:block;
+    font-family:'Inter',sans-serif;
+    font-size:11.5px;
+    font-weight:700;
+    color:var(--ink);
+    background:var(--card-bg);
+    padding:4px 9px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.18);
+    white-space:nowrap;
+  }
+  .menu-icon-sq .micon-circle{
+    flex-shrink:0;
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    background:var(--ink);
+    color:var(--paper-dim);
+    box-shadow:0 4px 14px rgba(0,0,0,0.25);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:background .15s ease, color .15s ease, box-shadow .15s ease;
+  }
+  .menu-icon-sq .micon{ width:19px; height:19px; }
+  .menu-icon-sq .micon svg{ width:100%; height:100%; display:block; }
+  .menu-icon-sq:active .micon-circle{ transform:scale(0.93); }
+  .menu-icon-sq.active .micon-circle{
+    background:var(--happy);
+    color:var(--ink);
+    box-shadow:0 0 0 2.5px var(--happy), 0 4px 14px rgba(0,0,0,0.3);
+  }
+
+  /* ---------- Section modal (the actual content, opens over/beside the icon column) ---------- */
+  #sectionModal{
+    position:fixed;
+    left:5%; right:88px;
+    top:60px;
+    max-height:calc(100vh - 60px - var(--submit-bar-h, 120px) - 20px);
     background:var(--paper);
     border-radius:18px;
-    z-index:60;
-    transform:translateY(-50%) scale(0.92);
+    z-index:62;
+    transform:translateY(-8px) scale(0.92);
     opacity:0;
     pointer-events:none;
     transition:transform .2s ease, opacity .18s ease;
@@ -228,63 +298,47 @@
     box-shadow:0 16px 50px rgba(0,0,0,0.28);
     overflow:hidden;
   }
-  #menuOverlay.show{
-    transform:translateY(-50%) scale(1);
+  #sectionModal.show{
+    transform:translateY(0) scale(1);
     opacity:1;
     pointer-events:auto;
   }
-  #menuOverlay.hidden{ display:flex; opacity:0; pointer-events:none; }
+  @media (max-width:480px){
+    #sectionModal{ left:4%; right:74px; }
+  }
 
-  .menu-head{
-    text-align:center;
-    padding:16px 16px 12px;
+  .section-modal-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 14px 12px 18px;
     border-bottom:var(--card-border-w) solid var(--rule);
     flex-shrink:0;
   }
-  .menu-head h3{
+  .section-modal-head h3{
     font-family:'Fraunces',serif;
     font-weight:700;
-    font-size:18px;
+    font-size:17px;
     margin:0;
     color:var(--ink);
   }
-  .menu-tabs{
-    display:flex;
-    gap:6px;
-    padding:10px 14px;
-    border-bottom:var(--card-border-w) solid var(--rule);
-    flex-shrink:0;
-    overflow-x:auto;
-    -webkit-overflow-scrolling:touch;
-  }
-  .menu-tab{
-    flex-shrink:0;
-    padding:7px 13px;
-    border-radius:16px;
-    border:1.5px solid var(--rule);
-    background:var(--card-bg);
-    font-family:'Inter',sans-serif;
-    font-size:12px;
-    font-weight:600;
+  #sectionModalClose{
+    width:28px; height:28px;
+    border-radius:50%;
+    background:var(--paper-dim);
+    border:none;
+    font-size:13px;
     color:var(--ink-soft);
-    display:flex; align-items:center; gap:5px;
-    cursor:pointer;
+    flex-shrink:0;
   }
-  .menu-tab .ticon{ width:13px; height:13px; flex-shrink:0; }
-  .menu-tab .ticon svg{ width:100%; height:100%; display:block; }
-  .menu-tab.active{
-    background:var(--ink);
-    border-color:var(--ink);
-    color:var(--card-bg);
-  }
-  .menu-body{
+  .section-modal-body{
     flex:1;
     overflow-y:auto;
     padding:16px;
     -webkit-overflow-scrolling:touch;
   }
-  .menu-pane{ display:none; }
-  .menu-pane.active{ display:block; }
+
+
 
   .mini-card{
     background:var(--card-bg);
@@ -471,6 +525,26 @@
     transition:width .25s ease;
   }
   .budget-fill.over{background:var(--health);}
+
+  .gpa-badge-row{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    margin-bottom:14px;
+    background:var(--card-bg);
+    border:var(--card-border-w) solid var(--rule);
+    border-radius:var(--card-radius);
+    padding:8px;
+  }
+  .gpa-badge-row .gpa-label{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .gpa-badge-row .gpa-value{
+    font-family:'Fraunces',serif;
+    font-weight:700;
+    font-size:16px;
+    color:var(--ink);
+  }
 
   /* ---------- Section headers ---------- */
   /* ---------- Category squares (accordion) ---------- */
@@ -1061,6 +1135,17 @@
   }
   .choice-card .name{font-weight:700; font-size:15px;}
   .choice-card .desc{font-size:12.5px; color:var(--ink-soft);}
+  .choice-card.locked{
+    opacity:0.45;
+    cursor:not-allowed;
+  }
+  .choice-card .meta-row{
+    display:flex; gap:10px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;
+    color:var(--ink-soft);
+    margin-top:2px;
+  }
   .sim-through-row{
     text-align:center;
     margin:18px 0 4px;
@@ -1228,6 +1313,11 @@
       <div class="budget-track"><div class="budget-fill" id="summerTimelineFill" style="width:0%"></div></div>
     </div>
 
+    <div id="gpaBadgeRow" class="gpa-badge-row hidden">
+      <span class="gpa-label">GPA</span>
+      <span class="gpa-value" id="gpaValue">3.00</span>
+    </div>
+
     <div class="ledger">
       <div class="stat health">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
@@ -1269,6 +1359,87 @@
     </div>
 
     <div id="schoolActivityList"></div>
+
+  </div>
+
+  <!-- GRADUATION ULTIMATUM (summer before 18) -->
+  <div id="gradUltimatumScreen" class="birth-screen hidden">
+    <span class="kicker">YouSim</span>
+    <h2>What's next?</h2>
+    <p class="landing-tagline" style="margin-bottom:18px;">High school's almost done. Time to decide.</p>
+
+    <div id="gpaSummaryCard"></div>
+
+    <div class="setup-section-label">Eligible Colleges</div>
+    <div id="collegeTierList"></div>
+
+    <div class="setup-section-label">Choose a Major</div>
+    <div id="collegeMajorList"></div>
+
+    <button id="enrollCollegeBtn" class="landing-btn primary" disabled>Enroll Full-Time</button>
+    <button id="skipCollegeBtn" class="landing-btn secondary">Skip College — Start Adult Life</button>
+  </div>
+
+  <!-- COLLEGE PHASE (monthly turns, like school but with GPA/major/tuition) -->
+  <div id="collegeScreen" class="hidden">
+
+    <div class="masthead">
+      <div class="kicker">YouSim</div>
+      <h1 id="collegeAgeHeader">Age 18</h1>
+      <div class="dateline" id="collegeMonthHeader">Year 1, Month 1</div>
+    </div>
+
+    <div class="gpa-badge-row" id="collegeGpaBadgeRow">
+      <span class="gpa-label">GPA</span>
+      <span class="gpa-value" id="collegeGpaValue">3.00</span>
+    </div>
+
+    <div class="budget-row" id="collegeStudyRow">
+      <span id="collegeStudyLabel">Study hours: 0 / 0 target</span>
+      <div class="budget-track"><div class="budget-fill" id="collegeStudyFill" style="width:0%"></div></div>
+    </div>
+
+    <div class="ledger">
+      <div class="stat health">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span>
+        <span class="label">Health</span>
+        <span class="value" id="collegeStatHealth">100</span>
+        <div class="bar"><i id="collegeBarHealth" style="width:100%"></i></div>
+      </div>
+      <div class="stat money">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9.5a2.8 2.8 0 0 0-2.8-1.5c-1.7 0-3 1-3 2.3 0 3 5.8 1.5 5.8 4.5 0 1.3-1.3 2.3-3 2.3a2.8 2.8 0 0 1-2.8-1.5M12 6.5v1.3M12 16.2v1.3"/></svg></span>
+        <span class="label">Money</span>
+        <span class="value" id="collegeStatMoney">100</span>
+        <div class="bar"><i id="collegeBarMoney" style="width:100%"></i></div>
+      </div>
+      <div class="stat happy">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 13.5s1.5 2 4 2 4-2 4-2"/><path d="M8.5 9.5h.01M15.5 9.5h.01"/></svg></span>
+        <span class="label">Mood</span>
+        <span class="value" id="collegeStatHappy">100</span>
+        <div class="bar"><i id="collegeBarHappy" style="width:100%"></i></div>
+      </div>
+      <div class="stat rel">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="9" r="3"/><circle cx="15.5" cy="9" r="3"/><path d="M3 19c0-2.8 2.5-5 5.5-5 1.4 0 2.6.4 3.5 1.2M21 19c0-2.8-2.5-5-5.5-5-1.4 0-2.6.4-3.5 1.2"/></svg></span>
+        <span class="label">Rel.</span>
+        <span class="value" id="collegeStatRel">100</span>
+        <div class="bar"><i id="collegeBarRel" style="width:100%"></i></div>
+      </div>
+      <div class="stat energy">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
+        <span class="label">Energy</span>
+        <span class="value" id="collegeStatEnergy">100</span>
+        <div class="bar"><i id="collegeBarEnergy" style="width:100%"></i></div>
+      </div>
+    </div>
+
+    <div id="collegeRecapBox"></div>
+
+    <div class="budget-row">
+      <span id="collegeBudgetLabel">0 / 100 hrs used</span>
+      <div class="budget-track"><div class="budget-fill" id="collegeBudgetFill" style="width:0%"></div></div>
+    </div>
+
+    <div id="collegeActivityList"></div>
 
   </div>
 
@@ -1349,12 +1520,15 @@
 </button>
 
 <div id="menuBackdrop" class="hidden"></div>
-<div id="menuOverlay" class="hidden">
-  <div class="menu-head">
-    <h3>Menu</h3>
+
+<div id="menuIconColumn" class="hidden"></div>
+
+<div id="sectionModal" class="hidden">
+  <div class="section-modal-head">
+    <h3 id="sectionModalTitle">Menu</h3>
+    <button id="sectionModalClose" title="Close">✕</button>
   </div>
-  <div class="menu-tabs" id="menuTabs"></div>
-  <div class="menu-body" id="menuBody"></div>
+  <div class="section-modal-body" id="sectionModalBody"></div>
 </div>
 
 <script>
@@ -1364,12 +1538,9 @@
 
   const ACTIVITIES = [
     // Work
-    { id:'office', category:'Work', name:'Office Job', cost:40,
-      effects:{money:14, energy:-12, happy:-2},
+    { id:'go_to_work', category:'Work', name:'Go to Work', cost:0, // cost set dynamically from held job's weekly hours
+      effects:{}, // pay/effects applied dynamically based on held job
       eventChance:0.10, eventPool:'work' },
-    { id:'hustle', category:'Work', name:'Side Hustle', cost:25,
-      effects:{money:8, energy:-10},
-      eventChance:0.15, eventPool:'hustle' },
     { id:'jobhunt', category:'Work', name:'Job Hunting', cost:30,
       effects:{energy:-8, happy:-3},
       eventChance:0.18, eventPool:'jobhunt' },
@@ -1422,11 +1593,6 @@
       {text:"Tense moment with your boss.", effects:{happy:-6}, tone:'neg'},
       {text:"You stayed late and burned out a little.", effects:{energy:-10, health:-4}, tone:'neg'},
       {text:"A coworker covered for you on a rough day.", effects:{happy:4}, tone:'pos'},
-    ],
-    hustle:[
-      {text:"A side gig paid off better than expected.", effects:{money:15}, tone:'pos'},
-      {text:"A client flaked and you wasted the week.", effects:{happy:-4}, tone:'neg'},
-      {text:"You're stretched thin juggling it all.", effects:{energy:-8}, tone:'neg'},
     ],
     jobhunt:[
       {text:"You landed an interview!", effects:{happy:6}, tone:'pos'},
@@ -1624,17 +1790,17 @@
 
   const SCHOOL_ACTIVITIES = [
     { id:'school', category:'School', name:'Attend School', cost:50,
-      effects:{ skill:3, energy:-6 },
+      effects:{ skill:3, energy:-6 }, gpaEffect:2,
       eventChance:0.10, eventPool:'school', mandatory:true },
     { id:'homework', category:'School', name:'Homework / Study', cost:20,
-      effects:{ skill:4, energy:-5, happy:-1 },
+      effects:{ skill:4, energy:-5, happy:-1 }, gpaEffect:4,
       eventChance:0.08, eventPool:'homework' },
     { id:'tutoring', category:'School', name:'Private Tutoring', cost:15,
-      effects:{ skill:6, energy:-3 },
+      effects:{ skill:6, energy:-3 }, gpaEffect:5,
       eventChance:0.05, eventPool:'tutoring', wealthGate:['middle','wealthy'] },
 
     { id:'play', category:'Free Time', name:'Play / Hang Out with Friends', cost:25,
-      effects:{ happy:8, rel:6, energy:-5 },
+      effects:{ happy:8, rel:6, energy:-5 }, gpaEffect:-1,
       eventChance:0.12, eventPool:'play' },
     { id:'sports', category:'Free Time', name:'Sports / Team Practice', cost:25,
       effects:{ health:7, happy:4, energy:-8 },
@@ -1654,9 +1820,19 @@
       eventChance:0.02, eventPool:'rest_school' },
 
     { id:'parttime', category:'Work', name:'Part-Time Job', cost:30,
-      effects:{ money:12, energy:-8, happy:-2 },
+      effects:{ money:12, energy:-8, happy:-2 }, gpaEffect:-1,
       eventChance:0.12, eventPool:'parttime', minAge:14 },
   ];
+
+  // GPA is stored 0-100 internally (same clamp/effect machinery as every
+  // other stat) and only ever displayed divided by 25, giving the familiar
+  // 0.0-4.0 scale. High school years (14+) weight academic activities'
+  // effect on GPA much more heavily than elementary/middle years, since
+  // those are meant to be flavor — only the high school record really counts.
+  const GPA_HIGH_SCHOOL_START_AGE = 14;
+  function gpaWeightForAge(age){
+    return age >= GPA_HIGH_SCHOOL_START_AGE ? 1.0 : 0.25;
+  }
 
   const SCHOOL_EVENT_POOLS = {
     school:[
@@ -1706,6 +1882,337 @@
     {text:"Something at home was stressful this month.", effects:{happy:-4, rel:-2}, chance:0.04, tone:'neg'},
   ];
 
+  // ---------------- College: tiers, majors, activities, events ----------------
+
+  // Tiers gate by GPA + Smarts + Money. Higher tiers cost more per term but
+  // give a bigger prestige bonus to job access/salary later.
+  const COLLEGE_TIERS = [
+    { id:'community', name:'Community College', minGpa:1.5, minSkill:0, minMoney:-9999,
+      tuitionPerTerm:8, prestige:1,
+      detail:'Open admission, low cost. A practical, no-frills path forward.' },
+    { id:'state', name:'State College', minGpa:2.3, minSkill:30, minMoney:-9999,
+      tuitionPerTerm:18, prestige:2,
+      detail:'Solid, well-regarded, and within reach for most students who kept their grades up.' },
+    { id:'competitive', name:'Competitive University', minGpa:3.2, minSkill:55, minMoney:0,
+      tuitionPerTerm:32, prestige:3,
+      detail:'Selective admission. Strong GPA and a financial cushion both matter here.' },
+    { id:'elite', name:'Elite University', minGpa:3.7, minSkill:75, minMoney:50,
+      tuitionPerTerm:55, prestige:4,
+      detail:'Highly selective. Near-perfect grades and real financial backing expected.' },
+  ];
+
+  function eligibleCollegeTiers(){
+    const gpa = state.stats.gpa / 25;
+    return COLLEGE_TIERS.filter(t =>
+      gpa >= t.minGpa && state.stats.skill >= t.minSkill && state.stats.money >= t.minMoney
+    );
+  }
+
+  // 6 majors, each with a difficulty (how many "study-equivalent" hours per
+  // month are needed to hold GPA steady — falling short drains it, exceeding
+  // it raises it), a length in years, and the career track it unlocks later.
+  const COLLEGE_MAJORS = [
+    { id:'liberal_arts', name:'Liberal Arts & Communications', difficulty:1, years:4, careerTrack:'general',
+      detail:'Broad, flexible, and the lightest course load — opens general office and communications work.' },
+    { id:'business', name:'Business', difficulty:2, years:4, careerTrack:'business',
+      detail:'A balanced, in-demand path into management, sales, and finance roles.' },
+    { id:'education', name:'Education', difficulty:2, years:4, careerTrack:'education',
+      detail:'Moderately demanding coursework leading into teaching.' },
+    { id:'trade', name:'Skilled Trade Certificate', difficulty:2, years:2, careerTrack:'trade',
+      detail:'Hands-on and faster to finish — electrician, plumbing, and similar trade work.' },
+    { id:'nursing', name:'Nursing', difficulty:4, years:4, careerTrack:'healthcare',
+      detail:'Demanding coursework and clinical hours, but strong job security on the other side.' },
+    { id:'computer_science', name:'Computer Science', difficulty:4, years:4, careerTrack:'tech',
+      detail:'The heaviest course load here — but it opens the highest-ceiling tech careers.' },
+  ];
+
+  // How many study-equivalent hours per month a major's difficulty expects.
+  // Falling short of this drains GPA; meeting/exceeding it holds or raises it.
+  function collegeStudyTarget(major){
+    return major.difficulty * 15; // difficulty 1 -> 15h, difficulty 4 -> 60h
+  }
+
+  const COLLEGE_ACTIVITIES = [
+    { id:'classes', category:'Academics', name:'Attend Classes', cost:40,
+      effects:{ skill:3, energy:-7 }, studyHours:25,
+      eventChance:0.10, eventPool:'classes', mandatory:true },
+    { id:'study', category:'Academics', name:'Study Session', cost:20,
+      effects:{ skill:3, energy:-5, happy:-1 }, studyHours:20,
+      eventChance:0.08, eventPool:'study' },
+    { id:'tutoring_college', category:'Academics', name:'Tutoring Center', cost:15,
+      effects:{ skill:4, energy:-3 }, studyHours:15,
+      eventChance:0.05, eventPool:'tutoring_college' },
+
+    { id:'campus_social', category:'Campus Life', name:'Campus Social Life', cost:25,
+      effects:{ happy:8, rel:7, energy:-6 },
+      eventChance:0.12, eventPool:'campus_social' },
+    { id:'campus_club', category:'Campus Life', name:'Club / Organization', cost:15,
+      effects:{ happy:5, rel:4, skill:1, energy:-3 },
+      eventChance:0.08, eventPool:'campus_club' },
+    { id:'campus_rest', category:'Campus Life', name:'Rest / Sleep In', cost:15,
+      effects:{ energy:13, health:2 },
+      eventChance:0.02, eventPool:'campus_rest' },
+
+    { id:'campus_job', category:'Work', name:'Part-Time / Work-Study Job', cost:25,
+      effects:{ money:14, energy:-7, happy:-1 },
+      eventChance:0.10, eventPool:'campus_job' },
+    { id:'campus_exercise', category:'Health', name:'Exercise', cost:15,
+      effects:{ health:8, energy:-6, happy:3 },
+      eventChance:0.06, eventPool:'campus_exercise' },
+  ];
+
+  const COLLEGE_EVENT_POOLS = {
+    classes:[
+      {text:"A guest lecture really clicked for you.", effects:{skill:3, happy:2}, tone:'pos'},
+      {text:"A pop quiz didn't go the way you hoped.", effects:{happy:-3}, tone:'neg'},
+    ],
+    study:[
+      {text:"A late-night study session finally paid off.", effects:{skill:3}, tone:'pos'},
+      {text:"You burned out cramming.", effects:{energy:-6, happy:-2}, tone:'neg'},
+    ],
+    tutoring_college:[
+      {text:"The tutoring center cleared up a concept you'd been stuck on.", effects:{skill:4}, tone:'pos'},
+    ],
+    campus_social:[
+      {text:"A great night out with new college friends.", effects:{happy:6, rel:4}, tone:'pos'},
+      {text:"A falling-out at a party left things tense.", effects:{rel:-5, happy:-3}, tone:'neg'},
+    ],
+    campus_club:[
+      {text:"You took on a small leadership role in the club.", effects:{rel:3, skill:1}, tone:'pos'},
+    ],
+    campus_rest:[
+      {text:"A full night's sleep for once.", effects:{energy:5}, tone:'pos'},
+    ],
+    campus_job:[
+      {text:"Your supervisor complimented your work.", effects:{happy:3, skill:1}, tone:'pos'},
+      {text:"A long shift on top of classes wore you down.", effects:{energy:-6}, tone:'neg'},
+    ],
+    campus_exercise:[
+      {text:"A solid workout cleared your head.", effects:{happy:3}, tone:'pos'},
+    ],
+  };
+
+  const COLLEGE_RANDOM_EVENTS = [
+    {text:"You caught a cold during finals week.", effects:{health:-6, energy:-4}, chance:0.04, tone:'neg'},
+    {text:"A scholarship or grant came through unexpectedly.", effects:{money:25}, chance:0.03, tone:'pos'},
+    {text:"An unexpected textbook/fee expense hit your budget.", effects:{money:-15}, chance:0.05, tone:'neg'},
+    {text:"A roommate conflict added stress.", effects:{happy:-4, rel:-2}, chance:0.04, tone:'neg'},
+  ];
+
+  function rollCollegeEvent(pool){
+    const list = COLLEGE_EVENT_POOLS[pool];
+    if (!list) return null;
+    return list[Math.floor(Math.random()*list.length)];
+  }
+
+  // ---------------- Jobs & salaries ----------------
+
+  // Salaries are real-world annual figures scaled down (~÷1000) so a
+  // paycheck lands in the same $5-30 range as everything else in the game's
+  // money economy. hoursPerWeek is what "Go to Work" costs from the weekly
+  // budget. payCycle is 'weekly' or 'biweekly' depending on how that kind of
+  // job realistically pays in real life — hourly/service jobs weekly,
+  // salaried/office jobs biweekly.
+  const JOBS = [
+    // No degree required
+    { id:'retail', name:'Retail Associate', careerTrack:null, minDegreeTier:null,
+      hoursPerWeek:30, payCycle:'weekly', payPerCycle:6, tier:1,
+      detail:'Real-world ~$28k/yr. No degree needed, flexible entry point.' },
+    { id:'food_service', name:'Food Service Worker', careerTrack:null, minDegreeTier:null,
+      hoursPerWeek:25, payCycle:'weekly', payPerCycle:5, tier:1,
+      detail:'Real-world ~$26k/yr. No degree needed.' },
+    { id:'warehouse', name:'Warehouse Associate', careerTrack:null, minDegreeTier:null,
+      hoursPerWeek:40, payCycle:'weekly', payPerCycle:8, tier:1,
+      detail:'Real-world ~$36k/yr. Physically demanding, no degree needed.' },
+    { id:'admin_assist', name:'Administrative Assistant', careerTrack:null, minDegreeTier:null,
+      hoursPerWeek:35, payCycle:'biweekly', payPerCycle:16, tier:2,
+      detail:'Real-world ~$40k/yr. No degree required, steady office hours.' },
+
+    // Trade
+    { id:'electrician', name:'Electrician', careerTrack:'trade', minDegreeTier:null,
+      hoursPerWeek:40, payCycle:'weekly', payPerCycle:14, tier:2,
+      detail:'Real-world ~$60k/yr. Requires the Skilled Trade Certificate.' },
+    { id:'plumber', name:'Plumber', careerTrack:'trade', minDegreeTier:null,
+      hoursPerWeek:40, payCycle:'weekly', payPerCycle:13, tier:2,
+      detail:'Real-world ~$59k/yr. Requires the Skilled Trade Certificate.' },
+
+    // General/Business track
+    { id:'office_manager', name:'Office Manager', careerTrack:'general', minDegreeTier:null,
+      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:20, tier:2,
+      detail:'Real-world ~$52k/yr. Liberal Arts/Communications degree helps but isn\'t required.' },
+    { id:'marketing_coord', name:'Marketing Coordinator', careerTrack:'general', minDegreeTier:null,
+      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:18, tier:2,
+      detail:'Real-world ~$48k/yr.' },
+    { id:'sales_rep', name:'Sales Representative', careerTrack:'business', minDegreeTier:null,
+      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:19, tier:2,
+      detail:'Real-world ~$50k/yr. A Business degree helps with advancement.' },
+    { id:'account_manager', name:'Account Manager', careerTrack:'business', minDegreeTier:'state',
+      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:28, tier:3,
+      detail:'Real-world ~$72k/yr. Requires a Business degree.' },
+    { id:'finance_analyst', name:'Financial Analyst', careerTrack:'business', minDegreeTier:'competitive',
+      hoursPerWeek:45, payCycle:'biweekly', payPerCycle:38, tier:4,
+      detail:'Real-world ~$95k/yr. Requires a Business degree from a Competitive University or better.' },
+
+    // Education
+    { id:'teacher', name:'Teacher', careerTrack:'education', minDegreeTier:null,
+      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:23, tier:3,
+      detail:'Real-world ~$58k/yr. Requires an Education degree.' },
+    { id:'principal', name:'School Principal', careerTrack:'education', minDegreeTier:'competitive',
+      hoursPerWeek:45, payCycle:'biweekly', payPerCycle:39, tier:4,
+      detail:'Real-world ~$98k/yr. Requires an Education degree and real experience.' },
+
+    // Healthcare
+    { id:'nurse', name:'Registered Nurse', careerTrack:'healthcare', minDegreeTier:null,
+      hoursPerWeek:36, payCycle:'biweekly', payPerCycle:32, tier:3,
+      detail:'Real-world ~$81k/yr. Requires a Nursing degree.' },
+    { id:'nurse_practitioner', name:'Nurse Practitioner', careerTrack:'healthcare', minDegreeTier:'competitive',
+      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:48, tier:4,
+      detail:'Real-world ~$125k/yr. Requires a Nursing degree from a Competitive University or better.' },
+
+    // Tech
+    { id:'support_tech', name:'IT Support Technician', careerTrack:'tech', minDegreeTier:null,
+      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:21, tier:2,
+      detail:'Real-world ~$55k/yr. A CS degree helps but isn\'t strictly required.' },
+    { id:'software_engineer', name:'Software Engineer', careerTrack:'tech', minDegreeTier:'state',
+      hoursPerWeek:42, payCycle:'biweekly', payPerCycle:42, tier:4,
+      detail:'Real-world ~$110k/yr. Requires a Computer Science degree.' },
+    { id:'senior_engineer', name:'Senior Software Engineer', careerTrack:'tech', minDegreeTier:'competitive',
+      hoursPerWeek:42, payCycle:'biweekly', payPerCycle:62, tier:5,
+      detail:'Real-world ~$160k/yr. Requires a Computer Science degree from a Competitive University or better, plus experience.' },
+  ];
+
+  const TIER_RANK = { community:1, state:2, competitive:3, elite:4 };
+
+  function jobIsEligible(job){
+    if (!job.minDegreeTier) return true;
+    if (!state.degree) return false;
+    if (job.careerTrack && state.degree.careerTrack !== job.careerTrack) return false;
+    return TIER_RANK[state.degree.tier] >= TIER_RANK[job.minDegreeTier];
+  }
+
+  // Jobs with a careerTrack but no minDegreeTier still prefer a matching
+  // degree (better starting reputation) but don't strictly require one.
+  function jobMatchesDegree(job){
+    return !!(state.degree && job.careerTrack && state.degree.careerTrack === job.careerTrack);
+  }
+
+  function currentJob(){
+    return JOBS.find(j=>j.id===state.heldJob);
+  }
+
+  // Keeps the "Go to Work" activity card's hours and label matched to
+  // whatever job is currently held, since job hours vary realistically
+  // by role instead of being a flat number like the old Office Job was.
+  function syncGoToWorkActivity(){
+    const goToWork = ACTIVITIES.find(a=>a.id==='go_to_work');
+    const job = currentJob();
+    if (job){
+      goToWork.cost = job.hoursPerWeek;
+      goToWork.name = `Go to Work — ${job.name}`;
+    } else {
+      goToWork.cost = 0;
+      goToWork.name = 'Go to Work';
+    }
+  }
+
+  // ---------------- Health: passive decay & chronic conditions ----------------
+
+  // Passive Health decay scales with age — negligible in your 20s-30s,
+  // mild in middle age, more noticeable from 60 on. This only fires for
+  // adult/college turns; school-age kids aren't subject to it.
+  function passiveHealthDecay(age){
+    if (age < 40) return 0.15;
+    if (age < 60) return 0.4;
+    return 0.9;
+  }
+
+  const CHRONIC_CONDITIONS = [
+    { id:'hypertension', name:'High Blood Pressure',
+      effects:{ health:-2, energy:-1 },
+      detail:'Needs ongoing management — Doctor Visits and Exercise help bring it under control.' },
+    { id:'chronic_pain', name:'Chronic Pain',
+      effects:{ health:-1, happy:-2, energy:-2 },
+      detail:'A persistent drain on mood and energy until properly treated.' },
+    { id:'type2_diabetes', name:'Type 2 Diabetes',
+      effects:{ health:-2, money:-3 },
+      detail:'Ongoing care costs add up, and it quietly wears on your health if ignored.' },
+    { id:'anxiety_disorder', name:'Anxiety Disorder',
+      effects:{ happy:-3, energy:-1 },
+      detail:'Manageable with care and support, but corrosive to mood if left unaddressed.' },
+    { id:'insomnia', name:'Insomnia',
+      effects:{ energy:-3, happy:-1 },
+      detail:'Poor sleep compounds over time — rest and consistency help most.' },
+  ];
+
+  function rollNewChronicCondition(){
+    return CHRONIC_CONDITIONS[randInt(0, CHRONIC_CONDITIONS.length-1)];
+  }
+
+  // Tracks consecutive turns Health has spent below a "neglected" threshold.
+  // A single bad week never triggers a condition — it takes sustained
+  // neglect, which is what makes this feel like a consequence of a pattern
+  // rather than bad luck on one random event.
+  const HEALTH_NEGLECT_THRESHOLD = 35;
+  const HEALTH_NEGLECT_TURNS_TO_RISK = 8; // ~2 months of weeks, or 8 college/adult turns
+
+  function updateChronicConditionRisk(eventLines){
+    if (state.stats.health < HEALTH_NEGLECT_THRESHOLD){
+      state.healthNeglectStreak = (state.healthNeglectStreak||0) + 1;
+    } else {
+      state.healthNeglectStreak = 0;
+    }
+
+    if (state.chronicCondition) return; // capped at one active condition at a time
+
+    if (state.healthNeglectStreak >= HEALTH_NEGLECT_TURNS_TO_RISK){
+      // Each turn past the threshold carries a real chance, rather than an
+      // instant trigger right at the streak cutoff.
+      if (Math.random() < 0.12){
+        const condition = rollNewChronicCondition();
+        state.chronicCondition = { id: condition.id, recoveryProgress: 0 };
+        state.healthNeglectStreak = 0;
+        eventLines.push({
+          text:`Months of neglect caught up with you — you've been diagnosed with ${condition.name}.`,
+          tone:'neg',
+          effects:{},
+        });
+      }
+    }
+  }
+
+  // Applies a held condition's recurring effects, and tracks recovery
+  // progress toward fully resolving it. Recovery requires sustained healthy
+  // effort (Doctor Visits / Exercise / good Health turns), not just time.
+  function applyChronicConditionEffects(eventLines, healthyEffortThisTurn){
+    if (!state.chronicCondition) return;
+    const condition = CHRONIC_CONDITIONS.find(c=>c.id===state.chronicCondition.id);
+    if (!condition) { state.chronicCondition = null; return; }
+
+    applyEffects(state.stats, condition.effects);
+
+    if (healthyEffortThisTurn){
+      state.chronicCondition.recoveryProgress += 1;
+    } else {
+      state.chronicCondition.recoveryProgress = Math.max(0, state.chronicCondition.recoveryProgress - 1);
+    }
+
+    const RECOVERY_TURNS_NEEDED = 10;
+    if (state.chronicCondition.recoveryProgress >= RECOVERY_TURNS_NEEDED){
+      eventLines.push({
+        text:`After sustained care, your ${condition.name} has fully resolved.`,
+        tone:'pos',
+        effects:{},
+      });
+      state.chronicCondition = null;
+    } else {
+      eventLines.push({
+        text:`Living with ${condition.name}.`,
+        tone:'neg',
+        effects: condition.effects,
+      });
+    }
+  }
+
   // ---------------- State ----------------
 
   let state = {
@@ -1717,11 +2224,30 @@
     age:0,
     infancyYear: 0,       // 0-5
     selectedInfancyChoice: null,
-    stats:{ health:100, money:50, happy:60, rel:60, energy:100, skill:0 },
+    stats:{ health:100, money:50, happy:60, rel:60, energy:100, skill:0, gpa:75 },
     selected:[],
     openCategories:[],
     journalLog:[],
     activeMenuTab:null,
+    // College
+    collegeTier:null,      // chosen tier object's id, once enrolled
+    collegeMajor:null,     // chosen major object's id, once enrolled
+    collegeMonth:1,        // 1-12 per academic year while in college
+    collegeYear:1,         // which year of the major (1-based)
+    collegeTermFails:0,    // count of failed terms this life (cost tracking)
+    degree:null,           // { tier, major, careerTrack } once graduated
+    // Jobs
+    heldJob:null,           // current job id, or null if unemployed
+    jobWeeksHeld:0,         // how many weeks at the current job (for raises)
+    performance:60,         // 0-100, drifts with work events, affects raise/fire odds
+    reputation:50,          // 0-100, broader career reputation, persists across job changes
+    payCycleCounter:0,      // weeks since last payday, used to time weekly/biweekly pay
+    pendingApplications:[], // [{ jobId, weeksNeeded, weeksProgressed }]
+    pendingOffers:[],       // [{ jobId }] - resolved applications awaiting a decision
+    healthNeglectStreak:0,  // consecutive turns Health has been below the neglect threshold
+    chronicCondition:null,  // { id, recoveryProgress } once diagnosed, capped at 1 active
+    gradSelectedTier:null,
+    gradSelectedMajor:null,
     gameOver:false,
   };
 
@@ -1740,9 +2266,11 @@
     homeBtn:document.getElementById('homeBtn'),
     menuFab:document.getElementById('menuFab'),
     menuBackdrop:document.getElementById('menuBackdrop'),
-    menuOverlay:document.getElementById('menuOverlay'),
-    menuTabs:document.getElementById('menuTabs'),
-    menuBody:document.getElementById('menuBody'),
+    menuIconColumn:document.getElementById('menuIconColumn'),
+    sectionModal:document.getElementById('sectionModal'),
+    sectionModalTitle:document.getElementById('sectionModalTitle'),
+    sectionModalClose:document.getElementById('sectionModalClose'),
+    sectionModalBody:document.getElementById('sectionModalBody'),
     landingScreen:document.getElementById('landingScreen'),
     startNewLifeBtn:document.getElementById('startNewLifeBtn'),
     continueLifeBtn:document.getElementById('continueLifeBtn'),
@@ -1758,6 +2286,15 @@
     youngChoiceList:document.getElementById('youngChoiceList'),
     schoolScreen:document.getElementById('schoolScreen'),
     schoolActivityList:document.getElementById('schoolActivityList'),
+    gradUltimatumScreen:document.getElementById('gradUltimatumScreen'),
+    gpaSummaryCard:document.getElementById('gpaSummaryCard'),
+    collegeTierList:document.getElementById('collegeTierList'),
+    collegeMajorList:document.getElementById('collegeMajorList'),
+    enrollCollegeBtn:document.getElementById('enrollCollegeBtn'),
+    skipCollegeBtn:document.getElementById('skipCollegeBtn'),
+    collegeScreen:document.getElementById('collegeScreen'),
+    collegeActivityList:document.getElementById('collegeActivityList'),
+    collegeRecapBox:document.getElementById('collegeRecapBox'),
     schoolRecapBox:document.getElementById('schoolRecapBox'),
     adultScreen:document.getElementById('adultScreen'),
     ageHeader:document.getElementById('ageHeader'),
@@ -1794,22 +2331,28 @@
   const CATEGORY_ICONS = {
     'Work': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`,
     'Health & Fitness': STAT_ICONS.health,
+    'Health': STAT_ICONS.health,
     'Social': STAT_ICONS.rel,
     'Personal Growth': STAT_ICONS.skill,
     'Life Admin': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
     'School': STAT_ICONS.skill,
+    'Academics': STAT_ICONS.skill,
     'Free Time': STAT_ICONS.happy,
+    'Campus Life': STAT_ICONS.happy,
     'Home': STAT_ICONS.rel,
   };
 
   const CATEGORY_COLOR_VAR = {
     'Work': '--money',
     'Health & Fitness': '--health',
+    'Health': '--health',
     'Social': '--rel',
     'Personal Growth': '--skill',
     'Life Admin': '--ink',
     'School': '--skill',
+    'Academics': '--skill',
     'Free Time': '--happy',
+    'Campus Life': '--happy',
     'Home': '--rel',
   };
 
@@ -1830,11 +2373,13 @@
     els.setupScreen.classList.toggle('hidden', phase !== 'setup');
     els.youngLifeScreen.classList.toggle('hidden', phase !== 'infancy');
     els.schoolScreen.classList.toggle('hidden', phase !== 'school');
+    els.gradUltimatumScreen.classList.toggle('hidden', phase !== 'gradUltimatum');
+    els.collegeScreen.classList.toggle('hidden', phase !== 'college');
     els.adultScreen.classList.toggle('hidden', phase !== 'adult');
     els.gameOverScreen.classList.add('hidden');
-    const showSubmitBar = (phase === 'adult' || phase === 'school' || phase === 'infancy' || phase === 'setup');
+    const showSubmitBar = (phase === 'adult' || phase === 'school' || phase === 'infancy' || phase === 'setup' || phase === 'college');
     els.submitBar.classList.toggle('hidden', !showSubmitBar);
-    els.simTurnBtn.classList.toggle('hidden', phase === 'setup');
+    els.simTurnBtn.classList.toggle('hidden', phase === 'setup' || phase === 'college');
     els.skipToAdultBtn.classList.toggle('hidden', phase !== 'school');
     if (phase === 'setup'){
       els.endWeekBtn.textContent = 'Begin Life';
@@ -1845,12 +2390,14 @@
     } else if (phase === 'school'){
       els.endWeekBtn.textContent = 'End Month';
       els.simTurnBtn.textContent = 'Sim Year';
+    } else if (phase === 'college'){
+      els.endWeekBtn.textContent = 'End Month';
     } else if (phase === 'adult'){
       els.endWeekBtn.textContent = 'End Week';
       els.simTurnBtn.textContent = 'Sim Month';
     }
     // "Continue Life" only makes sense once a life is actually underway
-    const lifeInProgress = ['infancy','school','adult'].includes(phase);
+    const lifeInProgress = ['infancy','school','college','adult'].includes(phase);
     if (lifeInProgress) state.hasLifeInProgress = true;
     els.continueLifeBtn.disabled = !state.hasLifeInProgress;
     els.homeBtn.classList.toggle('hidden', !lifeInProgress);
@@ -1888,6 +2435,7 @@
     if (state.phase === 'setup') beginLife();
     else if (state.phase === 'infancy') endInfancyYear();
     else if (state.phase === 'school') endSchoolMonth();
+    else if (state.phase === 'college') endCollegeMonth();
     else endWeek();
   }
 
@@ -2136,6 +2684,13 @@
     document.getElementById('schoolBarRel').style.width = clamp(state.stats.rel)+'%';
     document.getElementById('schoolBarEnergy').style.width = clamp(state.stats.energy)+'%';
     document.getElementById('schoolBarSkill').style.width = clamp(state.stats.skill)+'%';
+
+    const gpaRow = document.getElementById('gpaBadgeRow');
+    const showGpa = state.age >= GPA_HIGH_SCHOOL_START_AGE;
+    gpaRow.classList.toggle('hidden', !showGpa);
+    if (showGpa){
+      document.getElementById('gpaValue').textContent = (state.stats.gpa / 25).toFixed(2);
+    }
   }
 
   function renderSchoolHeader(){
@@ -2282,6 +2837,7 @@
       state.truancyMisses += 1;
       const missEffects = { skill:-5 };
       applyEffects(state.stats, missEffects);
+      applyGpaEffect(state.stats, -4, state.age);
       eventLines.push({
         text:`You missed school this month. (${state.truancyMisses}/5 misses this year)`,
         tone:'neg',
@@ -2311,6 +2867,7 @@
     state.selected.forEach(id=>{
       const a = SCHOOL_ACTIVITIES.find(x=>x.id===id);
       applyEffects(state.stats, a.effects);
+      applyGpaEffect(state.stats, a.gpaEffect, state.age);
       logLines.push(a.name);
 
       if (Math.random() < a.eventChance){
@@ -2367,8 +2924,12 @@
       return;
     }
 
-    if (state.age >= 18){
-      finishSchool();
+    // The graduation ultimatum fires the moment summer starts in the final
+    // school year (age 17), rather than waiting for the age-18 rollover —
+    // that's what gives the player a real "summer before adulthood" to decide.
+    if (state.age === 17 && isSummerMonth() && monthOfYear() === 11 && !state.gradUltimatumShown){
+      state.gradUltimatumShown = true;
+      showGraduationUltimatum();
       return;
     }
 
@@ -2464,15 +3025,18 @@
     const recapHistory = [];
     let safety = 0; // hard ceiling so a stray bug can't infinite-loop the tab
 
-    while (state.phase === 'school' && state.age < 18 && safety < 300){
+    while (state.phase === 'school' && state.age < 18 && !state.gradUltimatumShown && safety < 300){
       safety += 1;
       state.selected = smartPickSchoolActivities();
       endSchoolMonth();
       recapHistory.push(els.schoolRecapBox.innerHTML);
       if (state.gameOver) break;
+      if (state.gradUltimatumShown) break; // pause for real player decision
     }
 
-    if (state.phase === 'adult' && !state.gameOver){
+    if (state.phase === 'school' && !state.gameOver && !state.gradUltimatumShown){
+      els.schoolRecapBox.innerHTML = `<div class="sim-history">${recapHistory.join('')}</div>`;
+    } else if (state.phase === 'adult' && !state.gameOver){
       els.recapBox.innerHTML = `<div class="sim-history">${recapHistory.join('')}</div>`;
     }
   }
@@ -2515,6 +3079,401 @@
 
   function finishSchool(){
     state.age = 18;
+    state.week = 1;
+    state.selected = [];
+    state.openCategories = [];
+    showPhase('adult');
+    renderAll();
+  }
+
+  // ---------------- Graduation ultimatum (summer before 18) ----------------
+
+  function showGraduationUltimatum(){
+    state.gradSelectedTier = null;
+    state.gradSelectedMajor = null;
+    showPhase('gradUltimatum');
+    renderGraduationUltimatum();
+  }
+
+  function renderGraduationUltimatum(){
+    const gpa = (state.stats.gpa / 25).toFixed(2);
+    els.gpaSummaryCard.innerHTML = `
+      <div class="parents-compact">
+        <div class="pc-row"><span class="pc-label">Final GPA</span><span class="pc-value">${gpa}</span></div>
+        <div class="pc-row"><span class="pc-label">Smarts</span><span class="pc-value">${Math.round(state.stats.skill)}</span></div>
+        <div class="pc-row"><span class="pc-label">Money</span><span class="pc-value">$${Math.round(state.stats.money)}</span></div>
+        <div class="pc-detail">This is what colleges will see when you apply.</div>
+      </div>`;
+
+    const eligible = eligibleCollegeTiers();
+    let tierHtml = '';
+    COLLEGE_TIERS.forEach(t=>{
+      const isEligible = eligible.some(e=>e.id===t.id);
+      const isPicked = state.gradSelectedTier === t.id;
+      tierHtml += `
+        <div class="choice-card ${isPicked?'picked':''} ${!isEligible?'locked':''}" data-tier="${t.id}">
+          <div class="name">${t.name}${!isEligible?' 🔒':''}</div>
+          <div class="desc">${t.detail}</div>
+          <div class="meta-row"><span>Tuition: $${t.tuitionPerTerm}/term</span><span>Min GPA ${t.minGpa.toFixed(1)}</span></div>
+        </div>`;
+    });
+    els.collegeTierList.innerHTML = tierHtml || `<div class="mini-card"><div class="mc-sub">No colleges currently within reach — you can still skip to adult life.</div></div>`;
+
+    els.collegeTierList.querySelectorAll('.choice-card').forEach(card=>{
+      if (card.classList.contains('locked')) return;
+      card.addEventListener('click', ()=>{
+        state.gradSelectedTier = card.dataset.tier;
+        renderGraduationUltimatum();
+      });
+    });
+
+    let majorHtml = '';
+    COLLEGE_MAJORS.forEach(m=>{
+      const isPicked = state.gradSelectedMajor === m.id;
+      majorHtml += `
+        <div class="choice-card ${isPicked?'picked':''}" data-major="${m.id}">
+          <div class="name">${m.name}</div>
+          <div class="desc">${m.detail}</div>
+          <div class="meta-row"><span>${m.years} years</span><span>Difficulty ${'★'.repeat(m.difficulty)}${'☆'.repeat(4-m.difficulty)}</span></div>
+        </div>`;
+    });
+    els.collegeMajorList.innerHTML = majorHtml;
+
+    els.collegeMajorList.querySelectorAll('.choice-card').forEach(card=>{
+      card.addEventListener('click', ()=>{
+        state.gradSelectedMajor = card.dataset.major;
+        renderGraduationUltimatum();
+      });
+    });
+
+    els.enrollCollegeBtn.disabled = !(state.gradSelectedTier && state.gradSelectedMajor);
+  }
+
+  function enrollInCollege(){
+    if (!state.gradSelectedTier || !state.gradSelectedMajor) return;
+    state.collegeTier = state.gradSelectedTier;
+    state.collegeMajor = state.gradSelectedMajor;
+    state.collegeMonth = 1;
+    state.collegeYear = 1;
+    state.collegeTermFails = 0;
+    state.selected = ['classes'];
+    state.openCategories = [];
+    showPhase('college');
+    chargeTuition();
+    renderCollegeAll();
+  }
+
+  function skipCollege(){
+    state.age = 18;
+    state.week = 1;
+    state.selected = [];
+    state.openCategories = [];
+    showPhase('adult');
+    renderAll();
+  }
+
+  // ---------------- College phase (monthly turns) ----------------
+
+  function currentMajor(){
+    return COLLEGE_MAJORS.find(m=>m.id===state.collegeMajor);
+  }
+  function currentTier(){
+    return COLLEGE_TIERS.find(t=>t.id===state.collegeTier);
+  }
+
+  function collegeSpentSoFar(){
+    return state.selected.reduce((sum,id)=>{
+      const a = COLLEGE_ACTIVITIES.find(x=>x.id===id);
+      return sum + (a ? a.cost : 0);
+    },0);
+  }
+
+  function collegeStudyHoursSoFar(){
+    return state.selected.reduce((sum,id)=>{
+      const a = COLLEGE_ACTIVITIES.find(x=>x.id===id);
+      return sum + (a && a.studyHours ? a.studyHours : 0);
+    },0);
+  }
+
+  function chargeTuition(){
+    const tier = currentTier();
+    if (!tier) return;
+    state.stats.money -= tier.tuitionPerTerm;
+  }
+
+  // Attend Classes auto-stays checked every month, same pattern as School in
+  // the K-12 phase — it claims its slot first, everything else carries over
+  // and fills in around whatever budget remains.
+  function carryOverCollegeSelections(){
+    const kept = [];
+    let runningTotal = 0;
+
+    const classesActivity = COLLEGE_ACTIVITIES.find(a=>a.id==='classes');
+    kept.push('classes');
+    runningTotal += classesActivity.cost;
+
+    state.selected.forEach(id=>{
+      if (id === 'classes') return;
+      const a = COLLEGE_ACTIVITIES.find(x=>x.id===id);
+      if (!a) return;
+      if (runningTotal + a.cost <= BUDGET_MAX){
+        kept.push(id);
+        runningTotal += a.cost;
+      }
+    });
+
+    state.selected = kept;
+  }
+
+  function renderCollegeHeader(){
+    document.getElementById('collegeAgeHeader').textContent = `Age ${state.age}`;
+    document.getElementById('collegeMonthHeader').textContent = `${currentMajor()?.name || 'College'} · Year ${state.collegeYear}, Month ${state.collegeMonth}`;
+  }
+
+  function renderCollegeStats(){
+    document.getElementById('collegeStatHealth').textContent = Math.round(state.stats.health);
+    document.getElementById('collegeStatHappy').textContent = Math.round(state.stats.happy);
+    document.getElementById('collegeStatRel').textContent = Math.round(state.stats.rel);
+    document.getElementById('collegeStatEnergy').textContent = Math.round(state.stats.energy);
+    document.getElementById('collegeBarHealth').style.width = clamp(state.stats.health)+'%';
+    document.getElementById('collegeBarHappy').style.width = clamp(state.stats.happy)+'%';
+    document.getElementById('collegeBarRel').style.width = clamp(state.stats.rel)+'%';
+    document.getElementById('collegeBarEnergy').style.width = clamp(state.stats.energy)+'%';
+
+    const moneyEl = document.getElementById('collegeStatMoney');
+    moneyEl.textContent = Math.round(state.stats.money);
+    moneyEl.classList.toggle('negative', state.stats.money < 0);
+    const moneyPct = clamp(((state.stats.money + 100) / 300) * 100);
+    document.getElementById('collegeBarMoney').style.width = moneyPct + '%';
+
+    document.getElementById('collegeGpaValue').textContent = (state.stats.gpa / 25).toFixed(2);
+  }
+
+  function renderCollegeStudyBar(){
+    const major = currentMajor();
+    const target = major ? collegeStudyTarget(major) : 0;
+    const studied = collegeStudyHoursSoFar();
+    document.getElementById('collegeStudyLabel').textContent = `Study hours: ${studied} / ${target} target`;
+    const pct = target ? Math.min(100, (studied/target)*100) : 0;
+    const fill = document.getElementById('collegeStudyFill');
+    fill.style.width = pct + '%';
+    fill.classList.toggle('over', studied >= target);
+  }
+
+  function renderCollegeBudget(){
+    const spent = collegeSpentSoFar();
+    document.getElementById('collegeBudgetLabel').textContent = `${spent} / ${BUDGET_MAX} hrs used`;
+    const pct = Math.min(100, (spent/BUDGET_MAX)*100);
+    document.getElementById('collegeBudgetFill').style.width = pct + '%';
+    document.getElementById('collegeBudgetFill').classList.toggle('over', spent > BUDGET_MAX);
+    els.endWeekBtn.disabled = spent === 0 || spent > BUDGET_MAX;
+    els.endWeekBtn.textContent = spent > BUDGET_MAX ? 'Over budget — remove something' : 'End Month';
+  }
+
+  function renderCollegeActivities(){
+    const spent = collegeSpentSoFar();
+    const categories = [...new Set(COLLEGE_ACTIVITIES.map(a=>a.category))];
+
+    if (!state.openCategories.length) state.openCategories = [categories[0]];
+    const activeCat = state.openCategories[0];
+
+    let railHtml = '';
+    categories.forEach(cat=>{
+      const colorVar = CATEGORY_COLOR_VAR[cat] || '--ink';
+      const isActive = cat === activeCat;
+      const countSelected = COLLEGE_ACTIVITIES.filter(a=>a.category===cat).reduce((sum,a)=>sum+countOf(a.id),0);
+      railHtml += `
+        <div class="cat-rail-sq ${isActive?'active':''}" data-cat="${cat}" style="--cat-color:var(${colorVar})">
+          ${countSelected ? `<div class="ccount">${countSelected}</div>` : ''}
+          <div class="cicon">${CATEGORY_ICONS[cat] || ''}</div>
+          <div class="cname">${cat}</div>
+        </div>`;
+    });
+
+    const activeColorVar = CATEGORY_COLOR_VAR[activeCat] || '--ink';
+    let paneHtml = `<div class="cat-pane-title" style="color:var(${activeColorVar})">${activeCat}</div>`;
+    COLLEGE_ACTIVITIES.filter(a=>a.category===activeCat).forEach(a=>{
+      const n = countOf(a.id);
+      const isSelected = n > 0;
+      const atRepeatCap = n >= MAX_REPEATS;
+      const wouldExceed = !atRepeatCap && (spent + a.cost) > BUDGET_MAX;
+      const disabledAdd = wouldExceed || atRepeatCap;
+
+      paneHtml += `
+        <div class="activity cat-tinted ${isSelected?'selected':''} ${disabledAdd?'disabled':''}" data-id="${a.id}" style="--cat-color:var(${activeColorVar})">
+          <div class="check">${isSelected?'✓':''}</div>
+          <div class="info">
+            <div class="name">${a.name}${a.mandatory?' (required)':''}</div>
+            <div class="effects">${effectsString(a.effects)}${a.studyHours?` · ${a.studyHours} study hrs`:''}</div>
+          </div>
+          ${n>0 ? `<button class="repeat-minus" data-id="${a.id}">−</button><span class="repeat-count">×${n}</span>` : ''}
+          <div class="cost">${a.cost}h</div>
+        </div>`;
+    });
+
+    els.collegeActivityList.innerHTML = `
+      <div class="rail-area">
+        <div class="cat-rail">${railHtml}</div>
+        <div class="cat-pane">${paneHtml}</div>
+      </div>`;
+
+    els.collegeActivityList.querySelectorAll('.cat-rail-sq').forEach(sq=>{
+      sq.addEventListener('click', ()=>{
+        state.openCategories = [sq.dataset.cat];
+        renderCollegeActivities();
+      });
+    });
+
+    els.collegeActivityList.querySelectorAll('.activity').forEach(el=>{
+      el.addEventListener('click', (e)=>{
+        if (e.target.closest('.repeat-minus')) return;
+        if (el.classList.contains('disabled')) return;
+        const id = el.dataset.id;
+        state.selected.push(id);
+        renderCollegeActivities();
+        renderCollegeBudget();
+        renderCollegeStudyBar();
+      });
+    });
+
+    els.collegeActivityList.querySelectorAll('.repeat-minus').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        const id = btn.dataset.id;
+        const idx = state.selected.indexOf(id);
+        if (idx >= 0) state.selected.splice(idx,1);
+        renderCollegeActivities();
+        renderCollegeBudget();
+        renderCollegeStudyBar();
+      });
+    });
+  }
+
+  function renderCollegeAll(){
+    renderCollegeHeader();
+    renderCollegeStats();
+    renderCollegeStudyBar();
+    renderCollegeBudget();
+    renderCollegeActivities();
+  }
+
+  function rollCollegeRandomEvents(eventLines){
+    COLLEGE_RANDOM_EVENTS.forEach(ev=>{
+      if (Math.random() < ev.chance){
+        applyEffects(state.stats, ev.effects);
+        eventLines.push({text:ev.text, tone:ev.tone, effects:ev.effects});
+      }
+    });
+  }
+
+  function endCollegeMonth(){
+    const spent = collegeSpentSoFar();
+    if (spent === 0 || spent > BUDGET_MAX) return;
+
+    const major = currentMajor();
+    let logLines = [];
+    let eventLines = [];
+
+    state.selected.forEach(id=>{
+      const a = COLLEGE_ACTIVITIES.find(x=>x.id===id);
+      applyEffects(state.stats, a.effects);
+      logLines.push(a.name);
+      if (Math.random() < a.eventChance){
+        const ev = rollCollegeEvent(a.eventPool);
+        if (ev){
+          applyEffects(state.stats, ev.effects);
+          eventLines.push({text:ev.text, tone:ev.tone, effects:ev.effects});
+        }
+      }
+    });
+
+    // GPA moves toward the major's study target: meeting/exceeding it raises
+    // GPA a little, falling short drains it — proportional to the shortfall,
+    // so harder majors (higher target) are genuinely harder to keep up with.
+    const studied = collegeStudyHoursSoFar();
+    const target = collegeStudyTarget(major);
+    const gpaDelta = target ? ((studied - target) / target) * 8 : 0;
+    state.stats.gpa = clamp(state.stats.gpa + gpaDelta);
+    if (gpaDelta <= -3){
+      eventLines.push({text:`You fell behind in your coursework this month.`, tone:'neg', effects:{gpa: Math.round(gpaDelta)}});
+    } else if (gpaDelta >= 3){
+      eventLines.push({text:`You're staying on top of your coursework.`, tone:'pos', effects:{gpa: Math.round(gpaDelta)}});
+    }
+
+    state.stats.energy = clamp(state.stats.energy - 2);
+
+    // Passive Health decay, scaled up from the weekly rate since college
+    // turns are monthly (~4.3x a week).
+    const collegeHealthDecay = passiveHealthDecay(state.age) * 4.3;
+    state.stats.health = clamp(state.stats.health - collegeHealthDecay);
+
+    rollCollegeRandomEvents(eventLines);
+
+    const healthyEffortThisMonth = state.selected.includes('campus_exercise');
+    updateChronicConditionRisk(eventLines);
+    applyChronicConditionEffects(eventLines, healthyEffortThisMonth);
+
+    const nameCounts = {};
+    logLines.forEach(name => nameCounts[name] = (nameCounts[name]||0) + 1);
+    const summaryParts = Object.entries(nameCounts).map(([name,n]) => n>1 ? `${name} ×${n}` : name);
+    const summary = summaryParts.length ? `This month: ${summaryParts.join(', ')}.` : `A quiet month.`;
+    addJournalEntry(summary, eventLines);
+
+    let html = `<div class="recap">${summary}`;
+    if (eventLines.length){
+      html += `<div class="events">`;
+      eventLines.forEach(e=>{
+        html += `<div class="${e.tone}">${e.tone==='pos'?'+':'–'} ${e.text}</div>${eventEffectsRow(e.effects)}`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`;
+    els.collegeRecapBox.innerHTML = html;
+
+    carryOverCollegeSelections();
+    state.collegeMonth += 1;
+
+    if (state.stats.health <= 0){
+      triggerGameOver();
+      return;
+    }
+
+    // Term (year) boundary — every 12 months
+    if (state.collegeMonth > 12){
+      state.collegeMonth = 1;
+      const passed = (state.stats.gpa / 25) >= 1.5; // below a D average fails the term
+      if (!passed){
+        state.collegeTermFails += 1;
+        const tier = currentTier();
+        const retakeFee = tier ? tier.tuitionPerTerm : 10;
+        state.stats.money -= retakeFee;
+        els.collegeRecapBox.innerHTML += `<div class="recap">You didn't pass this year — you'll need to retake it. A retake fee of $${retakeFee} was charged, but it doesn't add extra time.</div>`;
+        state.age += 1;
+      } else {
+        state.age += 1;
+        state.collegeYear += 1;
+        chargeTuition();
+        if (state.collegeYear > major.years){
+          finishCollege();
+          return;
+        }
+      }
+    }
+
+    renderCollegeAll();
+  }
+
+  function finishCollege(){
+    const tier = currentTier();
+    const major = currentMajor();
+    state.degree = {
+      tier: tier.id,
+      tierName: tier.name,
+      major: major.id,
+      majorName: major.name,
+      careerTrack: major.careerTrack,
+      prestige: tier.prestige,
+    };
     state.week = 1;
     state.selected = [];
     state.openCategories = [];
@@ -2629,9 +3588,13 @@
     ACTIVITIES.filter(a=>a.category===activeCat).forEach(a=>{
       const n = countOf(a.id);
       const isSelected = n > 0;
-      const atRepeatCap = n >= MAX_REPEATS;
-      const wouldExceed = !atRepeatCap && (spent + a.cost) > BUDGET_MAX;
-      const disabledAdd = wouldExceed || atRepeatCap;
+      const isGoToWork = a.id === 'go_to_work';
+      const noJobHeld = isGoToWork && !state.heldJob;
+      const repeatCap = isGoToWork ? 1 : MAX_REPEATS; // one work-week per week, not stackable
+      const atRepeatCap = n >= repeatCap;
+      const wouldExceed = !atRepeatCap && !noJobHeld && (spent + a.cost) > BUDGET_MAX;
+      const disabledAdd = wouldExceed || atRepeatCap || noJobHeld;
+      const lockTag = noJobHeld ? '<span class="lock-tag">No job held</span>' : '';
       paneHtml += `
         <div class="activity cat-tinted ${isSelected?'selected':''} ${disabledAdd?'disabled':''}" data-id="${a.id}" style="--cat-color:var(${activeColorVar})">
           <div class="check">${isSelected?'✓':''}</div>
@@ -2640,7 +3603,7 @@
             <div class="effects">${effectsString(a.effects)}${a.isAdmin?' · prevents penalties':''}</div>
           </div>
           ${n>0 ? `<button class="repeat-minus" data-id="${a.id}">−</button><span class="repeat-count">×${n}</span>` : ''}
-          <div class="cost">${a.cost}h</div>
+          ${lockTag || `<div class="cost">${a.cost}h</div>`}
         </div>`;
     });
 
@@ -2702,6 +3665,14 @@
     });
   }
 
+  // GPA effects are separate from the normal effects object since they need
+  // age-based weighting (high school years count far more than earlier ones).
+  function applyGpaEffect(stats, gpaEffect, age){
+    if (!gpaEffect) return;
+    const weighted = gpaEffect * gpaWeightForAge(age);
+    stats.gpa = clamp(stats.gpa + weighted);
+  }
+
   function endWeek(){
     const spent = spentSoFar();
     if (spent === 0 || spent > BUDGET_MAX) return;
@@ -2720,9 +3691,54 @@
         if (ev){
           applyEffects(state.stats, ev.effects);
           eventLines.push({text:ev.text, tone:ev.tone, effects:ev.effects});
+          if (id === 'go_to_work'){
+            // Work events nudge performance a little — good weeks build it,
+            // rough weeks erode it, separate from reputation which moves slower.
+            state.performance = clamp(state.performance + (ev.tone === 'pos' ? 3 : -4));
+          }
         }
       }
     });
+
+    // Job applications progress this week only if Job Hunting was worked
+    advanceJobApplications(eventLines);
+
+    // Job pay cycle — only ticks if "Go to Work" was actually worked this
+    // week, and only pays out on the held job's real cadence (weekly jobs
+    // pay every week; biweekly jobs accumulate one extra week before paying).
+    const workedThisWeek = state.selected.includes('go_to_work');
+    const job = currentJob();
+    if (workedThisWeek && job){
+      state.jobWeeksHeld += 1;
+      state.payCycleCounter += 1;
+      const cycleLength = job.payCycle === 'biweekly' ? 2 : 1;
+      if (state.payCycleCounter >= cycleLength){
+        state.payCycleCounter = 0;
+        const raiseMultiplier = 1 + Math.floor(state.jobWeeksHeld / 52) * 0.04; // small annual raise feel
+        const performanceMultiplier = 0.85 + (state.performance / 100) * 0.3; // 0.85x-1.15x based on performance
+        const pay = Math.round(job.payPerCycle * raiseMultiplier * performanceMultiplier);
+        state.stats.money += pay;
+        eventLines.push({
+          text:`Payday — ${job.name} (${job.payCycle}).`,
+          tone:'pos',
+          effects:{money:pay},
+        });
+        // Reputation drifts slowly toward performance over time
+        state.reputation = clamp(state.reputation + (state.performance > state.reputation ? 1 : -1));
+      }
+      // Small chance of a firing risk if performance has been bad for a while
+      if (state.performance < 25 && Math.random() < 0.08){
+        eventLines.push({text:`You were let go from ${job.name} — performance had slipped too far.`, tone:'neg', effects:{}});
+        state.heldJob = null;
+        state.jobWeeksHeld = 0;
+        state.payCycleCounter = 0;
+        syncGoToWorkActivity();
+      }
+    } else if (workedThisWeek && !job){
+      // Selected Go to Work with no job held (shouldn't normally happen since
+      // the activity is disabled in that state, but guard anyway).
+      state.selected = state.selected.filter(id=>id!=='go_to_work');
+    }
 
     // Admin activities prevent a "neglect penalty" — small money/happy decay if NOT handled
     const handledBills = state.selected.includes('bills');
@@ -2740,6 +3756,11 @@
     state.stats.energy = clamp(state.stats.energy - 3);
     state.stats.money -= 3; // baseline cost of living
 
+    // Passive Health decay scales with age — small reminder that health
+    // needs upkeep, especially later in life, not just a reactive number.
+    const healthDecay = passiveHealthDecay(state.age);
+    state.stats.health = clamp(state.stats.health - healthDecay);
+
     // Pure random events, independent of choices
     RANDOM_EVENTS.forEach(ev=>{
       if (Math.random() < ev.chance){
@@ -2747,6 +3768,13 @@
         eventLines.push({text:ev.text, tone:ev.tone, effects:ev.effects});
       }
     });
+
+    // Chronic condition risk + ongoing effects/recovery. "Healthy effort"
+    // this week means the player actually invested in their health, not
+    // just coasted — that's what recovery progress is measured against.
+    const healthyEffortThisWeek = state.selected.includes('exercise') || state.selected.includes('doctor');
+    updateChronicConditionRisk(eventLines);
+    applyChronicConditionEffects(eventLines, healthyEffortThisWeek);
 
     // Build recap (collapse repeats like "Exercise, Exercise" into "Exercise ×2")
     const nameCounts = {};
@@ -2801,7 +3829,19 @@
   function carryOverAdultSelections(){
     const kept = [];
     let runningTotal = 0;
+
+    // If a job is held, Go to Work claims its slot first — same pattern as
+    // School/Classes in earlier life stages, so holding a job means showing
+    // up by default unless the player explicitly skips it that week.
+    const job = currentJob();
+    if (job){
+      const goToWork = ACTIVITIES.find(a=>a.id==='go_to_work');
+      kept.push('go_to_work');
+      runningTotal += goToWork.cost;
+    }
+
     state.selected.forEach(id=>{
+      if (id === 'go_to_work') return; // already handled above
       const a = ACTIVITIES.find(x=>x.id===id);
       if (!a) return;
       if (runningTotal + a.cost <= BUDGET_MAX){
@@ -2834,13 +3874,17 @@
     closeMenu();
     els.youngLifeScreen.classList.add('hidden');
     els.schoolScreen.classList.add('hidden');
+    els.gradUltimatumScreen.classList.add('hidden');
+    els.collegeScreen.classList.add('hidden');
     els.adultScreen.classList.add('hidden');
 
     const timeLine = state.phase === 'adult'
       ? `in week ${state.week} of your adult life`
-      : state.phase === 'school'
-        ? `partway through grade school`
-        : `in early childhood`;
+      : state.phase === 'college'
+        ? `partway through college`
+        : state.phase === 'school'
+          ? `partway through grade school`
+          : `in early childhood`;
 
     els.gameOverTitle.textContent = 'Game Over';
     els.gameOverSub.textContent = `Your health gave out at age ${state.age}, ${timeLine}.`;
@@ -2870,19 +3914,28 @@
         rel: clamp(60 + parents.startRel),
         energy:100,
         skill:0,
+        gpa:75,
       },
       selected:[], openCategories:[], journalLog:[], gameOver:false,
-      truancyMisses:0, suspended:false,
+      truancyMisses:0, suspended:false, gradUltimatumShown:false,
+      collegeTier:null, collegeMajor:null, collegeMonth:1, collegeYear:1, collegeTermFails:0, degree:null,
+      gradSelectedTier:null, gradSelectedMajor:null,
+      heldJob:null, jobWeeksHeld:0, performance:60, reputation:50, payCycleCounter:0,
+      pendingApplications:[], pendingOffers:[],
+      healthNeglectStreak:0, chronicCondition:null,
     };
 
     els.submitBar.classList.add('hidden');
     els.youngLifeScreen.classList.add('hidden');
     els.schoolScreen.classList.add('hidden');
+    els.gradUltimatumScreen.classList.add('hidden');
+    els.collegeScreen.classList.add('hidden');
     els.adultScreen.classList.add('hidden');
     els.gameOverScreen.classList.add('hidden');
     els.recapBox.innerHTML = '';
     els.youngRecapBox.innerHTML = '';
     els.schoolRecapBox.innerHTML = '';
+    els.collegeRecapBox.innerHTML = '';
 
     showPhase('landing');
   }
@@ -2904,19 +3957,28 @@
         rel: clamp(60 + parents.startRel),
         energy:100,
         skill:0,
+        gpa:75,
       },
       selected:[], openCategories:[], journalLog:[], gameOver:false,
-      truancyMisses:0, suspended:false,
+      truancyMisses:0, suspended:false, gradUltimatumShown:false,
+      collegeTier:null, collegeMajor:null, collegeMonth:1, collegeYear:1, collegeTermFails:0, degree:null,
+      gradSelectedTier:null, gradSelectedMajor:null,
+      heldJob:null, jobWeeksHeld:0, performance:60, reputation:50, payCycleCounter:0,
+      pendingApplications:[], pendingOffers:[],
+      healthNeglectStreak:0, chronicCondition:null,
     };
 
     els.submitBar.classList.add('hidden');
     els.youngLifeScreen.classList.add('hidden');
     els.schoolScreen.classList.add('hidden');
+    els.gradUltimatumScreen.classList.add('hidden');
+    els.collegeScreen.classList.add('hidden');
     els.adultScreen.classList.add('hidden');
     els.gameOverScreen.classList.add('hidden');
     els.recapBox.innerHTML = '';
     els.youngRecapBox.innerHTML = '';
     els.schoolRecapBox.innerHTML = '';
+    els.collegeRecapBox.innerHTML = '';
 
     showPhase('setup');
     renderSetupScreen();
@@ -2927,14 +3989,283 @@
   const MENU_ICONS = {
     assets: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9.5 20v-6h5v6"/></svg>`,
     journal: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2V4z"/><path d="M5 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2"/><path d="M9 9h6M9 13h4"/></svg>`,
+    job: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`,
   };
 
   const MENU_TABS = [
     { id:'finances', name:'Finances', icon: STAT_ICONS.money, build: renderFinancesPane },
+    { id:'job', name:'Job', icon: MENU_ICONS.job, build: renderJobPane },
+    { id:'health', name:'Health', icon: STAT_ICONS.health, build: renderHealthPane },
     { id:'assets', name:'Assets', icon: MENU_ICONS.assets, build: renderAssetsPane },
     { id:'family', name:'Family', icon: STAT_ICONS.rel, build: renderFamilyPane },
     { id:'journal', name:'Journal Log', icon: MENU_ICONS.journal, build: renderJournalPane },
   ];
+
+  function renderHealthPane(){
+    let html = `<div class="menu-section-label">Current Health</div>
+      <div class="mini-card">
+        <div class="mc-label">Health</div>
+        <div class="mc-value">${Math.round(state.stats.health)}/100</div>
+        <div class="mc-sub">${passiveHealthDecay(state.age).toFixed(2)}/turn passive decay at age ${state.age}</div>
+      </div>`;
+
+    if (state.chronicCondition){
+      const condition = CHRONIC_CONDITIONS.find(c=>c.id===state.chronicCondition.id);
+      const progress = state.chronicCondition.recoveryProgress;
+      const pct = Math.min(100, Math.round((progress/10)*100));
+      html += `<div class="menu-section-label">Chronic Condition</div>
+        <div class="mini-card">
+          <div class="mc-label">${condition.name}</div>
+          <div class="mc-sub">${condition.detail}</div>
+          <div class="budget-track" style="margin-top:8px;"><div class="budget-fill" style="width:${pct}%"></div></div>
+          <div class="mc-sub" style="margin-top:4px;">Recovery progress: ${pct}% — keep up Exercise/Doctor Visits to fully resolve it.</div>
+        </div>`;
+    } else {
+      html += `<div class="menu-section-label">Chronic Condition</div>
+        <div class="mini-card"><div class="mc-sub">None currently. Sustained neglect of your health can lead to one — Exercise and Doctor Visits help prevent and treat them.</div></div>`;
+    }
+
+    return html;
+  }
+
+  function renderJobPane(){
+    const job = currentJob();
+    let html = '';
+
+    // Pending offers first — these need a decision and should be the most
+    // visible thing in this pane when they exist.
+    if (state.pendingOffers.length){
+      html += `<div class="menu-section-label">Offers Awaiting Your Decision</div>`;
+      state.pendingOffers.forEach(offer=>{
+        const offerJob = JOBS.find(j=>j.id===offer.jobId);
+        if (!offerJob) return;
+        html += `
+          <div class="mini-card" data-offer="${offerJob.id}">
+            <div class="mc-label">${offerJob.name}</div>
+            <div class="mc-value">$${offerJob.payPerCycle}/${offerJob.payCycle}</div>
+            <div class="mc-sub">${offerJob.hoursPerWeek}h/week</div>
+            <div style="display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;">
+              <button class="landing-btn primary small offer-accept" data-offer-job="${offerJob.id}" style="margin:0;">Accept</button>
+              ${job ? `<button class="landing-btn secondary small offer-leverage" data-offer-job="${offerJob.id}" style="margin:0;">Leverage at ${job.name}</button>` : ''}
+              <button class="landing-btn secondary small offer-decline" data-offer-job="${offerJob.id}" style="margin:0;">Decline</button>
+            </div>
+          </div>`;
+      });
+    }
+
+    if (job){
+      html += `
+        <div class="menu-section-label">Current Job</div>
+        <div class="mini-card">
+          <div class="mc-label">${job.name}</div>
+          <div class="mc-value">$${job.payPerCycle}/${job.payCycle}</div>
+          <div class="mc-sub">${job.hoursPerWeek}h/week · ${state.jobWeeksHeld} week${state.jobWeeksHeld===1?'':'s'} held</div>
+        </div>
+        <div class="mini-card" style="padding:4px 14px;">
+          <div class="menu-row-line"><div><div class="rl-name">Performance</div></div><div class="rl-amt" style="color:${state.performance>=50?'var(--money)':'var(--health)'}">${Math.round(state.performance)}/100</div></div>
+          <div class="menu-row-line"><div><div class="rl-name">Reputation</div></div><div class="rl-amt" style="color:${state.reputation>=50?'var(--money)':'var(--health)'}">${Math.round(state.reputation)}/100</div></div>
+        </div>
+        <button class="landing-btn secondary small" id="quitJobBtn">Quit This Job</button>`;
+    } else {
+      html += `<div class="menu-section-label">Current Job</div>
+        <div class="mini-card"><div class="mc-sub">You're not currently employed. Browse the job board below.</div></div>`;
+    }
+
+    if (state.pendingApplications.length){
+      html += `<div class="menu-section-label">Pending Applications</div>`;
+      state.pendingApplications.forEach(app=>{
+        const appJob = JOBS.find(j=>j.id===app.jobId);
+        if (!appJob) return;
+        const weeksLeft = Math.max(1, app.weeksNeeded - app.weeksProgressed);
+        html += `
+          <div class="mini-card" style="padding:10px 14px;">
+            <div class="menu-row-line">
+              <div><div class="rl-name">${appJob.name}</div><div class="rl-sub">~${weeksLeft} week${weeksLeft===1?'':'s'} left · needs Job Hunting hours to progress</div></div>
+              <button class="landing-btn secondary small withdraw-app" data-withdraw-job="${appJob.id}" style="margin:0;">Withdraw</button>
+            </div>
+          </div>`;
+      });
+    }
+
+    html += `<div class="menu-section-label">Job Board</div>`;
+    JOBS.forEach(j=>{
+      const eligible = jobIsEligible(j);
+      const matchesDegree = jobMatchesDegree(j);
+      const isCurrent = state.heldJob === j.id;
+      const isApplied = state.pendingApplications.some(a=>a.jobId===j.id);
+      const hasOffer = state.pendingOffers.some(o=>o.jobId===j.id);
+      const disabled = !eligible || isCurrent || isApplied || hasOffer;
+      let statusTag = '';
+      if (isCurrent) statusTag = '<span class="lock-tag">Current job</span>';
+      else if (hasOffer) statusTag = '<span class="lock-tag">Offer pending</span>';
+      else if (isApplied) statusTag = '<span class="lock-tag">Applied</span>';
+
+      html += `
+        <div class="choice-card ${isCurrent?'picked':''} ${disabled?'locked':''}" data-job="${disabled?'':j.id}" style="margin-bottom:9px;">
+          <div class="name">${j.name}${!eligible?' 🔒':''}${matchesDegree?' ✓':''}</div>
+          <div class="desc">${j.detail}</div>
+          <div class="meta-row"><span>$${j.payPerCycle}/${j.payCycle}</span><span>${j.hoursPerWeek}h/wk</span>${!eligible && j.minDegreeTier ? `<span>Needs ${j.careerTrack} degree, ${j.minDegreeTier}+</span>`:''}${statusTag}</div>
+        </div>`;
+    });
+
+    return html;
+  }
+
+  function wireJobPaneListeners(){
+    const quitBtn = document.getElementById('quitJobBtn');
+    if (quitBtn) quitBtn.addEventListener('click', quitJob);
+
+    document.querySelectorAll('.choice-card[data-job]').forEach(card=>{
+      if (card.classList.contains('locked')) return;
+      if (!card.dataset.job) return;
+      card.addEventListener('click', ()=>{
+        applyForJob(card.dataset.job);
+        openSection('job');
+      });
+    });
+
+    document.querySelectorAll('.offer-accept').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        acceptOffer(btn.dataset.offerJob);
+        openSection('job');
+      });
+    });
+
+    document.querySelectorAll('.offer-decline').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        declineOffer(btn.dataset.offerJob);
+        openSection('job');
+      });
+    });
+
+    document.querySelectorAll('.offer-leverage').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        const result = leverageOffer(btn.dataset.offerJob);
+        openSection('job');
+        if (result && result.message){
+          els.sectionModalBody.insertAdjacentHTML('afterbegin',
+            `<div class="mini-card" style="border-color:${result.success?'var(--money)':'var(--health)'}"><div class="mc-sub">${result.message}</div></div>`);
+        }
+      });
+    });
+
+    document.querySelectorAll('.withdraw-app').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        withdrawApplication(btn.dataset.withdrawJob);
+        openSection('job');
+      });
+    });
+  }
+
+  function applyForJob(jobId){
+    const job = JOBS.find(j=>j.id===jobId);
+    if (!job || !jobIsEligible(job)) return;
+    if (state.heldJob === jobId) return; // already in this job
+    if (state.pendingApplications.some(a=>a.jobId===jobId)) return; // already applied
+    if (state.pendingOffers.some(o=>o.jobId===jobId)) return; // already have an offer
+
+    state.pendingApplications.push({
+      jobId,
+      weeksNeeded: randInt(1,2),
+      weeksProgressed: 0,
+    });
+  }
+
+  function withdrawApplication(jobId){
+    state.pendingApplications = state.pendingApplications.filter(a=>a.jobId!==jobId);
+  }
+
+  // Called once per week from endWeek() — every pending application gets a
+  // week of progress IF the player actually put in Job Hunting hours that
+  // week. No Job Hunting selected that week means applications stall.
+  function advanceJobApplications(eventLines){
+    if (!state.pendingApplications.length) return;
+    const huntedThisWeek = state.selected.includes('jobhunt');
+    if (!huntedThisWeek) return;
+
+    const stillPending = [];
+    state.pendingApplications.forEach(app=>{
+      app.weeksProgressed += 1;
+      if (app.weeksProgressed >= app.weeksNeeded){
+        const job = JOBS.find(j=>j.id===app.jobId);
+        state.pendingOffers.push({ jobId: app.jobId });
+        eventLines.push({
+          text:`You got an offer from ${job ? job.name : 'a company'}! Check the Job board to respond.`,
+          tone:'pos',
+          effects:{},
+        });
+      } else {
+        stillPending.push(app);
+      }
+    });
+    state.pendingApplications = stillPending;
+  }
+
+  // Offer resolution: accept switches jobs immediately; leverage presents it
+  // to the current employer for a raise (can fail); decline just drops it.
+  function acceptOffer(jobId){
+    const job = JOBS.find(j=>j.id===jobId);
+    if (!job) return;
+    state.pendingOffers = state.pendingOffers.filter(o=>o.jobId!==jobId);
+    hireIntoJob(jobId);
+  }
+
+  function declineOffer(jobId){
+    state.pendingOffers = state.pendingOffers.filter(o=>o.jobId!==jobId);
+  }
+
+  function leverageOffer(jobId){
+    const offerJob = JOBS.find(j=>j.id===jobId);
+    state.pendingOffers = state.pendingOffers.filter(o=>o.jobId!==jobId);
+    const current = currentJob();
+    if (!current || !offerJob) return { success:false, message:'There was no current job to negotiate with.' };
+
+    // Better odds if the outside offer is a meaningfully higher tier/pay —
+    // a leverage attempt with a weak offer is less likely to land.
+    const payAdvantage = offerJob.payPerCycle > current.payPerCycle;
+    const successChance = payAdvantage ? 0.65 : 0.35;
+    const succeeded = Math.random() < successChance;
+
+    if (succeeded){
+      // Boost performance/reputation slightly and grant a raise by
+      // permanently nudging this job's effective pay via jobWeeksHeld
+      // milestones — simplest realistic approximation: jump weeksHeld
+      // forward so the existing raise curve kicks in sooner.
+      state.jobWeeksHeld += 52;
+      state.performance = clamp(state.performance + 8);
+      return { success:true, message:`${current.name} matched the offer and gave you a raise to keep you.` };
+    } else {
+      return { success:false, message:`${current.name} wasn't willing to negotiate. You're still in your current role.` };
+    }
+  }
+
+  function hireIntoJob(jobId){
+    const job = JOBS.find(j=>j.id===jobId);
+    if (!job || !jobIsEligible(job)) return;
+    state.heldJob = jobId;
+    state.jobWeeksHeld = 0;
+    state.payCycleCounter = 0;
+    // Starting performance/reputation get a small boost if the job matches
+    // the player's actual degree track, since that's a more natural fit.
+    if (jobMatchesDegree(job)){
+      state.performance = clamp(state.performance + 10);
+    }
+    syncGoToWorkActivity();
+    if (!state.selected.includes('go_to_work')) state.selected.push('go_to_work');
+  }
+
+  function quitJob(){
+    state.heldJob = null;
+    state.jobWeeksHeld = 0;
+    state.payCycleCounter = 0;
+    state.selected = state.selected.filter(id=>id!=='go_to_work');
+    syncGoToWorkActivity();
+    openSection('job');
+  }
 
   function renderFinancesPane(){
     const recentMoneyEvents = [];
@@ -3033,46 +4364,62 @@
     return html;
   }
 
-  function renderMenuTabs(activeId){
-    els.menuTabs.innerHTML = MENU_TABS.map(t => `
-      <div class="menu-tab ${t.id===activeId?'active':''}" data-tab="${t.id}">
-        <span class="ticon">${t.icon}</span>${t.name}
+  function renderIconColumn(){
+    els.menuIconColumn.innerHTML = MENU_TABS.map(t => `
+      <div class="menu-icon-sq ${t.id===state.activeMenuTab?'active':''}" data-tab="${t.id}" title="${t.name}">
+        <span class="mlbl">${t.name}</span>
+        <span class="micon-circle"><span class="micon">${t.icon}</span></span>
       </div>`).join('');
-    els.menuTabs.querySelectorAll('.menu-tab').forEach(tabEl=>{
-      tabEl.addEventListener('click', ()=>{
-        state.activeMenuTab = tabEl.dataset.tab;
-        renderMenuTabs(state.activeMenuTab);
-        renderMenuBody(state.activeMenuTab);
+    els.menuIconColumn.querySelectorAll('.menu-icon-sq').forEach(iconEl=>{
+      iconEl.addEventListener('click', ()=>{
+        openSection(iconEl.dataset.tab);
       });
     });
   }
 
-  function renderMenuBody(activeId){
-    const tab = MENU_TABS.find(t=>t.id===activeId) || MENU_TABS[0];
-    els.menuBody.innerHTML = tab.build();
+  function openSection(tabId){
+    state.activeMenuTab = tabId;
+    const tab = MENU_TABS.find(t=>t.id===tabId) || MENU_TABS[0];
+    els.sectionModalTitle.textContent = tab.name;
+    els.sectionModalBody.innerHTML = tab.build();
+    if (tabId === 'job') wireJobPaneListeners();
+
+    // Reflect the active selection on the icon column
+    els.menuIconColumn.querySelectorAll('.menu-icon-sq').forEach(el=>{
+      el.classList.toggle('active', el.dataset.tab === tabId);
+    });
+
+    els.sectionModal.classList.remove('hidden');
+    void els.sectionModal.offsetWidth;
+    els.sectionModal.classList.add('show');
+  }
+
+  function closeSectionModal(){
+    els.sectionModal.classList.remove('show');
   }
 
   function openMenu(){
-    if (!state.activeMenuTab) state.activeMenuTab = MENU_TABS[0].id;
-    renderMenuTabs(state.activeMenuTab);
-    renderMenuBody(state.activeMenuTab);
+    renderIconColumn();
     els.menuBackdrop.classList.remove('hidden');
-    els.menuOverlay.classList.remove('hidden');
+    els.menuIconColumn.classList.remove('hidden');
     // Force a reflow before adding .show so the CSS transition actually plays
-    void els.menuOverlay.offsetWidth;
+    void els.menuIconColumn.offsetWidth;
     els.menuBackdrop.classList.add('show');
-    els.menuOverlay.classList.add('show');
+    els.menuIconColumn.classList.add('show');
     els.menuFab.classList.add('open');
+    // Always land on Finances first when the menu opens
+    openSection('finances');
   }
 
   function closeMenu(){
     els.menuBackdrop.classList.remove('show');
-    els.menuOverlay.classList.remove('show');
+    els.menuIconColumn.classList.remove('show');
+    closeSectionModal();
     els.menuFab.classList.remove('open');
   }
 
   function toggleMenu(){
-    const isOpen = els.menuOverlay.classList.contains('show');
+    const isOpen = els.menuIconColumn.classList.contains('show');
     if (isOpen) closeMenu();
     else openMenu();
   }
@@ -3085,7 +4432,10 @@
   els.simTurnBtn.addEventListener('click', currentSimTurnHandler);
   els.menuFab.addEventListener('click', toggleMenu);
   els.menuBackdrop.addEventListener('click', closeMenu);
+  els.sectionModalClose.addEventListener('click', closeSectionModal);
   els.skipToAdultBtn.addEventListener('click', skipToAdulthood);
+  els.enrollCollegeBtn.addEventListener('click', enrollInCollege);
+  els.skipCollegeBtn.addEventListener('click', skipCollege);
   els.restartBtn.addEventListener('click', startNewLifeSetup);
 
   els.startNewLifeBtn.addEventListener('click', ()=>{

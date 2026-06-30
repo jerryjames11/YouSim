@@ -178,42 +178,46 @@
     width:46px; height:46px;
     border-radius:50%;
     border:none;
+    outline:none;
     background:var(--ink);
-    box-shadow:0 4px 14px rgba(0,0,0,0.2);
+    box-shadow:0 4px 14px rgba(0,0,0,0.25);
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     gap:4px;
     cursor:pointer;
-    z-index:55;
+    z-index:63;
     padding:0;
-    transition:bottom .15s ease;
+    transition:bottom .15s ease, background .15s ease, box-shadow .15s ease;
   }
+  #menuFab:active, #menuFab:focus, #menuFab:focus-visible{ outline:none; }
   #menuFab:active{ transform:scale(0.93); }
+  #menuFab.open{
+    background:var(--ink);
+    box-shadow:0 4px 14px rgba(0,0,0,0.25);
+  }
   #menuFab span{
     width:18px; height:2px;
     background:var(--card-bg);
     border-radius:2px;
-    transition:transform .25s ease, opacity .2s ease;
+    transition:transform .25s ease, opacity .2s ease, background .15s ease;
   }
   #menuFab.open span:nth-child(1){ transform:translateY(6px) rotate(45deg); }
   #menuFab.open span:nth-child(2){ opacity:0; }
   #menuFab.open span:nth-child(3){ transform:translateY(-6px) rotate(-45deg); }
 
-  /* ---------- Journal Log button (sits directly above the burger FAB) ---------- */
+  /* ---------- Journal Log button (sits directly above the burger FAB; visually identical to the menu-icon-sq items) ---------- */
   #journalFab{
     position:fixed;
     right:18px;
     bottom:calc(var(--submit-bar-h, 120px) + 14px + 46px + 10px);
-    width:46px; height:46px;
-    border-radius:50%;
-    border:none;
-    background:var(--ink);
-    box-shadow:0 4px 14px rgba(0,0,0,0.2);
-    display:flex; align-items:center; justify-content:center;
-    cursor:pointer;
-    z-index:55;
-    padding:0;
+    z-index:63;
+    transition:bottom .15s ease;
   }
-  #journalFab:active{ transform:scale(0.93); }
+  #journalFab .mlbl{
+    display:none;
+  }
+  #journalFab.menu-open .mlbl{
+    display:block;
+  }
   .journal-fab-icon{
     width:19px; height:19px;
     display:block;
@@ -294,7 +298,7 @@
   #menuIconColumn{
     position:fixed;
     right:18px;
-    bottom:calc(var(--submit-bar-h, 120px) + 70px);
+    bottom:calc(var(--submit-bar-h, 120px) + 14px + 46px + 10px + 46px + 10px);
     top:60px;
     width:170px;
     z-index:61;
@@ -302,8 +306,9 @@
     overflow-x:hidden;
     -webkit-overflow-scrolling:touch;
     display:flex;
-    flex-direction:column;
+    flex-direction:column-reverse;
     align-items:flex-end;
+    justify-content:flex-start;
     gap:10px;
     opacity:0;
     transform:translateY(8px) scale(0.96);
@@ -338,6 +343,7 @@
     white-space:nowrap;
   }
   .menu-icon-sq .micon-circle{
+    position:relative;
     flex-shrink:0;
     width:46px;
     height:46px;
@@ -350,25 +356,51 @@
     justify-content:center;
     transition:background .15s ease, color .15s ease, box-shadow .15s ease;
   }
-  .menu-icon-sq .micon{ width:19px; height:19px; }
+  .menu-icon-sq .micon{ width:19px; height:19px; transition:opacity .15s ease, transform .15s ease; }
   .menu-icon-sq .micon svg{ width:100%; height:100%; display:block; }
   .menu-icon-sq:active .micon-circle{ transform:scale(0.93); }
+  .menu-icon-sq .micon-x{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    transform:scale(0.6) rotate(-45deg);
+    transition:opacity .15s ease, transform .15s ease;
+  }
+  .menu-icon-sq .micon-x span{
+    position:absolute;
+    width:18px; height:2px;
+    background:var(--ink);
+    border-radius:2px;
+  }
+  .menu-icon-sq .micon-x span:nth-child(1){ transform:rotate(45deg); }
+  .menu-icon-sq .micon-x span:nth-child(2){ transform:rotate(-45deg); }
   .menu-icon-sq.active .micon-circle{
     background:var(--happy);
     color:var(--ink);
     box-shadow:0 0 0 2.5px var(--happy), 0 4px 14px rgba(0,0,0,0.3);
+  }
+  .menu-icon-sq.active .micon{
+    opacity:0;
+    transform:scale(0.6) rotate(45deg);
+  }
+  .menu-icon-sq.active .micon-x{
+    opacity:1;
+    transform:scale(1) rotate(0deg);
   }
 
   /* ---------- Section modal (the actual content, opens over/beside the icon column) ---------- */
   #sectionModal{
     position:fixed;
     left:5%; right:88px;
-    top:60px;
+    bottom:calc(var(--submit-bar-h, 120px) + 14px);
     max-height:calc(100vh - 60px - var(--submit-bar-h, 120px) - 20px);
     background:var(--paper);
     border-radius:18px;
     z-index:62;
-    transform:translateY(-8px) scale(0.92);
+    transform:translateY(8px) scale(0.92);
     opacity:0;
     pointer-events:none;
     transition:transform .2s ease, opacity .18s ease;
@@ -1721,9 +1753,12 @@
   <span></span><span></span><span></span>
 </button>
 
-<button id="journalFab" class="hidden" title="Journal Log">
-  <span class="journal-fab-icon"></span>
-  <span class="journal-fab-badge hidden" id="journalFabBadge">0</span>
+<button id="journalFab" class="hidden menu-icon-sq" title="Journal Log">
+  <span class="mlbl">Journal</span>
+  <span class="micon-circle">
+    <span class="micon journal-fab-icon"></span>
+    <span class="journal-fab-badge hidden" id="journalFabBadge">0</span>
+  </span>
 </button>
 
 <div id="menuBackdrop" class="hidden"></div>
@@ -5368,7 +5403,10 @@
     els.menuIconColumn.innerHTML = MENU_TABS.map(t => `
       <div class="menu-icon-sq ${t.id===state.activeMenuTab?'active':''}" data-tab="${t.id}" title="${t.name}">
         <span class="mlbl">${t.name}</span>
-        <span class="micon-circle"><span class="micon">${t.icon}</span></span>
+        <span class="micon-circle">
+          <span class="micon">${t.icon}</span>
+          <span class="micon-x"><span></span><span></span></span>
+        </span>
       </div>`).join('');
     els.menuIconColumn.querySelectorAll('.menu-icon-sq').forEach(iconEl=>{
       iconEl.addEventListener('click', ()=>{
@@ -5452,6 +5490,16 @@
     els.journalFabBadge.classList.toggle('hidden', unread === 0);
   }
 
+  function toggleJournalModal(){
+    const isOpen = els.sectionModal.classList.contains('show') && els.sectionModalTitle.textContent === 'Journal Log';
+    if (isOpen){
+      closeSectionModal();
+      els.menuBackdrop.classList.remove('show');
+    } else {
+      openJournalModal();
+    }
+  }
+
   function closeSectionModal(){
     els.sectionModal.classList.remove('show');
   }
@@ -5465,6 +5513,7 @@
     els.menuBackdrop.classList.add('show');
     els.menuIconColumn.classList.add('show');
     els.menuFab.classList.add('open');
+    els.journalFab.classList.add('menu-open');
   }
 
   function closeMenu(){
@@ -5474,6 +5523,7 @@
     els.confirmPopup.classList.remove('show');
     confirmPopupHandlers = { onYes:null, onNo:null };
     els.menuFab.classList.remove('open');
+    els.journalFab.classList.remove('menu-open');
   }
 
   function toggleMenu(){
@@ -5489,7 +5539,7 @@
   els.endWeekBtn.addEventListener('click', currentEndTurnHandler);
   els.simTurnBtn.addEventListener('click', currentSimTurnHandler);
   els.menuFab.addEventListener('click', toggleMenu);
-  els.journalFab.addEventListener('click', openJournalModal);
+  els.journalFab.addEventListener('click', toggleJournalModal);
   els.menuBackdrop.addEventListener('click', closeMenu);
   els.confirmPopupYes.addEventListener('click', ()=>{
     const fn = confirmPopupHandlers.onYes;

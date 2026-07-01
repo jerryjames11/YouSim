@@ -294,6 +294,156 @@
     gap:8px;
   }
 
+  #specPickerModal{
+    position:fixed;
+    left:8%; right:8%;
+    top:50%;
+    max-height:78vh;
+    overflow-y:auto;
+    background:var(--paper);
+    border-radius:18px;
+    z-index:65;
+    transform:translateY(-50%) scale(0.92);
+    opacity:0;
+    pointer-events:none;
+    transition:transform .18s ease, opacity .16s ease;
+    box-shadow:0 16px 50px rgba(0,0,0,0.3);
+    padding:20px 18px;
+  }
+  #specPickerModal.show{
+    transform:translateY(-50%) scale(1);
+    opacity:1;
+    pointer-events:auto;
+  }
+  .spec-picker-list .choice-card{ cursor:pointer; }
+
+  /* ---------- New Year full-screen toast ---------- */
+  #newYearToast{
+    position:fixed;
+    inset:0;
+    z-index:200;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(0,0,0,0.82);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .35s ease;
+  }
+  #newYearToast.show{
+    opacity:1;
+    pointer-events:none; /* auto-dismiss, no tap needed */
+  }
+  .nyt-content{
+    text-align:center;
+    animation:nytPop .45s cubic-bezier(.34,1.56,.64,1) forwards;
+  }
+  .nyt-year{
+    font-family:'Fraunces',serif;
+    font-size:72px;
+    font-weight:900;
+    color:#fff;
+    line-height:1;
+    letter-spacing:-2px;
+  }
+  .nyt-label{
+    font-family:'Inter',sans-serif;
+    font-size:16px;
+    font-weight:700;
+    color:rgba(255,255,255,0.6);
+    letter-spacing:.15em;
+    text-transform:uppercase;
+    margin-top:6px;
+  }
+  @keyframes nytPop{
+    from{ transform:scale(0.7); opacity:0; }
+    to{   transform:scale(1);   opacity:1; }
+  }
+
+  .loan-row{
+    display:flex;
+    gap:6px;
+    align-items:center;
+    flex-wrap:wrap;
+    margin-top:4px;
+  }
+  .loan-select{
+    flex:1;
+    min-width:80px;
+    padding:6px 8px;
+    border:1.5px solid var(--border);
+    border-radius:10px;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+  }
+
+  /* ---------- Financial Summary two-column layout ---------- */
+  .fin-summary-wrap{
+    display:flex;
+    gap:0;
+    background:var(--card-bg);
+    border-radius:14px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    overflow:hidden;
+    margin-bottom:4px;
+  }
+  .fin-col{
+    flex:1;
+    padding:12px 10px;
+    min-width:0;
+  }
+  .fin-divider-vert{
+    width:1px;
+    background:var(--border);
+    flex-shrink:0;
+  }
+  .fin-scroll{
+    max-height:220px;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .fin-section-label{
+    font-size:10px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    color:var(--ink-soft);
+    margin:6px 0 3px;
+  }
+  .fin-section-label:first-child{ margin-top:0; }
+  .fin-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:4px;
+    padding:2px 0;
+  }
+  .fin-lbl{
+    font-size:11.5px;
+    font-weight:600;
+    color:var(--ink);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    min-width:0;
+    flex:1;
+  }
+  .fin-row .rl-amt{
+    font-size:11.5px;
+    flex-shrink:0;
+  }
+  .fin-divider{
+    height:1px;
+    background:var(--border);
+    margin:5px 0;
+  }
+  .fin-net .fin-lbl{ font-weight:700; }
+  .fin-net .rl-amt{ font-weight:700; }
+
   /* ---------- Icon column (vertical, docked right where the FAB is) ---------- */
   #menuIconColumn{
     position:fixed;
@@ -939,6 +1089,7 @@
   .effect-tag.eff-money .eicon{ color:var(--money); }
   .effect-tag.eff-happy .eicon{ color:var(--happy); }
   .effect-tag.eff-rel .eicon{ color:var(--rel); }
+  .effect-tag.eff-social .eicon{ color:var(--rel); }
   .effect-tag.eff-energy .eicon{ color:var(--energy); }
   .effect-tag.eff-skill .eicon{ color:var(--skill); }
   .activity .cost{
@@ -1497,9 +1648,9 @@
       </div>
       <div class="stat rel">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="9" r="3"/><circle cx="15.5" cy="9" r="3"/><path d="M3 19c0-2.8 2.5-5 5.5-5 1.4 0 2.6.4 3.5 1.2M21 19c0-2.8-2.5-5-5.5-5-1.4 0-2.6.4-3.5 1.2"/></svg></span>
-        <span class="label">Rel.</span>
-        <span class="value" id="youngStatRel">60</span>
-        <div class="bar"><i id="youngBarRel" style="width:60%"></i></div>
+        <span class="label">Social</span>
+        <span class="value" id="youngStatSocial">60</span>
+        <div class="bar"><i id="youngBarSocial" style="width:60%"></i></div>
       </div>
       <div class="stat energy">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
@@ -1554,9 +1705,9 @@
       </div>
       <div class="stat rel">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="9" r="3"/><circle cx="15.5" cy="9" r="3"/><path d="M3 19c0-2.8 2.5-5 5.5-5 1.4 0 2.6.4 3.5 1.2M21 19c0-2.8-2.5-5-5.5-5-1.4 0-2.6.4-3.5 1.2"/></svg></span>
-        <span class="label">Rel.</span>
-        <span class="value" id="schoolStatRel">100</span>
-        <div class="bar"><i id="schoolBarRel" style="width:100%"></i></div>
+        <span class="label">Social</span>
+        <span class="value" id="schoolStatSocial">100</span>
+        <div class="bar"><i id="schoolBarSocial" style="width:100%"></i></div>
       </div>
       <div class="stat energy">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
@@ -1647,9 +1798,9 @@
       </div>
       <div class="stat rel">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="9" r="3"/><circle cx="15.5" cy="9" r="3"/><path d="M3 19c0-2.8 2.5-5 5.5-5 1.4 0 2.6.4 3.5 1.2M21 19c0-2.8-2.5-5-5.5-5-1.4 0-2.6.4-3.5 1.2"/></svg></span>
-        <span class="label">Rel.</span>
+        <span class="label">Social</span>
         <span class="value" id="collegeStatRel">100</span>
-        <div class="bar"><i id="collegeBarRel" style="width:100%"></i></div>
+        <div class="bar"><i id="collegeBarSocial" style="width:100%"></i></div>
       </div>
       <div class="stat energy">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
@@ -1693,7 +1844,7 @@
         <span class="value" id="statHealth">100</span>
         <div class="bar"><i id="barHealth" style="width:100%"></i></div>
       </div>
-      <div class="stat happy">
+      <div class="stat happy mood-stat-tap" style="cursor:pointer;" title="What's affecting Mood">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 13.5s1.5 2 4 2 4-2 4-2"/><path d="M8.5 9.5h.01M15.5 9.5h.01"/></svg></span>
         <span class="label">Mood</span>
         <span class="value" id="statHappy">100</span>
@@ -1701,11 +1852,11 @@
       </div>
       <div class="stat rel">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="9" r="3"/><circle cx="15.5" cy="9" r="3"/><path d="M3 19c0-2.8 2.5-5 5.5-5 1.4 0 2.6.4 3.5 1.2M21 19c0-2.8-2.5-5-5.5-5-1.4 0-2.6.4-3.5 1.2"/></svg></span>
-        <span class="label">Rel.</span>
-        <span class="value" id="statRel">100</span>
-        <div class="bar"><i id="barRel" style="width:100%"></i></div>
+        <span class="label">Social</span>
+        <span class="value" id="statSocial">100</span>
+        <div class="bar"><i id="barSocial" style="width:100%"></i></div>
       </div>
-      <div class="stat energy">
+      <div class="stat energy energy-stat-tap" style="cursor:pointer;" title="What's affecting Energy">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
         <span class="label">Energy</span>
         <span class="value" id="statEnergy">100</span>
@@ -1742,6 +1893,7 @@
 <div class="submit-bar" id="submitBar">
   <div class="inner">
     <div class="sim-row">
+      <button id="simYearBtn" class="sim-turn-btn hidden">Sim Year</button>
       <button id="simTurnBtn" class="sim-turn-btn">Sim Month</button>
       <button id="skipToAdultBtn" class="sim-turn-btn skip-btn hidden">Skip to High School →</button>
     </div>
@@ -1772,6 +1924,19 @@
   </div>
 </div>
 
+<div id="specPickerModal" class="hidden">
+  <div class="confirm-title" id="specPickerTitle">Choose Your Sport</div>
+  <div class="confirm-body">This sticks for the rest of your life — building real mastery here can eventually lead to a career.</div>
+  <div class="spec-picker-list" id="specPickerList"></div>
+</div>
+
+<div id="newYearToast" class="hidden">
+  <div class="nyt-content">
+    <div class="nyt-year" id="newYearToastYear">2024</div>
+    <div class="nyt-label">New Year</div>
+  </div>
+</div>
+
 <div id="menuIconColumn" class="hidden"></div>
 
 <div id="sectionModal" class="hidden">
@@ -1790,7 +1955,7 @@
   const ACTIVITIES = [
     // Work
     { id:'go_to_work', category:'Work', name:'Go to Work', cost:0, // cost set dynamically from held job's weekly hours
-      effects:{}, // pay/effects applied dynamically based on held job
+      effects:{happy:-6}, // pay applied dynamically based on held job; mood cost is flat
       eventChance:0.10, eventPool:'work' },
     { id:'jobhunt', category:'Work', name:'Job Hunting', cost:30,
       effects:{energy:-8, happy:-3},
@@ -1803,20 +1968,23 @@
     { id:'doctor', category:'Self-Care', name:'Doctor Visit', cost:15,
       effects:{health:12, money:-10, energy:-3},
       eventChance:0.08, eventPool:'doctor' },
-    { id:'rest', category:'Self-Care', name:'Sleep In / Rest', cost:15,
+    { id:'rest', category:'Health & Fitness', name:'Sleep In / Rest', cost:15,
       effects:{energy:14, health:3},
       eventChance:0.03, eventPool:'rest' },
 
     // Social
     { id:'friends', category:'Social', name:'Hang Out with Friends', cost:20,
-      effects:{happy:8, rel:8, energy:-6},
+      effects:{happy:8, social:8, energy:-6},
       eventChance:0.12, eventPool:'friends' },
     { id:'date', category:'Social', name:'Date Night', cost:25,
-      effects:{rel:10, happy:8, money:-12, energy:-4},
+      effects:{social:10, happy:8, money:-12, energy:-4},
       eventChance:0.12, eventPool:'date' },
-    { id:'family', category:'Social', name:'Family Time', cost:15,
-      effects:{rel:7, happy:5, energy:2},
+    { id:'family', category:'Social', name:'Family Time (Kids)', cost:15,
+      effects:{social:7, happy:5, energy:2},
       eventChance:0.06, eventPool:'family' },
+    { id:'call_parents', category:'Social', name:'Call / Visit Parents', cost:10,
+      effects:{happy:3, social:2, energy:-2},
+      eventChance:0.08, eventPool:'call_parents' },
 
     // Personal Growth
     { id:'study', category:'Personal Growth', name:'Study / Learn Skill', cost:30,
@@ -1828,6 +1996,12 @@
     { id:'hobby', category:'Personal Growth', name:'Hobby Time', cost:15,
       effects:{happy:6, energy:-4},
       eventChance:0.05, eventPool:'hobby' },
+    { id:'practice_spec', category:'Personal Growth', name:'Practice', cost:25,
+      effects:{energy:-10, happy:2},
+      eventChance:0.06, eventPool:'practice_spec', requiresSpec:true },
+    { id:'coach_session', category:'Personal Growth', name:'Work with a Coach', cost:30,
+      effects:{energy:-8, happy:3, money:-400},
+      eventChance:0.08, eventPool:'coach_session', requiresProTrack:true },
     { id:'meditate', category:'Self-Care', name:'Meditate', cost:10,
       effects:{happy:4, energy:3},
       eventChance:0.04, eventPool:'meditate' },
@@ -1843,7 +2017,7 @@
 
   const EVENT_POOLS = {
     work:[
-      {text:"You got a small bonus.", effects:{money:10}, tone:'pos'},
+      {text:"You got a small bonus.", effects:{money:200}, tone:'pos'},
       {text:"Tense moment with your boss.", effects:{happy:-6}, tone:'neg'},
       {text:"You stayed late and burned out a little.", effects:{energy:-10, health:-4}, tone:'neg'},
       {text:"A coworker covered for you on a rough day.", effects:{happy:4}, tone:'pos'},
@@ -1851,7 +2025,7 @@
     jobhunt:[
       {text:"You landed an interview!", effects:{happy:6}, tone:'pos'},
       {text:"Rejection email. Stings a little.", effects:{happy:-8}, tone:'neg'},
-      {text:"A friend referred you somewhere promising.", effects:{happy:5, rel:2}, tone:'pos'},
+      {text:"A friend referred you somewhere promising.", effects:{happy:5, social:2}, tone:'pos'},
     ],
     exercise:[
       {text:"You hit a personal best.", effects:{happy:5, health:3}, tone:'pos'},
@@ -1859,23 +2033,29 @@
     ],
     doctor:[
       {text:"Clean bill of health.", effects:{happy:4}, tone:'pos'},
-      {text:"Unexpected extra cost for tests.", effects:{money:-15}, tone:'neg'},
+      {text:"Unexpected extra cost for tests.", effects:{money:-300}, tone:'neg'},
     ],
     rest:[
       {text:"You woke up feeling completely renewed.", effects:{energy:6}, tone:'pos'},
     ],
     friends:[
       {text:"A night out turned into a great memory.", effects:{happy:6}, tone:'pos'},
-      {text:"A small argument with a friend.", effects:{rel:-6, happy:-3}, tone:'neg'},
-      {text:"Split a surprise bar tab.", effects:{money:-8}, tone:'neg'},
+      {text:"A small argument with a friend.", effects:{social:-6, happy:-3}, tone:'neg'},
+      {text:"Split a surprise bar tab.", effects:{money:-160}, tone:'neg'},
     ],
     date:[
-      {text:"A genuinely great date.", effects:{happy:6, rel:5}, tone:'pos'},
-      {text:"Awkward silence over dinner.", effects:{rel:-4}, tone:'neg'},
+      {text:"A genuinely great date.", effects:{happy:6, social:5}, tone:'pos'},
+      {text:"Awkward silence over dinner.", effects:{social:-4}, tone:'neg'},
     ],
     family:[
-      {text:"A relative needed help — you stepped up.", effects:{money:-10, rel:5}, tone:'neg'},
+      {text:"A relative needed help — you stepped up.", effects:{money:-200, social:5}, tone:'neg'},
       {text:"A warm, easy visit home.", effects:{happy:5}, tone:'pos'},
+    ],
+    call_parents:[
+      {text:"A really good catch-up. You forgot how much you missed them.", effects:{happy:4, social:2}, tone:'pos'},
+      {text:"An old disagreement came up. Ended the call early.", effects:{happy:-3}, tone:'neg'},
+      {text:"They surprised you with some unexpected news.", effects:{happy:3}, tone:'pos'},
+      {text:"It was fine — routine, nothing deep. Still worth it.", effects:{happy:1}, tone:'pos'},
     ],
     study:[
       {text:"You're starting to really understand this.", effects:{happy:3}, tone:'pos'},
@@ -1883,6 +2063,16 @@
     ],
     hobby:[
       {text:"You lost yourself in it for hours, in a good way.", effects:{happy:4}, tone:'pos'},
+    ],
+    practice_spec:[
+      {text:"A genuinely good session — real progress.", effects:{happy:3}, tone:'pos'},
+      {text:"Rough session today. Frustrating plateau.", effects:{happy:-3}, tone:'neg'},
+      {text:"Pushed too hard and tweaked something.", effects:{health:-3}, tone:'neg'},
+    ],
+    coach_session:[
+      {text:"Your coach caught a flaw you'd never have noticed alone.", effects:{happy:3}, tone:'pos'},
+      {text:"A tough, demanding session — but it'll pay off.", effects:{energy:-3}, tone:'neg'},
+      {text:"Your coach made an introduction that could matter later.", effects:{social:2}, tone:'pos'},
     ],
     meditate:[
       {text:"A rare moment of real clarity.", effects:{happy:3, energy:2}, tone:'pos'},
@@ -1896,11 +2086,11 @@
   };
 
   const RANDOM_EVENTS = [
-    {text:"You found $20 in an old jacket pocket.", effects:{money:5}, chance:0.04, tone:'pos'},
-    {text:"Car trouble ate into your week.", effects:{money:-15, happy:-3}, chance:0.05, tone:'neg'},
+    {text:"You found $20 in an old jacket pocket.", effects:{money:100}, chance:0.04, tone:'pos'},
+    {text:"Car trouble ate into your week.", effects:{money:-300, happy:-3}, chance:0.05, tone:'neg'},
     {text:"You caught a cold.", effects:{health:-8, energy:-5}, chance:0.06, tone:'neg'},
-    {text:"An old friend reached out out of nowhere.", effects:{happy:5, rel:3}, chance:0.04, tone:'pos'},
-    {text:"Rent or a bill went up unexpectedly.", effects:{money:-10}, chance:0.05, tone:'neg'},
+    {text:"An old friend reached out out of nowhere.", effects:{happy:5, social:3}, chance:0.04, tone:'pos'},
+    {text:"Rent or a bill went up unexpectedly.", effects:{money:-200}, chance:0.05, tone:'neg'},
     {text:"You had a genuinely good week for no particular reason.", effects:{happy:5}, chance:0.04, tone:'pos'},
     {text:"A minor injury slowed you down.", effects:{health:-6, energy:-4}, chance:0.04, tone:'neg'},
   ];
@@ -1908,13 +2098,13 @@
   // ---------------- Parent / Birth Generator ----------------
 
   const WEALTH_TIERS = [
-    { id:'poor', label:'Poor', weight:20, startMoney:[-20,10],
+    { id:'poor', label:'Poor', weight:20, startMoney:[-400,200],
       detail:'Money was tight, always. There wasn\'t a lot of room for extras.' },
-    { id:'working', label:'Working-Class', weight:35, startMoney:[10,35],
+    { id:'working', label:'Working-Class', weight:35, startMoney:[200,700],
       detail:'Your family worked hard and got by, paycheck to paycheck most months.' },
-    { id:'middle', label:'Middle-Class', weight:32, startMoney:[35,65],
+    { id:'middle', label:'Middle-Class', weight:32, startMoney:[700,1300],
       detail:'Comfortable enough. Not rich, but you rarely worried about the basics.' },
-    { id:'wealthy', label:'Wealthy', weight:13, startMoney:[65,100],
+    { id:'wealthy', label:'Wealthy', weight:13, startMoney:[1300,2000],
       detail:'Money was rarely a source of stress in your house growing up.' },
   ];
 
@@ -1943,6 +2133,19 @@
 
   function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
 
+  // ---------------- Relationships: name pools ----------------
+
+  const FIRST_NAMES = ['Jordan','Casey','Riley','Morgan','Taylor','Alex','Sam','Jamie','Avery','Reese',
+    'Quinn','Drew','Skyler','Charlie','Rowan','Emerson','Finley','Hayden','Parker','Sage',
+    'Maya','Liam','Noah','Emma','Olivia','Ethan','Ava','Mason','Sofia','Lucas',
+    'Mia','Elijah','Zoe','James','Layla','Benjamin','Chloe','Daniel','Grace','Henry'];
+  const LAST_NAMES = ['Reyes','Bennett','Coleman','Hayes','Foster','Price','Sanders','Morris','Patel','Nguyen',
+    'Kim','Walsh','Brooks','Hughes','Ward','Powell','Torres','Diaz','Flores','Russell'];
+
+  function randomPersonName(){
+    return `${FIRST_NAMES[randInt(0,FIRST_NAMES.length-1)]} ${LAST_NAMES[randInt(0,LAST_NAMES.length-1)]}`;
+  }
+
   function generateParents(){
     const wealth = weightedPick(WEALTH_TIERS);
     const household = weightedPick(HOUSEHOLDS);
@@ -1964,6 +2167,13 @@
     // Will parents eventually need care from the player? More likely if poor/working and present.
     const mayNeedCare = presentEnough && (wealth.id === 'poor' || wealth.id === 'working');
 
+    const PARENT_FIRST_NAMES_M = ['James','Robert','Michael','David','John','William','Thomas','Charles','Daniel','Christopher'];
+    const PARENT_FIRST_NAMES_F = ['Mary','Patricia','Linda','Barbara','Elizabeth','Jennifer','Maria','Susan','Dorothy','Helen'];
+    const momName = PARENT_FIRST_NAMES_F[randInt(0,PARENT_FIRST_NAMES_F.length-1)];
+    const dadName = PARENT_FIRST_NAMES_M[randInt(0,PARENT_FIRST_NAMES_M.length-1)];
+    const hasTwoParents = ['two_present','two_distant'].includes(household.id);
+    const isSingleMom  = household.id === 'single_present' && Math.random() < 0.65;
+
     return {
       wealthTier: wealth.id,
       wealthLabel: wealth.label,
@@ -1978,10 +2188,539 @@
       startMoney: randInt(wealth.startMoney[0], wealth.startMoney[1]),
       startRel: randInt(household.startRel[0], household.startRel[1]),
       startHappy: randInt(household.startHappy[0], household.startHappy[1]),
-      // Tracks if player has already leaned on parents financially / parents already helped this game
       timesAskedForMoney: 0,
       careBurdenActive: false,
+      // Individual parent NPCs
+      mom: hasTwoParents || isSingleMom  ? { name: momName, rel: randInt(40,70), lastAskedWeek:-52, lastGiftWeek:-52 } : null,
+      dad: hasTwoParents && !isSingleMom ? { name: dadName, rel: randInt(35,65), lastAskedWeek:-52, lastGiftWeek:-52 } : null,
     };
+  }
+
+  // ---------------- Relationships system ----------------
+  // state.relationships: array of person records the player has an ongoing
+  // bond with — friends, a dating partner, a spouse, and kids. Each has its
+  // own rel meter (0-100) that decays slowly each turn and needs upkeep
+  // (Hang Out, Date Night, Family Time) to maintain, mirroring how the
+  // aggregate `stats.rel` already works but per-person instead of global.
+  //
+  // type: 'friend' | 'dating' | 'spouse' | 'ex' | 'child'
+  // rel: 0-100 closeness meter, decays passively, raised by targeted activities
+  // status fields for dating -> engaged -> married progression live on the
+  // 'dating'/'spouse' record itself (engaged: bool, weeksTogether: number)
+
+  const DATING_MIN_AGE = 15;
+  const MARRIAGE_MIN_AGE = 18;
+  const REL_DECAY_PER_TURN = 1.5;
+  const REL_BREAKUP_THRESHOLD = 15;
+  const REL_DIVORCE_THRESHOLD = 10;
+  const PARENT_DECAY_BASE = 0.8;
+  const PARENT_DECAY_HIGH_SCHOOL = 2.2;
+  const PARENT_ALLOWANCE_COOLDOWN = 52;
+  const PARENT_GIFT_COOLDOWN = 104;
+
+  function parentDecayRate(){
+    return state.age >= 14 ? PARENT_DECAY_HIGH_SCHOOL : PARENT_DECAY_BASE;
+  }
+
+  // Each week/month, decay parent rel and apply mood/energy effects based on quality.
+  // Parents with high rel boost mood + energy slightly; low rel drags both down.
+  function processParentRelationships(eventLines){
+    const p = state.parents;
+    if (!p) return;
+    const decay = parentDecayRate();
+    ['mom','dad'].forEach(key=>{
+      const parent = p[key];
+      if (!parent) return;
+      parent.rel = clamp(parent.rel - decay);
+      // Passive stat effect based on relationship quality
+      if (parent.rel >= 65){
+        state.stats.happy  = clamp(state.stats.happy  + 1);
+        state.stats.energy = clamp(state.stats.energy + 0.5);
+      } else if (parent.rel < 25){
+        state.stats.happy  = clamp(state.stats.happy  - 2);
+        state.stats.energy = clamp(state.stats.energy - 1);
+        if (parent.rel < 15 && Math.random() < 0.15){
+          eventLines.push({text:`Things are tense with ${parent.name}. It's been weighing on you.`, tone:'neg', effects:{happy:-3}});
+          state.stats.happy = clamp(state.stats.happy - 3);
+        }
+      }
+    });
+  }
+
+  // Boost a specific parent's rel (called from spend-time activities or tab actions)
+  function spendTimeWithParent(key, amount){
+    const parent = state.parents && state.parents[key];
+    if (!parent) return;
+    parent.rel = clamp(parent.rel + amount);
+  }
+
+  // Ask a parent for allowance — small weekly-ish cash, cooldown 1 year
+  function askParentAllowance(key){
+    const p = state.parents;
+    const parent = p && p[key];
+    if (!parent) return { ok:false, reason:'No parent' };
+    if (!p.canAskForMoney) return { ok:false, reason:`${parent.name} isn't in a position to help financially` };
+    if (parent.rel < 40) return { ok:false, reason:`Your relationship with ${parent.name} isn't close enough` };
+    const turnCount = state.week || state.month || 0;
+    if (turnCount - (parent.lastAskedWeek||(-PARENT_ALLOWANCE_COOLDOWN)) < PARENT_ALLOWANCE_COOLDOWN)
+      return { ok:false, reason:`${parent.name} already helped recently — wait a while` };
+    parent.lastAskedWeek = turnCount;
+    const amount = p.wealthTier === 'wealthy' ? randInt(200,500) : p.wealthTier === 'middle' ? randInt(80,200) : randInt(20,60);
+    state.stats.money += amount;
+    addJournalEntry(`${parent.name} gave you $${amount} as an allowance.`, []);
+    return { ok:true, amount };
+  }
+
+  // Ask a parent for a meaningful gift (asset/money) — 2-year cooldown, high rel req
+  function askParentGift(key){
+    const p = state.parents;
+    const parent = p && p[key];
+    if (!parent) return { ok:false, reason:'No parent' };
+    if (!p.canAskForMoney || !p.hasAssets) return { ok:false, reason:`${parent.name} can't offer a significant gift` };
+    if (parent.rel < 70) return { ok:false, reason:`You need a much closer relationship with ${parent.name} (70+ closeness)` };
+    const turnCount = state.week || state.month || 0;
+    if (turnCount - (parent.lastGiftWeek||(-PARENT_GIFT_COOLDOWN)) < PARENT_GIFT_COOLDOWN)
+      return { ok:false, reason:`${parent.name} already gave a major gift recently` };
+    parent.lastGiftWeek = turnCount;
+    const amount = p.wealthTier === 'wealthy' ? randInt(2000,8000) : randInt(500,2000);
+    state.stats.money += amount;
+    parent.rel = clamp(parent.rel - 5); // a little resentment / expectation tax
+    addJournalEntry(`${parent.name} gave you a significant gift of $${amount.toLocaleString()}.`, []);
+    return { ok:true, amount };
+  }
+
+  function makeFriend(){
+    return {
+      id: 'p' + Math.random().toString(36).slice(2,9),
+      name: randomPersonName(),
+      type: 'friend',
+      rel: randInt(45,70),
+    };
+  }
+
+  function makeDatingProspect(){
+    return {
+      id: 'p' + Math.random().toString(36).slice(2,9),
+      name: randomPersonName(),
+      type: 'dating',
+      rel: randInt(40,60),
+      engaged: false,
+      weeksTogether: 0,
+    };
+  }
+
+  function ensureRelationshipsInit(){
+    if (!state.relationships) state.relationships = [];
+    if (state.pendingDateOffers === undefined) state.pendingDateOffers = [];
+  }
+
+  function currentPartner(){
+    ensureRelationshipsInit();
+    return state.relationships.find(p => p.type === 'dating' || p.type === 'spouse') || null;
+  }
+
+  function friendsList(){
+    ensureRelationshipsInit();
+    return state.relationships.filter(p => p.type === 'friend');
+  }
+
+  function childrenList(){
+    ensureRelationshipsInit();
+    return state.relationships.filter(p => p.type === 'child');
+  }
+
+  // Called whenever "Hang Out with Friends" (or school's "Play") is worked.
+  // Small chance of meeting someone new; if a friend slot already exists,
+  // strengthens a random existing friend instead so the roster doesn't grow
+  // unbounded.
+  function rollFriendActivityOutcome(eventLines){
+    ensureRelationshipsInit();
+    const friends = friendsList();
+    if (friends.length && Math.random() < 0.7){
+      const f = friends[randInt(0, friends.length-1)];
+      f.rel = clamp(f.rel + randInt(4,9));
+    } else if (friends.length < 5 && Math.random() < 0.35){
+      const f = makeFriend();
+      state.relationships.push(f);
+      eventLines.push({text:`You hit it off with someone new — ${f.name} is now a friend.`, tone:'pos', effects:{}});
+    }
+
+    // Dating: only once old enough, and only if not already attached.
+    if (state.age >= DATING_MIN_AGE && !currentPartner() && Math.random() < 0.18){
+      const prospect = makeDatingProspect();
+      state.pendingDateOffers.push(prospect);
+      eventLines.push({text:`You hit it off with someone — ${prospect.name} seems interested in dating. Check Relationships.`, tone:'pos', effects:{}});
+    }
+  }
+
+  function acceptDateOffer(prospectId){
+    ensureRelationshipsInit();
+    const idx = state.pendingDateOffers.findIndex(p => p.id === prospectId);
+    if (idx < 0) return;
+    const prospect = state.pendingDateOffers[idx];
+    state.pendingDateOffers.splice(idx,1);
+    state.relationships.push(prospect);
+    addJournalEntry(`You started dating ${prospect.name}.`, []);
+  }
+
+  function declineDateOffer(prospectId){
+    ensureRelationshipsInit();
+    state.pendingDateOffers = state.pendingDateOffers.filter(p => p.id !== prospectId);
+  }
+
+  // "Ask someone out" — available once Hang Out with Friends has built up
+  // enough goodwill with at least one friend (rel >= 55), converts that
+  // friend into a dating prospect offer instead of waiting on a random roll.
+  function askFriendOut(friendId){
+    ensureRelationshipsInit();
+    if (currentPartner()) return false;
+    const friend = state.relationships.find(p => p.id === friendId && p.type === 'friend');
+    if (!friend || friend.rel < 55) return false;
+    const chance = clamp(friend.rel) / 100;
+    if (Math.random() < chance){
+      friend.type = 'dating';
+      friend.engaged = false;
+      friend.weeksTogether = 0;
+      addJournalEntry(`You asked ${friend.name} out, and they said yes!`, []);
+      return true;
+    } else {
+      friend.rel = clamp(friend.rel - 8);
+      addJournalEntry(`You asked ${friend.name} out, but they weren't ready for that.`, []);
+      return false;
+    }
+  }
+
+  function proposeToPartner(){
+    const partner = currentPartner();
+    if (!partner || partner.type !== 'dating' || partner.engaged) return false;
+    const RING_COST = 1500;
+    if (state.stats.money < RING_COST) return false;
+    state.stats.money -= RING_COST;
+    const chance = clamp(partner.rel) / 100;
+    if (Math.random() < chance){
+      partner.engaged = true;
+      addJournalEntry(`You proposed to ${partner.name}, and they said yes!`, []);
+      return true;
+    } else {
+      partner.rel = clamp(partner.rel - 15);
+      addJournalEntry(`You proposed to ${partner.name}... they weren't ready. Awkward.`, []);
+      return false;
+    }
+  }
+
+  function marryPartner(){
+    const partner = currentPartner();
+    if (!partner || partner.type !== 'dating' || !partner.engaged) return false;
+    const WEDDING_COST = 5000;
+    if (state.stats.money < WEDDING_COST) return false;
+    state.stats.money -= WEDDING_COST;
+    partner.type = 'spouse';
+    partner.engaged = false;
+    partner.movedIn = true;
+    state.stats.happy = clamp(state.stats.happy + 12);
+    addJournalEntry(`You married ${partner.name}! They've moved in with you.`, []);
+    return true;
+  }
+
+  function tryForChild(){
+    const partner = currentPartner();
+    if (!partner || partner.type !== 'spouse') return false;
+    const CHILD_COST = 2000;
+    if (state.stats.money < CHILD_COST) return false;
+    state.stats.money -= CHILD_COST;
+    if (Math.random() < 0.55){
+      const child = {
+        id: 'p' + Math.random().toString(36).slice(2,9),
+        name: randomPersonName(),
+        type: 'child',
+        rel: randInt(60,80),
+        childAge: 0,
+      };
+      state.relationships.push(child);
+      state.stats.happy = clamp(state.stats.happy + 10);
+      addJournalEntry(`You and ${partner.name} welcomed a new baby — ${child.name}!`, []);
+      return true;
+    } else {
+      addJournalEntry(`You and ${partner.name} tried for a baby this time, but it didn't happen yet.`, []);
+      return false;
+    }
+  }
+
+  // Weekly/monthly upkeep tick — called from endWeek/endSchoolMonth/endCollegeMonth.
+  // Applies passive decay to every tracked relationship, ages up children,
+  // and checks for breakups/divorce if neglect has gone on too long.
+  function processRelationshipUpkeep(eventLines){
+    ensureRelationshipsInit();
+    if (!state.relationships.length) return;
+
+    const stillTogether = [];
+    state.relationships.forEach(p=>{
+      if (p.type === 'child'){
+        p.rel = clamp(p.rel - REL_DECAY_PER_TURN * 0.5);
+        stillTogether.push(p);
+        return;
+      }
+
+      p.rel = clamp(p.rel - REL_DECAY_PER_TURN);
+      if (p.type === 'dating' || p.type === 'spouse'){
+        p.weeksTogether = (p.weeksTogether || 0) + 1;
+      }
+
+      if (p.type === 'dating' && p.rel <= REL_BREAKUP_THRESHOLD){
+        eventLines.push({text:`${p.name} broke up with you — the relationship had been neglected too long.`, tone:'neg', effects:{happy:-10}});
+        state.stats.happy = clamp(state.stats.happy - 10);
+        return; // dropped — not pushed to stillTogether
+      }
+      if (p.type === 'spouse' && p.rel <= REL_DIVORCE_THRESHOLD){
+        eventLines.push({text:`${p.name} filed for divorce — the marriage had fallen apart.`, tone:'neg', effects:{happy:-18, money:-100}});
+        state.stats.happy = clamp(state.stats.happy - 18);
+        state.stats.money -= 2000; // settlement / split costs
+        return; // dropped
+      }
+      stillTogether.push(p);
+    });
+    state.relationships = stillTogether;
+  }
+
+  // ---------------- Specializations (sport / hobby) logic ----------------
+  // state.specializations = { sport: {id,name,level} | null, hobby: {id,name,level} | null }
+  // Picked once via a one-time picker the first time the relevant Free Time
+  // activity is selected; afterward the activity always uses that pick.
+  // `level` (0-100) grows through repeated practice and gates the
+  // athletics/arts jobs defined above.
+
+  function ensureSpecializationsInit(){
+    if (!state.specializations) state.specializations = { sport:null, hobby:null };
+  }
+
+  function pickSpecialization(kind, optionId){
+    ensureSpecializationsInit();
+    const pool = kind === 'sport' ? SPORT_OPTIONS : HOBBY_OPTIONS;
+    const opt = pool.find(o => o.id === optionId);
+    if (!opt) return;
+    state.specializations[kind] = { id: opt.id, name: opt.name, level: 0 };
+  }
+
+  // Quitting drops the specialization entirely (mastery is lost) and, if the
+  // player is currently working the matching pro career (athletics/arts),
+  // also costs them that job — the role only existed because of that skill.
+  function quitSpecialization(kind){
+    ensureSpecializationsInit();
+    if (!state.specializations[kind]) return;
+    const trackId = kind === 'sport' ? 'athletics' : 'arts';
+    const job = currentJob();
+    if (job && job.careerTrack === trackId){
+      addJournalEntry(`Walking away from ${state.specializations[kind].name} cost you your job as ${job.name}.`, []);
+      state.heldJob = null;
+      state.jobWeeksHeld = 0;
+      state.payCycleCounter = 0;
+      state.selected = state.selected.filter(id=>id!=='go_to_work');
+      syncGoToWorkActivity();
+    } else {
+      addJournalEntry(`You quit ${state.specializations[kind].name}.`, []);
+    }
+    state.specializations[kind] = null;
+    state.selected = state.selected.filter(id => id !== (kind === 'sport' ? 'sports' : 'hobby_school') && id !== 'practice_spec');
+  }
+
+  // Change = quit, then immediately open the picker for a fresh choice.
+  // Mastery does not carry over — it's a different sport/craft entirely.
+  function changeSpecialization(kind, onPicked){
+    quitSpecialization(kind);
+    openSpecPicker(kind, onPicked || (()=>{}));
+  }
+
+  // One-time picker UI — shown the first time Sports/Team Practice or
+  // Hobby/Creative Time is selected and no specialization is set yet for
+  // that kind. onPicked fires after a choice is made so the caller can
+  // finish adding the activity to state.selected.
+  function openSpecPicker(kind, onPicked){
+    const pool = kind === 'sport' ? SPORT_OPTIONS : HOBBY_OPTIONS;
+    els.specPickerTitle.textContent = kind === 'sport' ? 'Choose Your Sport' : 'Choose Your Hobby';
+    els.specPickerList.innerHTML = pool.map(o=>`<div class="choice-card" data-spec-id="${o.id}"><div class="name">${o.name}</div></div>`).join('');
+    els.specPickerList.querySelectorAll('.choice-card').forEach(card=>{
+      card.addEventListener('click', ()=>{
+        pickSpecialization(kind, card.dataset.specId);
+        closeSpecPicker();
+        onPicked();
+      });
+    });
+    els.specPickerModal.classList.remove('hidden');
+    void els.specPickerModal.offsetWidth;
+    els.specPickerModal.classList.add('show');
+  }
+
+  function closeSpecPicker(){
+    els.specPickerModal.classList.remove('show');
+  }
+
+  function showNewYearToast(year){
+    els.newYearToastYear.textContent = year;
+    els.newYearToast.classList.remove('hidden');
+    void els.newYearToast.offsetWidth;
+    els.newYearToast.classList.add('show');
+    setTimeout(()=>{
+      els.newYearToast.classList.remove('show');
+      setTimeout(()=> els.newYearToast.classList.add('hidden'), 400);
+    }, 1800);
+  }
+
+  // Called whenever a practice-type activity is worked (Sports/Team Practice,
+  // Hobby/Creative Time, Practice, Work with a Coach, Campus Club/Exercise).
+  // Mastery now grows slowly and unevenly — this is meant to take years of
+  // real-game-time investment, not a few turns. coachTier controls the boost:
+  // 'school' (a private youth coach, no career yet — modest boost) vs 'pro'
+  // (working with a coach while actually employed in the career — bigger
+  // boost, since it's real professional development).
+  function practiceSpecialization(kind, eventLines, coachTier){
+    ensureSpecializationsInit();
+    const spec = state.specializations[kind];
+    if (!spec) return;
+    const room = 100 - spec.level;
+    let gain;
+    if (coachTier === 'pro'){
+      gain = Math.max(0.6, room * 0.05 + randInt(1,2));   // pro coaching: faster, still bounded
+    } else if (coachTier === 'school'){
+      gain = Math.max(0.35, room * 0.03 + randInt(0,1));  // youth coaching: meaningfully better than solo, well below pro
+    } else {
+      gain = Math.max(0.15, room * 0.015 + Math.random()*0.6); // solo: slow grind
+    }
+    spec.level = clamp(spec.level + gain);
+
+    // Milestone callouts so the player notices real progress toward a career
+    if (spec.level >= 80 && spec.level - gain < 80){
+      eventLines.push({text:`You've reached an elite level in ${spec.name} — pro-level opportunities are now within reach.`, tone:'pos', effects:{}});
+    } else if (spec.level >= 55 && spec.level - gain < 55){
+      eventLines.push({text:`You're getting genuinely good at ${spec.name} — semi-pro/working-level opportunities are opening up.`, tone:'pos', effects:{}});
+    } else if (spec.level >= 30 && spec.level - gain < 30){
+      eventLines.push({text:`You've built real skill in ${spec.name} — entry-level opportunities in the field are opening up.`, tone:'pos', effects:{}});
+    }
+  }
+
+  // ---------------- Loans system ----------------
+  // state.loans: array of active loan records
+  //   { id, type, label, principal, balance, weeklyPayment, weeksTotal, weeksRemaining, missedPayments }
+  // Payments are deducted weekly in endWeek / monthly (×4) in endCollegeMonth.
+  // Miss 4 payments on any loan → default event (hard penalty).
+  // state.loanCooldownWeeks: weeks before player can take a new loan after a default.
+  // state.hasCar: true while an auto loan exists (car owned); grants weekly Energy+Mood.
+
+  const LOAN_TYPES = {
+    student:{
+      label:'Student Loan', minAge:17, maxAge:null,
+      requiresJob:false,
+      amounts:[2000, 5000, 10000],
+      rateRange:[0.05, 0.07],
+      termYears:[10, 15, 20],
+      desc:'Covers tuition and education costs. No job required. Low interest, long term.',
+    },
+    auto:{
+      label:'Auto Loan', minAge:18, maxAge:null,
+      requiresJob:true,
+      amounts:[3000, 6000, 10000],
+      rateRange:[0.08, 0.12],
+      termYears:[3, 4, 5],
+      desc:'Finance a car. Requires steady employment. Car gives +3 Energy +2 Mood weekly while owned.',
+    },
+    personal:{
+      label:'Personal Loan', minAge:18, maxAge:null,
+      requiresJob:true,
+      amounts:[500, 1500, 3000],
+      rateRange:[0.14, 0.20],
+      termYears:[1, 2, 3],
+      desc:'Flexible short-term cash. Requires a job. High interest — use sparingly.',
+    },
+  };
+
+  const LOAN_MISSED_BEFORE_DEFAULT = 4;
+  const CAR_EFFECTS = { energy:3, happy:2 };
+
+  function loanWeeklyPayment(principal, annualRate, years){
+    const r = annualRate / 52;
+    const n = years * 52;
+    if (r === 0) return principal / n;
+    return principal * r * Math.pow(1+r, n) / (Math.pow(1+r, n) - 1);
+  }
+
+  function canTakeLoan(type){
+    if (!state.loans) state.loans = [];
+    if (state.loanCooldownWeeks > 0) return { ok:false, reason:'In loan default cooldown' };
+    const def = LOAN_TYPES[type];
+    if (state.age < def.minAge) return { ok:false, reason:`Must be ${def.minAge}+ to take this loan` };
+    if (def.requiresJob && !state.heldJob) return { ok:false, reason:'Requires steady employment' };
+    if (type === 'auto' && state.hasCar) return { ok:false, reason:'You already own a car' };
+    if (type === 'student' && state.loans.some(l=>l.type==='student')) return { ok:false, reason:'Already have a student loan' };
+    return { ok:true };
+  }
+
+  function takeLoan(type, amount, termYears){
+    if (!canTakeLoan(type).ok) return false;
+    const def = LOAN_TYPES[type];
+    const rate = def.rateRange[0] + Math.random() * (def.rateRange[1] - def.rateRange[0]);
+    const weeklyPayment = loanWeeklyPayment(amount, rate, termYears);
+    const loan = {
+      id: 'ln_' + Math.random().toString(36).slice(2,8),
+      type,
+      label: def.label,
+      principal: amount,
+      balance: amount,
+      weeklyPayment: Math.round(weeklyPayment * 100) / 100,
+      weeksTotal: termYears * 52,
+      weeksRemaining: termYears * 52,
+      missedPayments: 0,
+      annualRate: Math.round(rate * 1000) / 10, // stored as % for display
+    };
+    if (!state.loans) state.loans = [];
+    state.loans.push(loan);
+    state.stats.money += amount;
+    if (type === 'auto') state.hasCar = true;
+    addJournalEntry(`Took a ${def.label} of $${amount.toLocaleString()} over ${termYears} yr at ${loan.annualRate}% — $${loan.weeklyPayment.toFixed(0)}/wk.`, []);
+    return true;
+  }
+
+  function processLoanPayments(eventLines, turnsPerCycle){
+    if (!state.loans || !state.loans.length) return;
+    // turnsPerCycle: 1 for weekly (adult), ~4 for monthly (college)
+    const surviving = [];
+    state.loans.forEach(loan => {
+      const payment = loan.weeklyPayment * turnsPerCycle;
+      if (state.stats.money >= payment){
+        state.stats.money -= payment;
+        loan.missedPayments = 0;
+      } else {
+        loan.missedPayments = (loan.missedPayments || 0) + 1;
+        if (loan.missedPayments >= LOAN_MISSED_BEFORE_DEFAULT){
+          triggerLoanDefault(loan, eventLines);
+          return; // drop this loan
+        } else {
+          eventLines.push({text:`Missed payment on your ${loan.label} (${loan.missedPayments}/${LOAN_MISSED_BEFORE_DEFAULT}).`, tone:'neg', effects:{}});
+        }
+      }
+      // Reduce balance by principal component of this payment
+      const interestThisCycle = loan.balance * (loan.annualRate/100/52) * turnsPerCycle;
+      const principalPaid = Math.max(0, payment - interestThisCycle);
+      loan.balance = Math.max(0, loan.balance - principalPaid);
+      loan.weeksRemaining -= turnsPerCycle;
+      if (loan.balance <= 0 || loan.weeksRemaining <= 0){
+        eventLines.push({text:`Your ${loan.label} is fully paid off.`, tone:'pos', effects:{}});
+        addJournalEntry(`${loan.label} paid off.`, []);
+        if (loan.type === 'auto') state.hasCar = false;
+        return; // drop paid-off loan
+      }
+      surviving.push(loan);
+    });
+    state.loans = surviving;
+  }
+
+  function triggerLoanDefault(loan, eventLines){
+    const penalty = Math.round(loan.balance * 0.3); // 30% of remaining balance as penalty/collections hit
+    state.stats.money -= penalty;
+    state.stats.happy = clamp(state.stats.happy - 20);
+    state.stats.social = clamp(state.stats.social - 10);
+    state.loanCooldownWeeks = 52; // locked out of new loans for 1 year
+    if (loan.type === 'auto') state.hasCar = false;
+    eventLines.push({text:`You defaulted on your ${loan.label}. Collections took $${penalty} and your credit is wrecked for the next year.`, tone:'neg', effects:{money:-penalty, happy:-20, social:-10}});
+    addJournalEntry(`Defaulted on ${loan.label} — $${penalty} seized, locked out of new loans for 1 year.`, []);
   }
 
   // ---------------- Childhood (ages 0-5, yearly) data ----------------
@@ -1991,7 +2730,7 @@
       id:'structured',
       name:'Pushed Into Activities',
       desc:'Lessons, structure, early achievement.',
-      effects:{ happy:-2, energy:-2, rel:1, skill:2 },
+      effects:{ happy:-2, energy:-2, social:1, skill:2 },
       eventChance:0.35, eventPool:'structured',
       note:'You were kept busy — classes, structure, expectations, even this young.'
     },
@@ -1999,7 +2738,7 @@
       id:'free_play',
       name:'Left to Be a Kid',
       desc:'Free play, few schedules, room to wander.',
-      effects:{ happy:3, energy:2, rel:0, health:1 },
+      effects:{ happy:3, energy:2, social:0, health:1 },
       eventChance:0.30, eventPool:'free_play',
       note:'Mostly unstructured time. You figured out how to entertain yourself.'
     },
@@ -2007,30 +2746,45 @@
       id:'sheltered',
       name:'Closely Watched',
       desc:'Cautious, protective, rarely out of sight.',
-      effects:{ happy:0, energy:-1, rel:2, health:1 },
+      effects:{ happy:0, energy:-1, social:2, health:1 },
       eventChance:0.30, eventPool:'sheltered',
       note:'You were rarely out of arm\'s reach. Safe, but a little stifled.'
+    },
+    {
+      id:'kindergarten',
+      name:'Attend Kindergarten',
+      desc:'A real classroom for the first time — a head start, but a long day for a 5-year-old.',
+      effects:{ happy:-3, energy:-3, social:1, skill:5 },
+      eventChance:0.30, eventPool:'kindergarten',
+      note:'You started kindergarten — your first taste of a real classroom.',
+      minInfancyYear:5, // only offered the year before grade school starts
     },
   ];
 
   const INFANCY_EVENT_POOLS = {
     structured:[
-      {text:"A relative started a small college fund for you.", effects:{money:15}, tone:'pos'},
+      {text:"A relative started a small college fund for you.", effects:{money:300}, tone:'pos'},
       {text:"You picked up an early reading habit.", effects:{skill:3}, tone:'pos'},
       {text:"All the structure wore you out this year.", effects:{energy:-4, happy:-2}, tone:'neg'},
       {text:"A minor tumble at practice or class.", effects:{health:-3}, tone:'neg'},
     ],
     free_play:[
-      {text:"You made a best friend at the park.", effects:{rel:4, happy:3}, tone:'pos'},
+      {text:"You made a best friend at the park.", effects:{social:4, happy:3}, tone:'pos'},
       {text:"Scraped knees and a wild imagination — a good year.", effects:{happy:2, health:-2}, tone:'pos'},
-      {text:"An unsupervised mishap led to a costly trip to urgent care.", effects:{money:-12, health:-4}, tone:'neg'},
+      {text:"An unsupervised mishap led to a costly trip to urgent care.", effects:{money:-240, health:-4}, tone:'neg'},
       {text:"You got sick more than usual this year.", effects:{health:-5}, tone:'neg'},
     ],
     sheltered:[
-      {text:"A grandparent quietly set aside an inheritance for you.", effects:{money:20}, tone:'pos'},
+      {text:"A grandparent quietly set aside an inheritance for you.", effects:{money:400}, tone:'pos'},
       {text:"Careful watching kept you safe and steady.", effects:{health:3}, tone:'pos'},
-      {text:"Being so closely watched left you a little withdrawn.", effects:{rel:-3, happy:-2}, tone:'neg'},
+      {text:"Being so closely watched left you a little withdrawn.", effects:{social:-3, happy:-2}, tone:'neg'},
       {text:"An overprotective year meant missed chances to learn things.", effects:{skill:-2}, tone:'neg'},
+    ],
+    kindergarten:[
+      {text:"You learned your letters and numbers fast.", effects:{skill:3}, tone:'pos'},
+      {text:"You made a friend on the first day.", effects:{social:3, happy:2}, tone:'pos'},
+      {text:"A long day left you cranky and worn out.", effects:{happy:-3, energy:-3}, tone:'neg'},
+      {text:"You cried at drop-off more mornings than not.", effects:{happy:-4}, tone:'neg'},
     ],
   };
 
@@ -2044,7 +2798,7 @@
 
   const SCHOOL_ACTIVITIES = [
     { id:'school', category:'School', name:'Attend School', cost:50,
-      effects:{ skill:3, energy:-6 }, gpaEffect:2,
+      effects:{ skill:3, energy:-6, happy:-6 }, gpaEffect:2,
       eventChance:0.10, eventPool:'school', mandatory:true },
     { id:'homework', category:'School', name:'Homework / Study', cost:20,
       effects:{ skill:4, energy:-5, happy:-1 }, gpaEffect:4,
@@ -2054,7 +2808,7 @@
       eventChance:0.05, eventPool:'tutoring', wealthGate:['middle','wealthy'] },
 
     { id:'play', category:'Free Time', name:'Play / Hang Out with Friends', cost:25,
-      effects:{ happy:8, rel:6, energy:-5 }, gpaEffect:-1,
+      effects:{ happy:8, social:6, energy:-5 }, gpaEffect:-1,
       eventChance:0.12, eventPool:'play' },
     { id:'sports', category:'Free Time', name:'Sports / Team Practice', cost:25,
       effects:{ health:7, happy:4, energy:-8 },
@@ -2062,12 +2816,15 @@
     { id:'hobby_school', category:'Free Time', name:'Hobby / Creative Time', cost:15,
       effects:{ happy:5, skill:1, energy:2 },
       eventChance:0.05, eventPool:'hobby_school' },
+    { id:'coach_session_school', category:'Free Time', name:'Work with a Coach', cost:25,
+      effects:{ happy:2, energy:-6 },
+      eventChance:0.08, eventPool:'coach_session_school', requiresSpecLevel:15, wealthGate:['middle','wealthy'] },
 
     { id:'chores', category:'Home', name:'Chores', cost:10,
-      effects:{ rel:2, energy:-2 },
+      effects:{ social:2, energy:-2 },
       eventChance:0.03, eventPool:'chores' },
-    { id:'family_school', category:'Home', name:'Family Time', cost:15,
-      effects:{ rel:7, happy:4, energy:2 },
+    { id:'family_school', category:'Home', name:'Time with Parents', cost:15,
+      effects:{ social:5, happy:4, energy:2 },
       eventChance:0.05, eventPool:'family_school' },
     { id:'rest_school', category:'Home', name:'Rest / Sleep In', cost:15,
       effects:{ energy:12, health:2 },
@@ -2104,7 +2861,7 @@
     ],
     play:[
       {text:"One of those perfect, carefree afternoons.", effects:{happy:5}, tone:'pos'},
-      {text:"A falling-out with a friend stung.", effects:{rel:-6, happy:-4}, tone:'neg'},
+      {text:"A falling-out with a friend stung.", effects:{social:-6, happy:-4}, tone:'neg'},
     ],
     sports:[
       {text:"You scored / performed well and felt great.", effects:{happy:5}, tone:'pos'},
@@ -2113,12 +2870,16 @@
     hobby_school:[
       {text:"You made something you're genuinely proud of.", effects:{happy:4}, tone:'pos'},
     ],
+    coach_session_school:[
+      {text:"Your coach pushed you further than you thought you could go.", effects:{happy:3}, tone:'pos'},
+      {text:"A tough, demanding session, but it'll pay off.", effects:{energy:-3}, tone:'neg'},
+    ],
     chores:[
-      {text:"Got it done without being asked twice.", effects:{rel:2}, tone:'pos'},
+      {text:"Got it done without being asked twice.", effects:{social:2}, tone:'pos'},
     ],
     family_school:[
       {text:"A really warm, easy night at home.", effects:{happy:4}, tone:'pos'},
-      {text:"An argument at home left things tense.", effects:{rel:-5, happy:-3}, tone:'neg'},
+      {text:"An argument at home left things tense.", effects:{social:-5, happy:-3}, tone:'neg'},
     ],
     rest_school:[
       {text:"You woke up actually feeling rested.", effects:{energy:5}, tone:'pos'},
@@ -2131,9 +2892,9 @@
 
   const SCHOOL_RANDOM_EVENTS = [
     {text:"You caught a cold going around school.", effects:{health:-6, energy:-4}, chance:0.05, tone:'neg'},
-    {text:"You made a new friend out of nowhere.", effects:{happy:4, rel:3}, chance:0.04, tone:'pos'},
-    {text:"A family trip or outing lifted your mood.", effects:{happy:5, rel:2}, chance:0.03, tone:'pos'},
-    {text:"Something at home was stressful this month.", effects:{happy:-4, rel:-2}, chance:0.04, tone:'neg'},
+    {text:"You made a new friend out of nowhere.", effects:{happy:4, social:3}, chance:0.04, tone:'pos'},
+    {text:"A family trip or outing lifted your mood.", effects:{happy:5, social:2}, chance:0.03, tone:'pos'},
+    {text:"Something at home was stressful this month.", effects:{happy:-4, social:-2}, chance:0.04, tone:'neg'},
   ];
 
   // ---------------- College: tiers, majors, activities, events ----------------
@@ -2146,16 +2907,16 @@
 
   const COLLEGE_TIERS = [
     { id:'community', name:'Community College', minGpa:1.5, minSkill:0, minMoney:-9999,
-      tuitionPerTerm:8, prestige:1,
+      tuitionPerTerm:320, prestige:1,
       detail:'Open admission, low cost. A practical, no-frills path forward.' },
     { id:'state', name:'State College', minGpa:2.3, minSkill:30, minMoney:-9999,
-      tuitionPerTerm:18, prestige:2,
+      tuitionPerTerm:720, prestige:2,
       detail:'Solid, well-regarded, and within reach for most students who kept their grades up.' },
     { id:'competitive', name:'Competitive University', minGpa:3.2, minSkill:55, minMoney:0,
-      tuitionPerTerm:32, prestige:3,
+      tuitionPerTerm:1280, prestige:3,
       detail:'Selective admission. Strong GPA and a financial cushion both matter here.' },
     { id:'elite', name:'Elite University', minGpa:3.7, minSkill:75, minMoney:50,
-      tuitionPerTerm:55, prestige:4,
+      tuitionPerTerm:2200, prestige:4,
       detail:'Highly selective. Near-perfect grades and real financial backing expected.' },
   ];
 
@@ -2195,17 +2956,17 @@
       effects:{ skill:3, energy:-7 }, studyHours:25,
       eventChance:0.10, eventPool:'classes', mandatory:true },
     { id:'study', category:'Academics', name:'Study Session', cost:20,
-      effects:{ skill:3, energy:-5, happy:-1 }, studyHours:20,
+      effects:{ skill:3, energy:-5, happy:-1 }, studyHours:10,
       eventChance:0.08, eventPool:'study' },
     { id:'tutoring_college', category:'Academics', name:'Tutoring Center', cost:15,
-      effects:{ skill:4, energy:-3 }, studyHours:15,
+      effects:{ skill:4, energy:-3 }, studyHours:5,
       eventChance:0.05, eventPool:'tutoring_college' },
 
     { id:'campus_social', category:'Campus Life', name:'Campus Social Life', cost:25,
-      effects:{ happy:8, rel:7, energy:-6 },
+      effects:{ happy:8, social:7, energy:-6 },
       eventChance:0.12, eventPool:'campus_social' },
     { id:'campus_club', category:'Campus Life', name:'Club / Organization', cost:15,
-      effects:{ happy:5, rel:4, skill:1, energy:-3 },
+      effects:{ happy:5, social:4, skill:1, energy:-3 },
       eventChance:0.08, eventPool:'campus_club' },
     { id:'campus_rest', category:'Campus Life', name:'Rest / Sleep In', cost:15,
       effects:{ energy:13, health:2 },
@@ -2232,11 +2993,11 @@
       {text:"The tutoring center cleared up a concept you'd been stuck on.", effects:{skill:4}, tone:'pos'},
     ],
     campus_social:[
-      {text:"A great night out with new college friends.", effects:{happy:6, rel:4}, tone:'pos'},
-      {text:"A falling-out at a party left things tense.", effects:{rel:-5, happy:-3}, tone:'neg'},
+      {text:"A great night out with new college friends.", effects:{happy:6, social:4}, tone:'pos'},
+      {text:"A falling-out at a party left things tense.", effects:{social:-5, happy:-3}, tone:'neg'},
     ],
     campus_club:[
-      {text:"You took on a small leadership role in the club.", effects:{rel:3, skill:1}, tone:'pos'},
+      {text:"You took on a small leadership role in the club.", effects:{social:3, skill:1}, tone:'pos'},
     ],
     campus_rest:[
       {text:"A full night's sleep for once.", effects:{energy:5}, tone:'pos'},
@@ -2252,9 +3013,9 @@
 
   const COLLEGE_RANDOM_EVENTS = [
     {text:"You caught a cold during finals week.", effects:{health:-6, energy:-4}, chance:0.04, tone:'neg'},
-    {text:"A scholarship or grant came through unexpectedly.", effects:{money:25}, chance:0.03, tone:'pos'},
-    {text:"An unexpected textbook/fee expense hit your budget.", effects:{money:-15}, chance:0.05, tone:'neg'},
-    {text:"A roommate conflict added stress.", effects:{happy:-4, rel:-2}, chance:0.04, tone:'neg'},
+    {text:"A scholarship or grant came through unexpectedly.", effects:{money:500}, chance:0.03, tone:'pos'},
+    {text:"An unexpected textbook/fee expense hit your budget.", effects:{money:-300}, chance:0.05, tone:'neg'},
+    {text:"A roommate conflict added stress.", effects:{happy:-4, social:-2}, chance:0.04, tone:'neg'},
   ];
 
   function rollCollegeEvent(pool){
@@ -2265,8 +3026,8 @@
 
   // ---------------- Jobs & salaries ----------------
 
-  // Salaries are real-world annual figures scaled down (~÷1000) so a
-  // paycheck lands in the same $5-30 range as everything else in the game's
+  // Salaries are real-world annual figures scaled down (~÷20) so a
+  // paycheck lands in the same $25-300 range as everything else in the game's
   // money economy. hoursPerWeek is what "Go to Work" costs from the weekly
   // budget. payCycle is 'weekly' or 'biweekly' depending on how that kind of
   // job realistically pays in real life — hourly/service jobs weekly,
@@ -2274,75 +3035,127 @@
   const JOBS = [
     // No degree required
     { id:'retail', name:'Retail Associate', careerTrack:null, minDegreeTier:null,
-      hoursPerWeek:30, payCycle:'weekly', payPerCycle:6, tier:1,
+      hoursPerWeek:30, payCycle:'weekly', payPerCycle:27, tier:1,
       detail:'Real-world ~$28k/yr. No degree needed, flexible entry point.' },
     { id:'food_service', name:'Food Service Worker', careerTrack:null, minDegreeTier:null,
-      hoursPerWeek:25, payCycle:'weekly', payPerCycle:5, tier:1,
+      hoursPerWeek:25, payCycle:'weekly', payPerCycle:25, tier:1,
       detail:'Real-world ~$26k/yr. No degree needed.' },
     { id:'warehouse', name:'Warehouse Associate', careerTrack:null, minDegreeTier:null,
-      hoursPerWeek:40, payCycle:'weekly', payPerCycle:8, tier:1,
+      hoursPerWeek:40, payCycle:'weekly', payPerCycle:33, tier:1,
       detail:'Real-world ~$36k/yr. Physically demanding, no degree needed.' },
     { id:'admin_assist', name:'Administrative Assistant', careerTrack:null, minDegreeTier:null,
-      hoursPerWeek:35, payCycle:'biweekly', payPerCycle:16, tier:2,
+      hoursPerWeek:35, payCycle:'biweekly', payPerCycle:81, tier:2,
       detail:'Real-world ~$40k/yr. No degree required, steady office hours.' },
 
     // Trade
     { id:'electrician', name:'Electrician', careerTrack:'trade', minDegreeTier:null,
-      hoursPerWeek:40, payCycle:'weekly', payPerCycle:14, tier:2,
+      hoursPerWeek:40, payCycle:'weekly', payPerCycle:58, tier:2,
       detail:'Real-world ~$60k/yr. Requires the Skilled Trade Certificate.' },
     { id:'plumber', name:'Plumber', careerTrack:'trade', minDegreeTier:null,
-      hoursPerWeek:40, payCycle:'weekly', payPerCycle:13, tier:2,
+      hoursPerWeek:40, payCycle:'weekly', payPerCycle:57, tier:2,
       detail:'Real-world ~$59k/yr. Requires the Skilled Trade Certificate.' },
 
     // General/Business track
     { id:'office_manager', name:'Office Manager', careerTrack:'general', minDegreeTier:null,
-      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:20, tier:2,
+      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:100, tier:2,
       detail:'Real-world ~$52k/yr. Liberal Arts/Communications degree helps but isn\'t required.' },
     { id:'marketing_coord', name:'Marketing Coordinator', careerTrack:'general', minDegreeTier:null,
-      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:18, tier:2,
+      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:92, tier:2,
       detail:'Real-world ~$48k/yr.' },
     { id:'sales_rep', name:'Sales Representative', careerTrack:'business', minDegreeTier:null,
-      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:19, tier:2,
+      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:96, tier:2,
       detail:'Real-world ~$50k/yr. A Business degree helps with advancement.' },
     { id:'account_manager', name:'Account Manager', careerTrack:'business', minDegreeTier:'state',
-      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:28, tier:3,
+      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:138, tier:3,
       detail:'Real-world ~$72k/yr. Requires a Business degree.' },
     { id:'finance_analyst', name:'Financial Analyst', careerTrack:'business', minDegreeTier:'competitive',
-      hoursPerWeek:45, payCycle:'biweekly', payPerCycle:38, tier:4,
+      hoursPerWeek:45, payCycle:'biweekly', payPerCycle:183, tier:4,
       detail:'Real-world ~$95k/yr. Requires a Business degree from a Competitive University or better.' },
 
     // Education
     { id:'teacher', name:'Teacher', careerTrack:'education', minDegreeTier:null,
-      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:23, tier:3,
+      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:112, tier:3,
       detail:'Real-world ~$58k/yr. Requires an Education degree.' },
     { id:'principal', name:'School Principal', careerTrack:'education', minDegreeTier:'competitive',
-      hoursPerWeek:45, payCycle:'biweekly', payPerCycle:39, tier:4,
+      hoursPerWeek:45, payCycle:'biweekly', payPerCycle:188, tier:4,
       detail:'Real-world ~$98k/yr. Requires an Education degree and real experience.' },
 
     // Healthcare
     { id:'nurse', name:'Registered Nurse', careerTrack:'healthcare', minDegreeTier:null,
-      hoursPerWeek:36, payCycle:'biweekly', payPerCycle:32, tier:3,
+      hoursPerWeek:36, payCycle:'biweekly', payPerCycle:156, tier:3,
       detail:'Real-world ~$81k/yr. Requires a Nursing degree.' },
     { id:'nurse_practitioner', name:'Nurse Practitioner', careerTrack:'healthcare', minDegreeTier:'competitive',
-      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:48, tier:4,
+      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:240, tier:4,
       detail:'Real-world ~$125k/yr. Requires a Nursing degree from a Competitive University or better.' },
 
     // Tech
     { id:'support_tech', name:'IT Support Technician', careerTrack:'tech', minDegreeTier:null,
-      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:21, tier:2,
+      hoursPerWeek:40, payCycle:'biweekly', payPerCycle:106, tier:2,
       detail:'Real-world ~$55k/yr. A CS degree helps but isn\'t strictly required.' },
     { id:'software_engineer', name:'Software Engineer', careerTrack:'tech', minDegreeTier:'state',
-      hoursPerWeek:42, payCycle:'biweekly', payPerCycle:42, tier:4,
+      hoursPerWeek:42, payCycle:'biweekly', payPerCycle:212, tier:4,
       detail:'Real-world ~$110k/yr. Requires a Computer Science degree.' },
     { id:'senior_engineer', name:'Senior Software Engineer', careerTrack:'tech', minDegreeTier:'competitive',
-      hoursPerWeek:42, payCycle:'biweekly', payPerCycle:62, tier:5,
+      hoursPerWeek:42, payCycle:'biweekly', payPerCycle:308, tier:5,
       detail:'Real-world ~$160k/yr. Requires a Computer Science degree from a Competitive University or better, plus experience.' },
+
+    // Athletics — no degree, requires a built-up Sport specialization instead
+    { id:'coach', name:'Youth Coach', careerTrack:'athletics', minDegreeTier:null, minSpecLevel:30, specKind:'sport',
+      hoursPerWeek:25, payCycle:'weekly', payPerCycle:31, tier:1,
+      detail:'Real-world ~$32k/yr. No degree needed — just real experience in your sport.' },
+    { id:'pro_athlete_minor', name:'Semi-Pro Athlete', careerTrack:'athletics', minDegreeTier:null, minSpecLevel:55, specKind:'sport',
+      hoursPerWeek:35, payCycle:'biweekly', payPerCycle:73, tier:2,
+      detail:'Real-world ~$38k/yr. Minor-league/semi-pro level competition in your sport.' },
+    { id:'pro_athlete', name:'Professional Athlete', careerTrack:'athletics', minDegreeTier:null, minSpecLevel:80, specKind:'sport',
+      hoursPerWeek:45, payCycle:'biweekly', payPerCycle:962, tier:5,
+      detail:'Real-world: highly variable, top tier can be $1M+/yr. Requires elite-level mastery of your sport.' },
+
+    // Arts — no degree, requires a built-up Hobby/craft specialization instead
+    { id:'freelance_artist', name:'Freelance Artist', careerTrack:'arts', minDegreeTier:null, minSpecLevel:30, specKind:'hobby',
+      hoursPerWeek:25, payCycle:'weekly', payPerCycle:29, tier:1,
+      detail:'Real-world ~$30k/yr. Gig-based, builds on your craft.' },
+    { id:'working_artist', name:'Working Artist', careerTrack:'arts', minDegreeTier:null, minSpecLevel:55, specKind:'hobby',
+      hoursPerWeek:35, payCycle:'biweekly', payPerCycle:87, tier:3,
+      detail:'Real-world ~$45k/yr. Steady commissions/gigs built on a real reputation in your craft.' },
+    { id:'pro_artist', name:'Touring / Signed Artist', careerTrack:'arts', minDegreeTier:null, minSpecLevel:80, specKind:'hobby',
+      hoursPerWeek:45, payCycle:'biweekly', payPerCycle:962, tier:5,
+      detail:'Real-world: highly variable, top tier can be $500k+/yr. Requires elite-level mastery of your craft.' },
   ];
 
   const TIER_RANK = { community:1, state:2, competitive:3, elite:4 };
 
+  // ---------------- Specializations (sport / hobby) ----------------
+  // First time the player selects Sports/Team Practice or Hobby/Creative
+  // Time, they pick a specific one from these lists — it then sticks for
+  // the rest of the game (shown as the activity name from then on) and
+  // builds a 0-100 mastery meter (state.specializations.sport.level /
+  // .hobby.level) through repeated practice. High mastery + adulthood
+  // unlocks the athletics/arts career track jobs above without a degree.
+
+  const SPORT_OPTIONS = [
+    { id:'basketball', name:'Basketball' },
+    { id:'soccer', name:'Soccer' },
+    { id:'track', name:'Track & Field' },
+    { id:'swimming', name:'Swimming' },
+    { id:'football', name:'Football' },
+    { id:'baseball', name:'Baseball' },
+  ];
+
+  const HOBBY_OPTIONS = [
+    { id:'visual_art', name:'Drawing & Painting' },
+    { id:'music', name:'Music' },
+    { id:'writing', name:'Writing' },
+    { id:'theater', name:'Theater / Acting' },
+    { id:'photography', name:'Photography' },
+    { id:'dance', name:'Dance' },
+  ];
+
   function jobIsEligible(job){
     if (job.tier > 1 && !state.hasHighSchoolCredential) return false;
+    if (job.minSpecLevel){
+      const spec = state.specializations && state.specializations[job.specKind];
+      return !!(spec && spec.level >= job.minSpecLevel);
+    }
     if (!job.minDegreeTier) return true;
     if (!state.degree) return false;
     if (job.careerTrack && state.degree.careerTrack !== job.careerTrack) return false;
@@ -2510,36 +3323,36 @@
     { id:'homeless', name:'Homeless', kind:'homeless' },
     { id:'parents', name:'Living with Parents', kind:'free' },
     { id:'shared', name:'Shared Room / Roommate', kind:'rent', tiers:[
-      { id:'shared_room', name:'Shared Room', price:5,
+      { id:'shared_room', name:'Shared Room', price:9,
         desc:'Splitting a place with roommates. Cheapest paid option.',
         effects:{happy:-3} },
     ]},
     { id:'apartment', name:'Apartments', kind:'rent', tiers:[
-      { id:'studio', name:'Studio', price:8,
+      { id:'studio', name:'Studio', price:17,
         desc:'Small and simple, all yours.',
         effects:{happy:-1} },
-      { id:'one_bed', name:'1-Bedroom Apartment', price:16,
+      { id:'one_bed', name:'1-Bedroom Apartment', price:23,
         desc:'Comfortable, modest.',
         effects:{} },
-      { id:'luxury_apt', name:'Luxury Apartment', price:32,
+      { id:'luxury_apt', name:'Luxury Apartment', price:40,
         desc:'Doorman, gym, the works — costs accordingly.',
         effects:{happy:3, energy:2} },
     ]},
     { id:'condo', name:'Condo', kind:'own', tiers:[
-      { id:'condo', name:'Condo', price:900, down:90, hoa:6,
+      { id:'condo', name:'Condo', price:12500, down:1250, hoa:4,
         desc:'You own it, but no land — an HOA fee replaces repair risk.',
-        effects:{happy:2, rel:1} },
+        effects:{happy:2, social:1} },
     ]},
     { id:'house', name:'Houses', kind:'own', tiers:[
-      { id:'starter', name:'Starter Home', price:600, down:60,
+      { id:'starter', name:'Starter Home', price:15000, down:1500,
         desc:'A modest first home. Builds equity steadily.',
-        effects:{happy:2, rel:2} },
-      { id:'family', name:'Family Home', price:1400, down:140,
+        effects:{happy:2, social:2} },
+      { id:'family', name:'Family Home', price:25000, down:2500,
         desc:'Room to grow into. A real step up.',
-        effects:{happy:4, rel:4} },
-      { id:'luxury_home', name:'Luxury Home', price:3200, down:320,
+        effects:{happy:4, social:4} },
+      { id:'luxury_home', name:'Luxury Home', price:50000, down:5000,
         desc:'The dream house — and the mortgage to match.',
-        effects:{happy:6, rel:5, energy:-1} },
+        effects:{happy:6, social:5, energy:-1} },
     ]},
   ];
 
@@ -2555,11 +3368,11 @@
   // helps Health/Rel a little.
   function parentsHousingEffects(){
     return state.age > 21
-      ? { happy:-4, energy:-2, health:1, rel:1 }
-      : { happy:-1, rel:1 };
+      ? { happy:-4, energy:-2, health:1, social:1 }
+      : { happy:-1, social:1 };
   }
 
-  const HOMELESS_EFFECTS = { health:-3, energy:-3, happy:-5, rel:-2 };
+  const HOMELESS_EFFECTS = { health:-3, energy:-3, happy:-5, social:-2 };
 
   // Repair-cost risk only applies to owned houses (not Condo, which has an
   // HOA fee instead). Roughly scaled to the home's price tier.
@@ -2685,7 +3498,7 @@
     age:0,
     infancyYear: 0,       // 0-5
     selectedInfancyChoice: null,
-    stats:{ health:100, money:50, happy:60, rel:60, energy:100, skill:0, gpa:75 },
+    stats:{ health:100, money:1000, happy:60, social:60, energy:100, skill:0, gpa:75 },
     selected:[],
     openCategories:[],
     journalLog:[],
@@ -2751,6 +3564,11 @@
     confirmPopupBody:document.getElementById('confirmPopupBody'),
     confirmPopupYes:document.getElementById('confirmPopupYes'),
     confirmPopupNo:document.getElementById('confirmPopupNo'),
+    specPickerModal:document.getElementById('specPickerModal'),
+    specPickerTitle:document.getElementById('specPickerTitle'),
+    specPickerList:document.getElementById('specPickerList'),
+    newYearToast:document.getElementById('newYearToast'),
+    newYearToastYear:document.getElementById('newYearToastYear'),
     sectionModalBody:document.getElementById('sectionModalBody'),
     landingScreen:document.getElementById('landingScreen'),
     startNewLifeBtn:document.getElementById('startNewLifeBtn'),
@@ -2806,6 +3624,7 @@
     budgetFill:document.getElementById('budgetFill'),
     endWeekBtn:document.getElementById('endWeekBtn'),
     simTurnBtn:document.getElementById('simTurnBtn'),
+    simYearBtn:document.getElementById('simYearBtn'),
     skipToAdultBtn:document.getElementById('skipToAdultBtn'),
     gameOverScreen:document.getElementById('gameOverScreen'),
     gameOverTitle:document.getElementById('gameOverTitle'),
@@ -2825,8 +3644,10 @@
     energy: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>`,
     skill: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2 9l10 5 10-5-10-5z"/><path d="M6 11.5V16c0 1 2.5 3 6 3s6-2 6-3v-4.5"/></svg>`,
   };
+  // Alias so both 'rel' (legacy event effects) and 'social' (renamed stat) find an icon
+  STAT_ICONS.social = STAT_ICONS.rel;
 
-  const STAT_LABELS = { health:'Health', money:'Money', happy:'Mood', rel:'Rel.', energy:'Energy', skill:'Smarts' };
+  const STAT_LABELS = { health:'Health', money:'Money', happy:'Mood', social:'Social', energy:'Energy', skill:'Smarts' };
 
   // Category icons + which stat color each category borrows
   const CATEGORY_ICONS = {
@@ -2883,6 +3704,7 @@
     const showSubmitBar = (phase === 'adult' || phase === 'school' || phase === 'infancy' || phase === 'setup' || phase === 'college');
     els.submitBar.classList.toggle('hidden', !showSubmitBar);
     els.simTurnBtn.classList.toggle('hidden', phase === 'setup' || phase === 'college');
+    els.simYearBtn.classList.toggle('hidden', phase !== 'adult');
     els.skipToAdultBtn.classList.toggle('hidden', phase !== 'school');
     if (phase === 'setup'){
       els.endWeekBtn.textContent = 'Begin Life';
@@ -3191,9 +4013,9 @@
   function randomizeParents(){
     state.parents = generateParents();
     // Re-apply starting stats tied to the new parent roll
-    state.stats.money = 50 + state.parents.startMoney;
+    state.stats.money = 1000 + state.parents.startMoney;
     state.stats.happy = clamp(60 + state.parents.startHappy);
-    state.stats.rel = clamp(60 + state.parents.startRel);
+    state.stats.social = clamp(60 + state.parents.startRel);
     renderParentsCard();
   }
 
@@ -3202,13 +4024,13 @@
   function renderYoungStats(){
     document.getElementById('youngStatHealth').textContent = Math.round(state.stats.health);
     document.getElementById('youngStatHappy').textContent = Math.round(state.stats.happy);
-    document.getElementById('youngStatRel').textContent = Math.round(state.stats.rel);
+    document.getElementById('youngStatSocial').textContent = Math.round(state.stats.social);
     document.getElementById('youngStatEnergy').textContent = Math.round(state.stats.energy);
     document.getElementById('youngStatSkill').textContent = Math.round(state.stats.skill);
 
     document.getElementById('youngBarHealth').style.width = clamp(state.stats.health)+'%';
     document.getElementById('youngBarHappy').style.width = clamp(state.stats.happy)+'%';
-    document.getElementById('youngBarRel').style.width = clamp(state.stats.rel)+'%';
+    document.getElementById('youngBarSocial').style.width = clamp(state.stats.social)+'%';
     document.getElementById('youngBarEnergy').style.width = clamp(state.stats.energy)+'%';
     document.getElementById('youngBarSkill').style.width = clamp(state.stats.skill)+'%';
 
@@ -3222,6 +4044,7 @@
 
     let html = '';
     INFANCY_CHOICES.forEach(c=>{
+      if (c.minInfancyYear && state.infancyYear < c.minInfancyYear) return;
       const isSelected = state.selectedInfancyChoice === c.id;
       html += `
         <div class="choice-card ${isSelected?'picked':''}" data-id="${c.id}">
@@ -3276,7 +4099,8 @@
   function simThroughInfancy(){
     const recapHistory = [];
     while (state.infancyYear < 6){
-      const choice = INFANCY_CHOICES[randInt(0, INFANCY_CHOICES.length-1)];
+      const eligible = INFANCY_CHOICES.filter(c => !c.minInfancyYear || state.infancyYear >= c.minInfancyYear);
+      const choice = eligible[randInt(0, eligible.length-1)];
       applyEffects(state.stats, choice.effects);
 
       let recapHtml = `<div class="recap">${choice.note}${eventEffectsRow(choice.effects)}`;
@@ -3333,6 +4157,34 @@
     return state.age < activity.minAge;
   }
 
+  // Practice requires a chosen specialization (sport or hobby) to exist at all.
+  function isSpecGated(activity){
+    if (!activity.requiresSpec) return false;
+    ensureSpecializationsInit();
+    return !(state.specializations.sport || state.specializations.hobby);
+  }
+
+  // Working with a coach requires actually holding one of the athletics/arts
+  // jobs — it's a professional-development perk of that career, not
+  // something available to just anyone with a hobby.
+  function isProTrackGated(activity){
+    if (!activity.requiresProTrack) return false;
+    const job = currentJob();
+    return !(job && (job.careerTrack === 'athletics' || job.careerTrack === 'arts'));
+  }
+
+  // School-age equivalent of the pro-track gate — no job is possible yet at
+  // this age, so coaching instead unlocks once the player has shown real
+  // commitment on their own (a lower mastery bar than the adult pro jobs).
+  function isSpecLevelGated(activity){
+    if (!activity.requiresSpecLevel) return false;
+    ensureSpecializationsInit();
+    const sport = state.specializations.sport;
+    const hobby = state.specializations.hobby;
+    const meetsBar = (sport && sport.level >= activity.requiresSpecLevel) || (hobby && hobby.level >= activity.requiresSpecLevel);
+    return !meetsBar;
+  }
+
   // School year = 10 school months + 2 summer months (months 11 & 12 of each year)
   function monthOfYear(){
     return ((state.month-1) % 12) + 1; // 1-12
@@ -3347,14 +4199,14 @@
   function renderSchoolStats(){
     document.getElementById('schoolStatHealth').textContent = Math.round(state.stats.health);
     document.getElementById('schoolStatHappy').textContent = Math.round(state.stats.happy);
-    document.getElementById('schoolStatRel').textContent = Math.round(state.stats.rel);
+    document.getElementById('schoolStatSocial').textContent = Math.round(state.stats.social);
     document.getElementById('schoolStatEnergy').textContent = Math.round(state.stats.energy);
     document.getElementById('schoolStatSkill').textContent = Math.round(state.stats.skill);
     els.schoolMoneyBoxValue.textContent = `$${Math.round(state.stats.money)}`;
 
     document.getElementById('schoolBarHealth').style.width = clamp(state.stats.health)+'%';
     document.getElementById('schoolBarHappy').style.width = clamp(state.stats.happy)+'%';
-    document.getElementById('schoolBarRel').style.width = clamp(state.stats.rel)+'%';
+    document.getElementById('schoolBarSocial').style.width = clamp(state.stats.social)+'%';
     document.getElementById('schoolBarEnergy').style.width = clamp(state.stats.energy)+'%';
     document.getElementById('schoolBarSkill').style.width = clamp(state.stats.skill)+'%';
 
@@ -3427,7 +4279,8 @@
       const gatedByWealth = isWealthGated(a);
       const gatedByAge = isAgeGated(a);
       const gatedBySummer = isSummerLocked(a);
-      const locked = gatedByWealth || gatedByAge || gatedBySummer;
+      const gatedBySpecLevel = isSpecLevelGated(a);
+      const locked = gatedByWealth || gatedByAge || gatedBySummer || gatedBySpecLevel;
       const repeatCap = a.id === 'school' ? 1 : MAX_REPEATS;
       const atRepeatCap = n >= repeatCap;
       const wouldExceed = !locked && !atRepeatCap && (spent + a.cost) > BUDGET_MAX;
@@ -3437,13 +4290,31 @@
       if (gatedBySummer) lockTag = '<span class="lock-tag">School\'s out</span>';
       else if (gatedByWealth) lockTag = '<span class="lock-tag">Not available</span>';
       else if (gatedByAge) lockTag = `<span class="lock-tag">Age ${a.minAge}+</span>`;
+      else if (gatedBySpecLevel) lockTag = `<span class="lock-tag">Needs ${a.requiresSpecLevel}+ mastery</span>`;
+
+      let displayName = a.name;
+      let extraInfo = '';
+      if (a.id === 'sports' && state.specializations && state.specializations.sport){
+        displayName = `Sports — ${state.specializations.sport.name}`;
+        extraInfo = `<div class="effects" style="margin-top:1px;">Mastery: ${Math.round(state.specializations.sport.level)}/100</div>`;
+      }
+      if (a.id === 'hobby_school' && state.specializations && state.specializations.hobby){
+        displayName = `Hobby — ${state.specializations.hobby.name}`;
+        extraInfo = `<div class="effects" style="margin-top:1px;">Mastery: ${Math.round(state.specializations.hobby.level)}/100</div>`;
+      }
+      if (a.id === 'coach_session_school'){
+        const sport = state.specializations?.sport, hobby = state.specializations?.hobby;
+        const lead = (sport && hobby) ? (sport.level >= hobby.level ? sport : hobby) : (sport || hobby);
+        if (lead) displayName = `Work with a Coach — ${lead.name}`;
+      }
 
       paneHtml += `
         <div class="activity cat-tinted ${isSelected?'selected':''} ${disabledAdd?'disabled':''} ${locked?'locked':''}" data-id="${a.id}" style="--cat-color:var(${activeColorVar})">
           <div class="check">${isSelected?'✓':''}</div>
           <div class="info">
-            <div class="name">${a.name}${a.mandatory?' (required)':''}</div>
+            <div class="name">${displayName}${a.mandatory?' (required)':''}</div>
             <div class="effects">${effectsString(a.effects)}</div>
+            ${extraInfo}
           </div>
           ${n>0 ? `<button class="repeat-minus" data-id="${a.id}">−</button><span class="repeat-count">×${n}</span>` : ''}
           ${lockTag || `<div class="cost">${a.cost}h</div>`}
@@ -3468,6 +4339,23 @@
         if (e.target.closest('.repeat-minus')) return;
         if (el.classList.contains('disabled') || el.classList.contains('locked')) return;
         const id = el.dataset.id;
+        ensureSpecializationsInit();
+        if (id === 'sports' && !state.specializations.sport){
+          openSpecPicker('sport', ()=>{
+            state.selected.push(id);
+            renderSchoolActivities();
+            renderSchoolBudget();
+          });
+          return;
+        }
+        if (id === 'hobby_school' && !state.specializations.hobby){
+          openSpecPicker('hobby', ()=>{
+            state.selected.push(id);
+            renderSchoolActivities();
+            renderSchoolBudget();
+          });
+          return;
+        }
         state.selected.push(id);
         renderSchoolActivities();
         renderSchoolBudget();
@@ -3530,7 +4418,7 @@
 
     // Suspension penalty — applies every remaining month this year once suspended
     if (state.suspended && !isSummerMonth()){
-      const suspensionEffects = { happy:-4, rel:-3 };
+      const suspensionEffects = { happy:-4, social:-3 };
       applyEffects(state.stats, suspensionEffects);
       eventLines.push({
         text:`Still suspended — it's weighing on you.`,
@@ -3545,6 +4433,19 @@
       applyGpaEffect(state.stats, a.gpaEffect, state.age);
       logLines.push(a.name);
 
+      if (id === 'play') rollFriendActivityOutcome(eventLines);
+      if (id === 'sports') practiceSpecialization('sport', eventLines);
+      if (id === 'hobby_school') practiceSpecialization('hobby', eventLines);
+      if (id === 'coach_session_school'){
+        if (state.specializations && state.specializations.sport) practiceSpecialization('sport', eventLines, 'school');
+        if (state.specializations && state.specializations.hobby) practiceSpecialization('hobby', eventLines, 'school');
+      }
+      if (id === 'family_school'){
+        spendTimeWithParent('mom', randInt(6,10));
+        spendTimeWithParent('dad', randInt(6,10));
+        childrenList().forEach(c => c.rel = clamp(c.rel + randInt(4,7)));
+      }
+
       if (Math.random() < a.eventChance){
         const ev = rollSchoolEvent(a.eventPool);
         if (ev){
@@ -3553,6 +4454,10 @@
         }
       }
     });
+
+    // Relationships: passive closeness decay + breakup/divorce checks
+    processRelationshipUpkeep(eventLines);
+    processParentRelationships(eventLines);
 
     // Passive monthly decay
     state.stats.energy = clamp(state.stats.energy - 2);
@@ -3576,6 +4481,7 @@
     state.month += 1;
     if ((state.month-1) % 12 === 0){
       state.age += 1;
+      showNewYearToast(2000 + state.age);
       // New school year — truancy record wipes clean
       state.truancyMisses = 0;
       state.suspended = false;
@@ -3643,7 +4549,7 @@
       remaining -= school.cost;
     }
 
-    const trackedStats = ['health','happy','rel','energy','skill'];
+    const trackedStats = ['health','happy','social','energy','skill'];
     const pickCounts = {}; // per-activity count this month, respects repeat caps
 
     while (remaining > 0){
@@ -3963,12 +4869,12 @@
   function renderCollegeStats(){
     document.getElementById('collegeStatHealth').textContent = Math.round(state.stats.health);
     document.getElementById('collegeStatHappy').textContent = Math.round(state.stats.happy);
-    document.getElementById('collegeStatRel').textContent = Math.round(state.stats.rel);
+    document.getElementById('collegeStatRel').textContent = Math.round(state.stats.social);
     document.getElementById('collegeStatEnergy').textContent = Math.round(state.stats.energy);
     document.getElementById('collegeStatSkill').textContent = Math.round(state.stats.skill);
     document.getElementById('collegeBarHealth').style.width = clamp(state.stats.health)+'%';
     document.getElementById('collegeBarHappy').style.width = clamp(state.stats.happy)+'%';
-    document.getElementById('collegeBarRel').style.width = clamp(state.stats.rel)+'%';
+    document.getElementById('collegeBarSocial').style.width = clamp(state.stats.social)+'%';
     document.getElementById('collegeBarEnergy').style.width = clamp(state.stats.energy)+'%';
     document.getElementById('collegeBarSkill').style.width = clamp(state.stats.skill)+'%';
 
@@ -4105,6 +5011,9 @@
       const a = COLLEGE_ACTIVITIES.find(x=>x.id===id);
       applyEffects(state.stats, a.effects);
       logLines.push(a.name);
+      if (id === 'campus_social') rollFriendActivityOutcome(eventLines);
+      if (id === 'campus_club' && state.specializations && state.specializations.hobby) practiceSpecialization('hobby', eventLines);
+      if (id === 'campus_exercise' && state.specializations && state.specializations.sport) practiceSpecialization('sport', eventLines);
       if (Math.random() < a.eventChance){
         const ev = rollCollegeEvent(a.eventPool);
         if (ev){
@@ -4113,6 +5022,14 @@
         }
       }
     });
+
+    // Relationships: passive closeness decay + breakup/divorce checks
+    processRelationshipUpkeep(eventLines);
+    processParentRelationships(eventLines);
+
+    // Loan repayments — college months count as ~4 weeks of payments
+    if (state.loans && state.loans.length) processLoanPayments(eventLines, 4);
+    if (state.loanCooldownWeeks > 0) state.loanCooldownWeeks = Math.max(0, state.loanCooldownWeeks - 4);
 
     // GPA moves toward the major's study target: meeting/exceeding it raises
     // GPA a little, falling short drains it — proportional to the shortfall,
@@ -4166,14 +5083,19 @@
         state.stats.money -= retakeFee;
         appendRecapEntry(els.collegeRecapBox, `You didn't pass this year — you'll need to retake it. A retake fee of $${retakeFee} was charged, but it doesn't add extra time.`, []);
         state.age += 1;
+        showNewYearToast(2000 + state.age);
       } else {
         state.age += 1;
+        showNewYearToast(2000 + state.age);
         state.collegeYear += 1;
-        chargeTuition();
         if (state.collegeYear > major.years){
           finishCollege();
           return;
         }
+        // Tuition charged at the START of each new year (upfront, like real life)
+        chargeTuition();
+        const tierNow = currentTier();
+        appendRecapEntry(els.collegeRecapBox, `Year ${state.collegeYear} begins — tuition of $${tierNow ? tierNow.tuitionPerTerm : '?'} charged upfront.`, []);
       }
     }
 
@@ -4209,13 +5131,13 @@
   function renderStats(){
     document.getElementById('statHealth').textContent = Math.round(state.stats.health);
     document.getElementById('statHappy').textContent = Math.round(state.stats.happy);
-    document.getElementById('statRel').textContent = Math.round(state.stats.rel);
+    document.getElementById('statSocial').textContent = Math.round(state.stats.social);
     document.getElementById('statEnergy').textContent = Math.round(state.stats.energy);
     document.getElementById('statSkill').textContent = Math.round(state.stats.skill);
 
     document.getElementById('barHealth').style.width = clamp(state.stats.health)+'%';
     document.getElementById('barHappy').style.width = clamp(state.stats.happy)+'%';
-    document.getElementById('barRel').style.width = clamp(state.stats.rel)+'%';
+    document.getElementById('barSocial').style.width = clamp(state.stats.social)+'%';
     document.getElementById('barEnergy').style.width = clamp(state.stats.energy)+'%';
     document.getElementById('barSkill').style.width = clamp(state.stats.skill)+'%';
 
@@ -4236,6 +5158,7 @@
     els.endWeekBtn.disabled = spent === 0 || spent > BUDGET_MAX;
     els.endWeekBtn.textContent = spent > BUDGET_MAX ? 'Over budget — remove something' : 'End Week';
     els.simTurnBtn.disabled = spent === 0 || spent > BUDGET_MAX;
+    els.simYearBtn.disabled = spent === 0 || spent > BUDGET_MAX;
   }
 
   function effectsString(effects){
@@ -4327,16 +5250,36 @@
       const isSelected = n > 0;
       const isGoToWork = a.id === 'go_to_work';
       const noJobHeld = isGoToWork && !state.heldJob;
+      const gatedBySpec = isSpecGated(a);
+      const gatedByProTrack = isProTrackGated(a);
+      const locked = gatedBySpec || gatedByProTrack;
       const repeatCap = isGoToWork ? 1 : MAX_REPEATS; // one work-week per week, not stackable
       const atRepeatCap = n >= repeatCap;
-      const wouldExceed = !atRepeatCap && !noJobHeld && (spent + a.cost) > BUDGET_MAX;
-      const disabledAdd = wouldExceed || atRepeatCap || noJobHeld;
-      const lockTag = noJobHeld ? '<span class="lock-tag">No job held</span>' : '';
+      const wouldExceed = !atRepeatCap && !noJobHeld && !locked && (spent + a.cost) > BUDGET_MAX;
+      const disabledAdd = wouldExceed || atRepeatCap || noJobHeld || locked;
+      let lockTag = '';
+      if (noJobHeld) lockTag = '<span class="lock-tag">No job held</span>';
+      else if (gatedBySpec) lockTag = '<span class="lock-tag">Pick a sport/hobby first</span>';
+      else if (gatedByProTrack) lockTag = '<span class="lock-tag">Needs an athletics/arts job</span>';
+
+      let displayName = a.name;
+      if (a.id === 'practice_spec'){
+        const names = [state.specializations?.sport?.name, state.specializations?.hobby?.name].filter(Boolean);
+        if (names.length) displayName = `Practice — ${names.join(' / ')}`;
+      }
+      if (a.id === 'coach_session'){
+        const job = currentJob();
+        if (job && (job.careerTrack === 'athletics' || job.careerTrack === 'arts')){
+          const kind = job.careerTrack === 'athletics' ? state.specializations?.sport?.name : state.specializations?.hobby?.name;
+          if (kind) displayName = `Work with a Coach — ${kind}`;
+        }
+      }
+
       paneHtml += `
-        <div class="activity cat-tinted ${isSelected?'selected':''} ${disabledAdd?'disabled':''}" data-id="${a.id}" style="--cat-color:var(${activeColorVar})">
+        <div class="activity cat-tinted ${isSelected?'selected':''} ${disabledAdd?'disabled':''} ${locked?'locked':''}" data-id="${a.id}" style="--cat-color:var(${activeColorVar})">
           <div class="check">${isSelected?'✓':''}</div>
           <div class="info">
-            <div class="name">${a.name}</div>
+            <div class="name">${displayName}</div>
             <div class="effects">${effectsString(a.effects)}${a.isAdmin?' · prevents penalties':''}</div>
           </div>
           ${n>0 ? `<button class="repeat-minus" data-id="${a.id}">−</button><span class="repeat-count">×${n}</span>` : ''}
@@ -4423,6 +5366,33 @@
       applyEffects(state.stats, a.effects);
       logLines.push(a.name);
 
+      if (id === 'friends') rollFriendActivityOutcome(eventLines);
+      if (id === 'call_parents'){
+        spendTimeWithParent('mom', randInt(5,9));
+        spendTimeWithParent('dad', randInt(5,9));
+      }
+      if (id === 'practice_spec'){
+        if (state.specializations && state.specializations.sport) practiceSpecialization('sport', eventLines);
+        if (state.specializations && state.specializations.hobby) practiceSpecialization('hobby', eventLines);
+      }
+      if (id === 'coach_session'){
+        const job = currentJob();
+        if (job && job.careerTrack === 'athletics') practiceSpecialization('sport', eventLines, 'pro');
+        if (job && job.careerTrack === 'arts') practiceSpecialization('hobby', eventLines, 'pro');
+      }
+      if (id === 'date'){
+        const partner = currentPartner();
+        if (partner){
+          partner.rel = clamp(partner.rel + randInt(6,12));
+        } else {
+          state.stats.happy = clamp(state.stats.happy - 2);
+          eventLines.push({text:"Date Night with no one to date — felt a little hollow.", tone:'neg', effects:{happy:-2}});
+        }
+      }
+      if (id === 'family'){
+        childrenList().forEach(c => c.rel = clamp(c.rel + randInt(5,9)));
+      }
+
       if (Math.random() < a.eventChance){
         const ev = rollEvent(a.eventPool);
         if (ev){
@@ -4501,7 +5471,7 @@
     const handledErrands = state.selected.includes('errands');
     if (!handledBills){
       state.stats.money -= 4;
-      eventLines.push({text:'Bills piled up unpaid this week.', tone:'neg', effects:{money:-4}});
+      eventLines.push({text:'Bills piled up unpaid this week.', tone:'neg', effects:{money:-80}});
     }
     if (!handledErrands){
       state.stats.happy = clamp(state.stats.happy - 2);
@@ -4510,7 +5480,26 @@
 
     // Passive weekly decay (life costs energy & a little money even doing nothing extra)
     state.stats.energy = clamp(state.stats.energy - 3);
-    state.stats.money -= 3; // baseline cost of living
+    state.stats.money -= 60; // baseline cost of living
+
+    // Relationships: passive closeness decay for friends/partner/spouse/kids,
+    // breakup/divorce checks, and the ongoing cost of a household that now
+    // includes a spouse and/or children.
+    processRelationshipUpkeep(eventLines);
+    processParentRelationships(eventLines);
+    const householdChildren = childrenList().length;
+    const hasSpouse = !!state.relationships.find(p=>p.type==='spouse');
+    if (hasSpouse) state.stats.money -= 100; // shared household costs
+    if (householdChildren) state.stats.money -= householdChildren * 120; // childcare/expenses per kid
+
+    // Loan repayments — auto-deducted weekly; missed payments accumulate
+    // toward default. Car bonus applied if player owns a car via auto loan.
+    if (state.loans && state.loans.length) processLoanPayments(eventLines, 1);
+    if (state.loanCooldownWeeks > 0) state.loanCooldownWeeks--;
+    if (state.hasCar){
+      state.stats.energy = clamp(state.stats.energy + CAR_EFFECTS.energy);
+      state.stats.happy  = clamp(state.stats.happy  + CAR_EFFECTS.happy);
+    }
 
     // Housing: weekly payment (rent/mortgage+HOA), missed-payment risk, and
     // the ongoing stat effects of wherever the player currently lives.
@@ -4550,6 +5539,7 @@
     state.week += 1;
     if ((state.week-1) % 52 === 0){
       state.age += 1;
+      showNewYearToast(2000 + state.age);
     }
     carryOverAdultSelections();
 
@@ -4572,6 +5562,17 @@
     while (turns < 4){
       endWeek();
       turns += 1;
+      if (state.gameOver) break;
+    }
+  }
+
+  function simAdultYear(){
+    const spent = spentSoFar();
+    if (spent === 0 || spent > BUDGET_MAX) return;
+    let months = 0;
+    while (months < 12){
+      simAdultMonth();
+      months += 1;
       if (state.gameOver) break;
     }
   }
@@ -4663,7 +5664,7 @@
       <div>Age reached: ${state.age}</div>
       <div>Final Money: ${Math.round(state.stats.money)}</div>
       <div>Final Mood: ${Math.round(state.stats.happy)}</div>
-      <div>Final Relationships: ${Math.round(state.stats.rel)}</div>
+      <div>Final Relationships: ${Math.round(state.stats.social)}</div>
       <div>Final Energy: ${Math.round(state.stats.energy)}</div>
       <div>Final Smarts: ${Math.round(state.stats.skill)}</div>
     `;
@@ -4680,9 +5681,9 @@
       selectedInfancyChoice:null,
       stats:{
         health:100,
-        money: 50 + parents.startMoney,
+        money: 1000 + parents.startMoney,
         happy: clamp(60 + parents.startHappy),
-        rel: clamp(60 + parents.startRel),
+        social: clamp(60 + parents.startRel),
         energy:100,
         skill:0,
         gpa:75,
@@ -4698,6 +5699,9 @@
       startStage:'birth', startStageMode:'sim',
       housing:null, mortgageMarketRate:0.065, missedHousingPayments:0,
       housingView:'status', housingShoppingTarget:null,
+      relationships:[], pendingDateOffers:[], relationshipsView:'status',
+      specializations:{ sport:null, hobby:null },
+      loans:[], loanCooldownWeeks:0, hasCar:false,
     };
 
     els.submitBar.classList.add('hidden');
@@ -4727,9 +5731,9 @@
       selectedInfancyChoice:null,
       stats:{
         health:100,
-        money: 50 + parents.startMoney,
+        money: 1000 + parents.startMoney,
         happy: clamp(60 + parents.startHappy),
-        rel: clamp(60 + parents.startRel),
+        social: clamp(60 + parents.startRel),
         energy:100,
         skill:0,
         gpa:75,
@@ -4745,6 +5749,9 @@
       startStage:'birth', startStageMode:'sim',
       housing:null, mortgageMarketRate:0.065, missedHousingPayments:0,
       housingView:'status', housingShoppingTarget:null,
+      relationships:[], pendingDateOffers:[], relationshipsView:'status',
+      specializations:{ sport:null, hobby:null },
+      loans:[], loanCooldownWeeks:0, hasCar:false,
     };
 
     els.submitBar.classList.add('hidden');
@@ -4775,7 +5782,7 @@
     { id:'finances', name:'Finances', icon: STAT_ICONS.money, build: renderFinancesPane },
     { id:'job', name:'Job', icon: MENU_ICONS.job, build: renderJobPane },
     { id:'assets', name:'Assets', icon: MENU_ICONS.assets, build: renderAssetsPane },
-    { id:'family', name:'Family', icon: STAT_ICONS.rel, build: renderFamilyPane },
+    { id:'family', name:'Relationships', icon: STAT_ICONS.rel, build: renderRelationshipsPane },
   ];
 
   function renderHealthPane(){
@@ -4808,6 +5815,37 @@
   function renderJobPane(){
     const job = currentJob();
     let html = '';
+
+    ensureSpecializationsInit();
+    html += `<div class="menu-section-label">Specializations</div>`;
+    if (state.specializations.sport){
+      const s = state.specializations.sport;
+      html += `<div class="mini-card">
+        <div class="mc-label">Sport — ${s.name}</div>
+        <div class="mc-value">${Math.round(s.level)}/100</div>
+        ${relBarHtml(s.level)}
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <button class="landing-btn secondary small" style="margin:0;" data-change-spec="sport">Change Sport</button>
+          <button class="landing-btn secondary small" style="margin:0;" data-quit-spec="sport">Quit</button>
+        </div>
+      </div>`;
+    } else {
+      html += `<div class="mini-card"><div class="mc-sub">No sport yet — pick one the next time you select Sports/Team Practice.</div></div>`;
+    }
+    if (state.specializations.hobby){
+      const h = state.specializations.hobby;
+      html += `<div class="mini-card">
+        <div class="mc-label">Hobby — ${h.name}</div>
+        <div class="mc-value">${Math.round(h.level)}/100</div>
+        ${relBarHtml(h.level)}
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <button class="landing-btn secondary small" style="margin:0;" data-change-spec="hobby">Change Hobby</button>
+          <button class="landing-btn secondary small" style="margin:0;" data-quit-spec="hobby">Quit</button>
+        </div>
+      </div>`;
+    } else {
+      html += `<div class="mini-card"><div class="mc-sub">No hobby yet — pick one the next time you select Hobby/Creative Time.</div></div>`;
+    }
 
     // Pending offers first — these need a decision and should be the most
     // visible thing in this pane when they exist.
@@ -4877,20 +5915,66 @@
       else if (hasOffer) statusTag = '<span class="lock-tag">Offer pending</span>';
       else if (isApplied) statusTag = '<span class="lock-tag">Applied</span>';
 
+      let lockReason = '';
+      if (!eligible && j.minSpecLevel){
+        const spec = state.specializations && state.specializations[j.specKind];
+        const have = spec ? Math.round(spec.level) : 0;
+        lockReason = `<span>Needs ${j.minSpecLevel}+ ${j.specKind} mastery (you have ${have})</span>`;
+      } else if (!eligible && j.minDegreeTier){
+        lockReason = `<span>Needs ${j.careerTrack} degree, ${j.minDegreeTier}+</span>`;
+      }
+
       html += `
         <div class="choice-card ${isCurrent?'picked':''} ${disabled?'locked':''}" data-job="${disabled?'':j.id}" style="margin-bottom:9px;">
           <div class="name">${j.name}${!eligible?' 🔒':''}${matchesDegree?' ✓':''}</div>
           <div class="desc">${j.detail}</div>
-          <div class="meta-row"><span>$${j.payPerCycle}/${j.payCycle}</span><span>${j.hoursPerWeek}h/wk</span>${!eligible && j.minDegreeTier ? `<span>Needs ${j.careerTrack} degree, ${j.minDegreeTier}+</span>`:''}${statusTag}</div>
+          <div class="meta-row"><span>$${j.payPerCycle}/${j.payCycle}</span><span>${j.hoursPerWeek}h/wk</span>${lockReason}${statusTag}</div>
         </div>`;
     });
 
     return html;
   }
 
+  function wireFinancesPaneListeners(){
+    document.querySelectorAll('[data-take-loan]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const type = btn.dataset.takeLoan;
+        const amountEl = document.querySelector(`.loan-select[data-loan-type="${type}"][data-select="amount"]`);
+        const termEl   = document.querySelector(`.loan-select[data-loan-type="${type}"][data-select="term"]`);
+        if (!amountEl || !termEl) return;
+        const amount = parseInt(amountEl.value);
+        const term   = parseInt(termEl.value);
+        const ok = takeLoan(type, amount, term);
+        if (ok){
+          els.sectionModalBody.innerHTML = renderFinancesPane();
+          wireFinancesPaneListeners();
+          renderStats();
+        }
+      });
+    });
+  }
+
   function wireJobPaneListeners(){
     const quitBtn = document.getElementById('quitJobBtn');
     if (quitBtn) quitBtn.addEventListener('click', quitJob);
+
+    document.querySelectorAll('[data-change-spec]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const kind = btn.dataset.changeSpec;
+        changeSpecialization(kind, ()=>{
+          els.sectionModalBody.innerHTML = renderJobPane();
+          wireJobPaneListeners();
+        });
+      });
+    });
+    document.querySelectorAll('[data-quit-spec]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        quitSpecialization(btn.dataset.quitSpec);
+        els.sectionModalBody.innerHTML = renderJobPane();
+        wireJobPaneListeners();
+        renderStats();
+      });
+    });
 
     document.querySelectorAll('.choice-card[data-job]').forEach(card=>{
       if (card.classList.contains('locked')) return;
@@ -5091,6 +6175,141 @@
   }
 
   function renderFinancesPane(){
+    const job = currentJob();
+    ensureSpecializationsInit();
+    ensureRelationshipsInit();
+
+    // ---- Compute monthly figures (4 weeks) ----
+
+    // INCOME
+    const incomeLines = [];
+    if (job){
+      const weeksPerMonth = 4;
+      let monthlyPay = 0;
+      if (job.payCycle === 'weekly') monthlyPay = job.payPerCycle * weeksPerMonth;
+      else monthlyPay = job.payPerCycle * 2; // biweekly = 2 pays/month
+      incomeLines.push({ label: job.name, amount: monthlyPay });
+    }
+
+    // OUTGOING — ordered biggest to smallest for legibility
+    const outgoingLines = [];
+
+    // Housing (4 weeks of weekly payments)
+    if (state.housing){
+      const h = state.housing;
+      if (h.kind !== 'homeless' && h.kind !== 'free'){
+        const weeklyHousing = currentHousingWeeklyCost();
+        const label = h.kind === 'own' ? 'Mortgage / HOA' : 'Rent';
+        outgoingLines.push({ label, amount: weeklyHousing * 4 });
+      }
+    }
+
+    // Spouse household costs
+    const spouse = currentPartner();
+    if (spouse && spouse.type === 'spouse'){
+      outgoingLines.push({ label: `Household (w/ ${spouse.name})`, amount: 100 * 4 });
+    }
+
+    // Children
+    const kids = childrenList();
+    if (kids.length){
+      outgoingLines.push({ label: `Children (×${kids.length})`, amount: kids.length * 120 * 4 });
+    }
+
+    // Baseline cost of living
+    outgoingLines.push({ label: 'Cost of living', amount: 60 * 4 });
+
+    // Coach session if it's a regular weekly activity
+    if (state.selected && state.selected.includes('coach_session')){
+      outgoingLines.push({ label: 'Coach sessions', amount: 400 * 4 });
+    }
+
+    // Active loan repayments
+    if (state.loans && state.loans.length){
+      state.loans.forEach(loan=>{
+        outgoingLines.push({ label: `${loan.label} payment`, amount: loan.weeklyPayment * 4 });
+      });
+    }
+
+    const totalIn  = incomeLines.reduce((s,l)=>s+l.amount,0);
+    const totalOut = outgoingLines.reduce((s,l)=>s+l.amount,0);
+    const net = totalIn - totalOut;
+    const netCls = net >= 0 ? 'pos' : 'neg';
+    const netSign = net >= 0 ? '+' : '';
+
+    // Yearly = monthly × 12
+    const yearlyIn  = totalIn  * 12;
+    const yearlyOut = totalOut * 12;
+    const yearlyNet = yearlyIn - yearlyOut;
+    const yNetCls   = yearlyNet >= 0 ? 'pos' : 'neg';
+    const yNetSign  = yearlyNet >= 0 ? '+' : '';
+
+    const colHeader = (label) => `
+      <div style="font-weight:700; font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); margin-bottom:6px;">${label}</div>`;
+
+    const incomeRowsHtml = incomeLines.length
+      ? incomeLines.map(l=>`<div class="fin-row"><span class="fin-lbl">${l.label}</span><span class="rl-amt pos">$${Math.round(l.amount)}</span></div>`).join('')
+      : `<div class="fin-row"><span class="fin-lbl" style="color:var(--ink-soft);">No income</span><span class="rl-amt">$0</span></div>`;
+
+    const outRowsHtml = outgoingLines.map(l=>
+      `<div class="fin-row"><span class="fin-lbl">${l.label}</span><span class="rl-amt neg">$${Math.round(l.amount)}</span></div>`
+    ).join('');
+
+    const yIncomeRowsHtml = incomeLines.length
+      ? incomeLines.map(l=>`<div class="fin-row"><span class="fin-lbl">${l.label}</span><span class="rl-amt pos">$${Math.round(l.amount*12).toLocaleString()}</span></div>`).join('')
+      : `<div class="fin-row"><span class="fin-lbl" style="color:var(--ink-soft);">No income</span><span class="rl-amt">$0</span></div>`;
+
+    const yOutRowsHtml = outgoingLines.map(l=>
+      `<div class="fin-row"><span class="fin-lbl">${l.label}</span><span class="rl-amt neg">$${Math.round(l.amount*12).toLocaleString()}</span></div>`
+    ).join('');
+
+    // ---- Build HTML ----
+    let html = `
+      <div class="mini-card">
+        <div class="mc-label">Current Balance</div>
+        <div class="mc-value">$${Math.round(state.stats.money).toLocaleString()}</div>
+      </div>
+
+      <div class="menu-section-label">Financial Summary</div>
+      <div class="fin-summary-wrap">
+
+        <div class="fin-col">
+          ${colHeader('Monthly')}
+          <div class="fin-scroll">
+            <div class="fin-section-label">Income</div>
+            ${incomeRowsHtml}
+            <div class="fin-divider"></div>
+            <div class="fin-section-label">Outgoing</div>
+            ${outRowsHtml}
+            <div class="fin-divider"></div>
+            <div class="fin-row fin-net">
+              <span class="fin-lbl">Net</span>
+              <span class="rl-amt ${netCls}">${netSign}$${Math.round(Math.abs(net)).toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="fin-divider-vert"></div>
+
+        <div class="fin-col">
+          ${colHeader('Yearly')}
+          <div class="fin-scroll">
+            <div class="fin-section-label">Income</div>
+            ${yIncomeRowsHtml}
+            <div class="fin-divider"></div>
+            <div class="fin-section-label">Outgoing</div>
+            ${yOutRowsHtml}
+            <div class="fin-divider"></div>
+            <div class="fin-row fin-net">
+              <span class="fin-lbl">Net</span>
+              <span class="rl-amt ${yNetCls}">${yNetSign}$${Math.round(Math.abs(yearlyNet)).toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>`;
+
+    // Recent money events
     const recentMoneyEvents = [];
     for (let i = state.journalLog.length - 1; i >= 0 && recentMoneyEvents.length < 8; i--){
       const entry = state.journalLog[i];
@@ -5100,12 +6319,8 @@
         }
       });
     }
-    let html = `
-      <div class="mini-card">
-        <div class="mc-label">Current Balance</div>
-        <div class="mc-value">$${Math.round(state.stats.money)}</div>
-      </div>
-      <div class="menu-section-label">Recent Money Events</div>`;
+
+    html += `<div class="menu-section-label">Recent Money Events</div>`;
     if (recentMoneyEvents.length){
       html += `<div class="mini-card" style="padding:4px 14px;">`;
       recentMoneyEvents.forEach(e=>{
@@ -5117,13 +6332,61 @@
     } else {
       html += `<div class="mini-card"><div class="mc-sub">No money-related events logged yet this life.</div></div>`;
     }
+
+    // ---- Active loans ----
+    html += `<div class="menu-section-label">Active Loans</div>`;
+    if (state.loans && state.loans.length){
+      state.loans.forEach(loan=>{
+        const pctPaid = Math.round((1 - loan.balance / loan.principal) * 100);
+        const weeksLeft = Math.max(0, Math.round(loan.weeksRemaining));
+        html += `<div class="mini-card" style="padding:8px 14px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline;">
+            <div class="mc-label">${loan.label}</div>
+            <div class="rl-amt neg" style="font-size:13px;">$${Math.round(loan.weeklyPayment)}/wk</div>
+          </div>
+          <div class="mc-sub">Balance: $${Math.round(loan.balance).toLocaleString()} · ${loan.annualRate}% APR · ${weeksLeft} wks left</div>
+          ${relBarHtml(pctPaid)}
+          ${loan.missedPayments > 0 ? `<div class="mc-sub" style="color:var(--health); margin-top:4px;">⚠ ${loan.missedPayments}/${LOAN_MISSED_BEFORE_DEFAULT} missed payments</div>` : ''}
+        </div>`;
+      });
+    } else {
+      html += `<div class="mini-card"><div class="mc-sub">No active loans.</div></div>`;
+    }
+
+    // ---- Take a loan ----
+    html += `<div class="menu-section-label">Take a Loan</div>`;
+    if (state.loanCooldownWeeks > 0){
+      html += `<div class="mini-card"><div class="mc-sub" style="color:var(--health);">⚠ Previous default — locked out of new loans for ${state.loanCooldownWeeks} more weeks.</div></div>`;
+    } else {
+      Object.entries(LOAN_TYPES).forEach(([type, def])=>{
+        const check = canTakeLoan(type);
+        const disabled = !check.ok;
+        html += `<div class="mini-card loan-option" style="opacity:${disabled?'0.55':'1'}">
+          <div class="mc-label">${def.label}</div>
+          <div class="mc-sub" style="margin-bottom:8px;">${def.desc}</div>
+          ${disabled
+            ? `<div class="mc-sub" style="color:var(--health);">${check.reason}</div>`
+            : `<div class="loan-row">
+                <select class="loan-select" data-loan-type="${type}" data-select="amount">
+                  ${def.amounts.map(a=>`<option value="${a}">$${a.toLocaleString()}</option>`).join('')}
+                </select>
+                <select class="loan-select" data-loan-type="${type}" data-select="term">
+                  ${def.termYears.map(y=>`<option value="${y}">${y} yr</option>`).join('')}
+                </select>
+                <button class="landing-btn primary small" style="margin:0;" data-take-loan="${type}">Borrow</button>
+              </div>`
+          }
+        </div>`;
+      });
+    }
+
     return html;
   }
 
   function effectsPillsHtml(effects){
     const entries = Object.entries(effects || {}).filter(([,v])=>v!==0);
     if (!entries.length) return `<span class="stat-pill">No effect</span>`;
-    const labelMap = { health:'Health', money:'Money', happy:'Mood', rel:'Rel', energy:'Energy' };
+    const labelMap = { health:'Health', money:'Money', happy:'Mood', social:'Social', energy:'Energy' };
     return entries.map(([k,v])=>{
       const tone = v > 0 ? 'pos' : 'neg';
       const sign = v > 0 ? '+' : '';
@@ -5353,32 +6616,310 @@
   }
 
 
-  function renderFamilyPane(){
+  // ---------------- Relationships pane (replaces the old Family tab) ----------------
+  // Sub-views, mirroring the Assets tab's status/categories/mortgage pattern:
+  //   'status'  — overview: parents, partner/spouse card, kids, friends list, date offers
+  //   'friend'  — detail view for a single friend (ask out button lives here)
+  //   'partner' — detail view for the current dating/spouse relationship
+
+  function renderRelationshipsPane(){
+    ensureRelationshipsInit();
+    if (state.relationshipsView === 'friend') return renderFriendDetailView();
+    if (state.relationshipsView === 'partner') return renderPartnerDetailView();
+    return renderRelationshipsStatusView();
+  }
+
+  function relPct(rel){ return clamp(rel); }
+
+  function relBarHtml(rel){
+    return `<div class="budget-track" style="margin-top:6px;"><div class="budget-fill" style="width:${relPct(rel)}%"></div></div>`;
+  }
+
+  function renderRelationshipsStatusView(){
     const p = state.parents;
-    if (!p) return `<div class="mini-card"><div class="mc-sub">No family generated yet.</div></div>`;
-    let html = `
-      <div class="menu-section-label">Parents</div>
-      <div class="family-member">
-        <div class="fm-icon">👪</div>
-        <div><div class="fm-name">${p.householdLabel}</div><div class="fm-sub">${p.wealthLabel}</div></div>
-      </div>
-      <div class="mini-card">
-        <div class="mc-label">Household Wealth</div>
-        <div class="mc-value">${p.wealthLabel}</div>
-        <div class="mc-sub">${p.wealthDetail}</div>
-      </div>
-      <div class="mini-card">
-        <div class="mc-label">Family Structure</div>
-        <div class="mc-value">${p.householdLabel}</div>
-        <div class="mc-sub">${p.householdDetail}</div>
-      </div>
-      <div class="menu-section-label">Your Family (future)</div>
-      <div class="mini-card" style="opacity:0.55;">
-        <div class="mc-label">Spouse / Kids</div>
-        <div class="mc-value">—</div>
-        <div class="mc-sub">Not yet started</div>
+    const partner = currentPartner();
+    const friends = friendsList();
+    const kids = childrenList();
+    let html = '';
+
+    // Pending date offers surface at the very top — they're time-sensitive
+    if (state.pendingDateOffers.length){
+      html += `<div class="menu-section-label">Interested In You</div>`;
+      state.pendingDateOffers.forEach(prospect=>{
+        html += `<div class="mini-card">
+          <div class="mc-label">${prospect.name}</div>
+          <div class="mc-sub">Wants to start dating you.</div>
+          <div style="display:flex; gap:8px; margin-top:8px;">
+            <button class="landing-btn primary small" style="margin:0;" data-accept-date="${prospect.id}">Accept</button>
+            <button class="landing-btn secondary small" style="margin:0;" data-decline-date="${prospect.id}">Decline</button>
+          </div>
+        </div>`;
+      });
+    }
+
+    // Current relationship (dating or spouse)
+    html += `<div class="menu-section-label">Relationship</div>`;
+    if (partner){
+      const statusLabel = partner.type === 'spouse' ? 'Married' : (partner.engaged ? 'Engaged' : 'Dating');
+      html += `<div class="choice-card" data-open-partner="1">
+        <div class="name">${partner.name}</div>
+        <div class="desc">${statusLabel}${partner.type !== 'child' ? ` · Closeness ${relPct(partner.rel)}/100` : ''}</div>
+        ${relBarHtml(partner.rel)}
       </div>`;
+    } else if (state.age < DATING_MIN_AGE){
+      html += `<div class="mini-card"><div class="mc-sub">Dating opens up once you're a bit older (around 10th grade).</div></div>`;
+    } else {
+      html += `<div class="mini-card"><div class="mc-sub">No one right now. Hang Out with Friends to meet people, or ask a close friend out below.</div></div>`;
+    }
+
+    // Kids
+    if (kids.length){
+      html += `<div class="menu-section-label">Children</div>`;
+      kids.forEach(c=>{
+        html += `<div class="mini-card">
+          <div class="mc-label">${c.name}</div>
+          <div class="mc-sub">Closeness ${relPct(c.rel)}/100</div>
+          ${relBarHtml(c.rel)}
+        </div>`;
+      });
+    }
+
+    // Friends
+    html += `<div class="menu-section-label">Friends</div>`;
+    if (!friends.length){
+      html += `<div class="mini-card"><div class="mc-sub">No close friends yet — Hang Out with Friends to start meeting people.</div></div>`;
+    } else {
+      friends.forEach(f=>{
+        html += `<div class="choice-card" data-open-friend="${f.id}">
+          <div class="name">${f.name}</div>
+          <div class="desc">Closeness ${relPct(f.rel)}/100${f.rel >= 55 && !partner && state.age >= DATING_MIN_AGE ? ' · could ask out' : ''}</div>
+          ${relBarHtml(f.rel)}
+        </div>`;
+      });
+    }
+
+    // Parents (kept from the old Family pane)
+    // Parents
+    html += `<div class="menu-section-label">Parents</div>`;
+    if (p){
+      ['mom','dad'].forEach(key=>{
+        const parent = p[key];
+        if (!parent) return;
+        const isExpanded = state.relationshipsSelectedId === `parent_${key}`;
+        const label = key === 'mom' ? 'Mom' : 'Dad';
+        const turnCount = state.week || state.month || 1;
+        const canAsk = p.canAskForMoney && parent.rel >= 40 &&
+          (turnCount - (parent.lastAskedWeek||(-PARENT_ALLOWANCE_COOLDOWN)) >= PARENT_ALLOWANCE_COOLDOWN);
+        const canGift = p.canAskForMoney && p.hasAssets && parent.rel >= 70 &&
+          (turnCount - (parent.lastGiftWeek||(-PARENT_GIFT_COOLDOWN)) >= PARENT_GIFT_COOLDOWN);
+        html += `<div class="choice-card${isExpanded?' picked':''}" data-open-parent="${key}">
+          <div class="name">${label} — ${parent.name}</div>
+          <div class="desc">Closeness ${Math.round(parent.rel)}/100</div>
+          ${relBarHtml(parent.rel)}
+          ${isExpanded ? `
+          <div style="margin-top:10px; display:flex; flex-direction:column; gap:6px;">
+            <div class="mc-sub" style="margin-bottom:2px;">Spend time to keep the relationship strong — it decays ${state.age>=14?'quickly':'slowly'} ${state.age>=14?'now that you\'re in high school':''} if neglected.</div>
+            <button class="landing-btn secondary small" style="margin:0;" data-parent-call="${key}">Call / Visit (+rel, free)</button>
+            <button class="landing-btn secondary small" style="margin:0;" data-parent-dinner="${key}">Take Out to Dinner (+rel, $80)</button>
+            ${canAsk
+              ? `<button class="landing-btn primary small" style="margin:0;" data-parent-ask="${key}">Ask for Allowance</button>`
+              : p.canAskForMoney && parent.rel >= 40
+                ? `<button class="landing-btn secondary small" style="margin:0; opacity:.5;" disabled>Ask for Allowance (cooldown)</button>`
+                : `<button class="landing-btn secondary small" style="margin:0; opacity:.5;" disabled>Ask for Allowance (rel 40+ needed)</button>`
+            }
+            ${canGift
+              ? `<button class="landing-btn primary small" style="margin:0;" data-parent-gift="${key}">Ask for a Big Gift</button>`
+              : p.hasAssets && p.canAskForMoney
+                ? `<button class="landing-btn secondary small" style="margin:0; opacity:.5;" disabled>Big Gift (rel 70+ · 2yr cooldown)</button>`
+                : ''
+            }
+          </div>` : ''}
+        </div>`;
+      });
+      html += `<div class="mini-card">
+        <div class="mc-label">Family Background</div>
+        <div class="mc-value">${p.householdLabel}</div>
+        <div class="mc-sub">${p.wealthLabel} · ${p.wealthDetail}</div>
+      </div>`;
+    } else {
+      html += `<div class="mini-card"><div class="mc-sub">No family generated yet.</div></div>`;
+    }
+
     return html;
+  }
+
+  function renderFriendDetailView(){
+    ensureRelationshipsInit();
+    const friend = state.relationships.find(p => p.id === state.relationshipsSelectedId);
+    if (!friend){
+      state.relationshipsView = 'status';
+      return renderRelationshipsStatusView();
+    }
+    const canAskOut = !currentPartner() && state.age >= DATING_MIN_AGE && friend.rel >= 55;
+    let html = `<button class="landing-btn secondary small" id="backToRelationshipsStatusBtn" style="margin-bottom:10px;">‹ Back</button>`;
+    html += `<div class="menu-section-label">${friend.name}</div>
+      <div class="mini-card">
+        <div class="mc-label">Closeness</div>
+        <div class="mc-value">${relPct(friend.rel)}/100</div>
+        ${relBarHtml(friend.rel)}
+        <div class="mc-sub" style="margin-top:6px;">Hang Out with Friends to keep this up — closeness fades a little each turn if neglected.</div>
+      </div>`;
+
+    if (currentPartner()){
+      html += `<div class="mini-card" style="opacity:0.6;"><div class="mc-sub">You're already in a relationship — you can't ask ${friend.name} out right now.</div></div>`;
+    } else if (state.age < DATING_MIN_AGE){
+      html += `<div class="mini-card" style="opacity:0.6;"><div class="mc-sub">You'll be old enough to date in a couple more years.</div></div>`;
+    } else {
+      html += `<button class="landing-btn primary" id="askOutBtn" ${canAskOut?'':'disabled'} style="margin-top:8px;">${canAskOut ? `Ask ${friend.name} Out` : `Needs 55+ closeness to ask out`}</button>`;
+    }
+
+    return html;
+  }
+
+  function renderPartnerDetailView(){
+    const partner = currentPartner();
+    if (!partner){
+      state.relationshipsView = 'status';
+      return renderRelationshipsStatusView();
+    }
+    let html = `<button class="landing-btn secondary small" id="backToRelationshipsStatusBtn" style="margin-bottom:10px;">‹ Back</button>`;
+    const statusLabel = partner.type === 'spouse' ? 'Married' : (partner.engaged ? 'Engaged' : 'Dating');
+    html += `<div class="menu-section-label">${partner.name} — ${statusLabel}</div>
+      <div class="mini-card">
+        <div class="mc-label">Closeness</div>
+        <div class="mc-value">${relPct(partner.rel)}/100</div>
+        ${relBarHtml(partner.rel)}
+        <div class="mc-sub" style="margin-top:6px;">Date Night keeps this up — it fades a little each turn if neglected. ${partner.type==='dating' ? `Falls below ${REL_BREAKUP_THRESHOLD} and they'll break up with you.` : `Falls below ${REL_DIVORCE_THRESHOLD} and the marriage ends.`}</div>
+      </div>`;
+
+    if (partner.type === 'dating' && !partner.engaged){
+      const canPropose = state.age >= MARRIAGE_MIN_AGE && state.stats.money >= 80;
+      html += `<button class="landing-btn primary" id="proposeBtn" ${canPropose?'':'disabled'} style="margin-top:8px;">${state.age < MARRIAGE_MIN_AGE ? 'Must be 18+ to propose' : canPropose ? 'Propose (Ring — $80)' : 'Need $80 for a ring'}</button>`;
+    } else if (partner.type === 'dating' && partner.engaged){
+      const canMarry = state.stats.money >= 250;
+      html += `<div class="mini-card"><div class="mc-sub">Engaged! Whenever you're ready, plan the wedding.</div></div>`;
+      html += `<button class="landing-btn primary" id="marryBtn" ${canMarry?'':'disabled'} style="margin-top:8px;">${canMarry ? 'Get Married (Wedding — $250)' : 'Need $250 for the wedding'}</button>`;
+    } else if (partner.type === 'spouse'){
+      const canTryChild = state.stats.money >= 60;
+      html += `<div class="mini-card"><div class="mc-sub">${partner.name} has moved in with you. Married life adds shared costs but a steady happiness boost.</div></div>`;
+      html += `<button class="landing-btn primary" id="tryChildBtn" ${canTryChild?'':'disabled'} style="margin-top:8px;">${canTryChild ? 'Try for a Baby ($60)' : 'Need $60'}</button>`;
+    }
+
+    return html;
+  }
+
+  function wireRelationshipsPaneListeners(){
+    document.querySelectorAll('[data-accept-date]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        acceptDateOffer(btn.dataset.acceptDate);
+        refreshRelationshipsPane();
+      });
+    });
+    document.querySelectorAll('[data-decline-date]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        declineDateOffer(btn.dataset.declineDate);
+        refreshRelationshipsPane();
+      });
+    });
+    const partnerCard = document.querySelector('[data-open-partner]');
+    if (partnerCard) partnerCard.addEventListener('click', ()=>{
+      state.relationshipsView = 'partner';
+      refreshRelationshipsPane();
+    });
+    document.querySelectorAll('[data-open-friend]').forEach(card=>{
+      card.addEventListener('click', ()=>{
+        state.relationshipsSelectedId = card.dataset.openFriend;
+        state.relationshipsView = 'friend';
+        refreshRelationshipsPane();
+      });
+    });
+
+    // Parent expand/collapse toggle
+    document.querySelectorAll('[data-open-parent]').forEach(card=>{
+      card.addEventListener('click', e=>{
+        if (e.target.closest('button')) return; // let buttons handle themselves
+        const key = card.dataset.openParent;
+        const pid = `parent_${key}`;
+        state.relationshipsSelectedId = state.relationshipsSelectedId === pid ? null : pid;
+        refreshRelationshipsPane();
+      });
+    });
+    // Parent action buttons
+    document.querySelectorAll('[data-parent-call]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        spendTimeWithParent(btn.dataset.parentCall, randInt(8,14));
+        state.stats.happy = clamp(state.stats.happy + 2);
+        addJournalEntry(`Spent time with ${state.parents[btn.dataset.parentCall]?.name}.`, []);
+        refreshRelationshipsPane();
+        renderStats();
+      });
+    });
+    document.querySelectorAll('[data-parent-dinner]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const key = btn.dataset.parentDinner;
+        if (state.stats.money < 80){ return; }
+        state.stats.money -= 80;
+        spendTimeWithParent(key, randInt(12,18));
+        state.stats.happy = clamp(state.stats.happy + 4);
+        addJournalEntry(`Took ${state.parents[key]?.name} out to dinner.`, []);
+        refreshRelationshipsPane();
+        renderStats();
+      });
+    });
+    document.querySelectorAll('[data-parent-ask]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const result = askParentAllowance(btn.dataset.parentAsk);
+        if (result.ok){
+          refreshRelationshipsPane();
+          renderStats();
+        }
+      });
+    });
+    document.querySelectorAll('[data-parent-gift]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const result = askParentGift(btn.dataset.parentGift);
+        if (result.ok){
+          refreshRelationshipsPane();
+          renderStats();
+        }
+      });
+    });
+
+    const backBtn = document.getElementById('backToRelationshipsStatusBtn');
+    if (backBtn) backBtn.addEventListener('click', ()=>{
+      state.relationshipsView = 'status';
+      refreshRelationshipsPane();
+    });
+    const askOutBtn = document.getElementById('askOutBtn');
+    if (askOutBtn) askOutBtn.addEventListener('click', ()=>{
+      askFriendOut(state.relationshipsSelectedId);
+      state.relationshipsView = 'status';
+      refreshRelationshipsPane();
+    });
+    const proposeBtn = document.getElementById('proposeBtn');
+    if (proposeBtn) proposeBtn.addEventListener('click', ()=>{
+      proposeToPartner();
+      refreshRelationshipsPane();
+    });
+    const marryBtn = document.getElementById('marryBtn');
+    if (marryBtn) marryBtn.addEventListener('click', ()=>{
+      marryPartner();
+      refreshRelationshipsPane();
+    });
+    const tryChildBtn = document.getElementById('tryChildBtn');
+    if (tryChildBtn) tryChildBtn.addEventListener('click', ()=>{
+      tryForChild();
+      refreshRelationshipsPane();
+    });
+  }
+
+  // Re-renders the section modal body in place (used after any relationships
+  // action) and re-wires its listeners, plus refreshes money/stats display
+  // since several actions spend money.
+  function refreshRelationshipsPane(){
+    els.sectionModalBody.innerHTML = renderRelationshipsPane();
+    wireRelationshipsPaneListeners();
+    renderStats();
   }
 
   function renderJournalPane(){
@@ -5428,8 +6969,10 @@
     const tab = MENU_TABS.find(t=>t.id===tabId) || MENU_TABS[0];
     els.sectionModalTitle.textContent = tab.name;
     els.sectionModalBody.innerHTML = tab.build();
+    if (tabId === 'finances') wireFinancesPaneListeners();
     if (tabId === 'job') wireJobPaneListeners();
     if (tabId === 'assets') wireAssetsPaneListeners();
+    if (tabId === 'family') wireRelationshipsPaneListeners();
 
     // Reflect the active selection on the icon column
     els.menuIconColumn.querySelectorAll('.menu-icon-sq').forEach(el=>{
@@ -5444,9 +6987,134 @@
   // Health opens as its own standalone modal from tapping the Health stat
   // box directly — it intentionally skips the burger-menu icon column,
   // since it isn't part of that flow anymore.
+  // ---------- Mood & Energy breakdown modals ----------
+
+  function statBreakdownRow(label, value, note){
+    if (value === 0) return '';
+    const cls = value > 0 ? 'pos' : 'neg';
+    const sign = value > 0 ? '+' : '';
+    return `<div class="menu-row-line">
+      <div><div class="rl-name">${label}</div>${note ? `<div class="rl-sub">${note}</div>` : ''}</div>
+      <div class="rl-amt ${cls}">${sign}${value}/wk</div>
+    </div>`;
+  }
+
+  function renderMoodBreakdown(){
+    const rows = [];
+    if (state.heldJob) rows.push(statBreakdownRow('Going to work', -6, 'Flat mood cost each week you work.'));
+    if (state.housing){
+      const h = state.housing;
+      if (h.kind === 'homeless'){
+        rows.push(statBreakdownRow('Homeless', -5, 'No stable home drains mood constantly.'));
+      } else if (h.kind === 'free'){
+        const fx = state.age > 21 ? -4 : -1;
+        rows.push(statBreakdownRow('Living with parents', fx, state.age > 21 ? "At your age, it's starting to weigh on you." : 'A little stifling, but stable.'));
+      } else {
+        const cat = HOUSING_CATEGORIES.find(c=>c.id===h.categoryId);
+        const tier = cat && cat.tiers ? cat.tiers.find(t=>t.id===h.tierId) : null;
+        if (tier && tier.effects && tier.effects.happy)
+          rows.push(statBreakdownRow(tier.name, tier.effects.happy, 'Weekly mood effect from your housing.'));
+      }
+    }
+    if (state.hasCar) rows.push(statBreakdownRow('Owning a car', CAR_EFFECTS.happy, 'Less commute stress each week.'));
+    const spouse = currentPartner();
+    if (spouse && spouse.type === 'spouse')
+      rows.push(statBreakdownRow(`Married to ${spouse.name}`, spouse.rel >= 50 ? 2 : -2, spouse.rel >= 50 ? 'A stable marriage lifts your mood.' : 'A strained marriage is weighing on you.'));
+    if (state.parents){
+      ['mom','dad'].forEach(key=>{
+        const p = state.parents[key];
+        if (!p) return;
+        if (p.rel < 25) rows.push(statBreakdownRow(`Tension with ${p.name}`, -2, 'Low closeness is affecting your mood.'));
+        else if (p.rel >= 65) rows.push(statBreakdownRow(`Close with ${p.name}`, 1, 'Good relationship gives a quiet boost.'));
+      });
+    }
+    if (state.chronicCondition)
+      rows.push(statBreakdownRow('Chronic condition', -3, state.chronicCondition.id.replace(/_/g,' ')+' — ongoing mood impact.'));
+    rows.push(statBreakdownRow('Skipping Life Admin', -2, "If Life Admin isn't done this week."));
+    const valid = rows.filter(r=>r.length>0);
+    return `
+      <div class="mini-card">
+        <div class="mc-label">Current Mood</div>
+        <div class="mc-value">${Math.round(state.stats.happy)}/100</div>
+      </div>
+      <div class="menu-section-label">Weekly Passive Sources</div>
+      <div class="mini-card" style="padding:6px 14px;">
+        <div class="mc-sub" style="margin-bottom:8px;">These apply every week regardless of activities. Activities add on top.</div>
+        ${valid.length ? valid.join('') : '<div class="rl-name" style="color:var(--ink-soft);">No passive sources right now.</div>'}
+      </div>`;
+  }
+
+  function renderEnergyBreakdown(){
+    const rows = [];
+    rows.push(statBreakdownRow('Weekly life drain', -3, 'Life costs energy even when you rest.'));
+    if (state.heldJob){
+      const job = currentJob();
+      rows.push(statBreakdownRow(`Working (${job ? job.name : 'job'})`, -6, 'Flat energy cost from Go to Work each week.'));
+    }
+    if (state.housing){
+      const h = state.housing;
+      if (h.kind === 'homeless'){
+        rows.push(statBreakdownRow('Homeless', -3, 'No stable rest drains energy constantly.'));
+      } else if (h.kind === 'free' && state.age > 21){
+        rows.push(statBreakdownRow('Living with parents (adult)', -2, 'Loss of independence takes a toll.'));
+      } else {
+        const cat = HOUSING_CATEGORIES.find(c=>c.id===h.categoryId);
+        const tier = cat && cat.tiers ? cat.tiers.find(t=>t.id===h.tierId) : null;
+        if (tier && tier.effects && tier.effects.energy)
+          rows.push(statBreakdownRow(tier.name, tier.effects.energy, 'Weekly energy effect from your housing.'));
+      }
+    }
+    if (state.hasCar) rows.push(statBreakdownRow('Owning a car', CAR_EFFECTS.energy, 'Less commute fatigue each week.'));
+    if (state.parents){
+      ['mom','dad'].forEach(key=>{
+        const p = state.parents[key];
+        if (!p) return;
+        if (p.rel < 25) rows.push(statBreakdownRow(`Tension with ${p.name}`, -1, 'Low closeness is draining.'));
+      });
+    }
+    if (state.chronicCondition)
+      rows.push(statBreakdownRow('Chronic condition', -4, state.chronicCondition.id.replace(/_/g,' ')+' — ongoing energy drain.'));
+    const kids = childrenList();
+    if (kids.length)
+      rows.push(statBreakdownRow(`Raising ${kids.length} child${kids.length>1?'ren':''}`, -kids.length*2, 'Parenting takes energy even on a quiet week.'));
+    const valid = rows.filter(r=>r.length>0);
+    return `
+      <div class="mini-card">
+        <div class="mc-label">Current Energy</div>
+        <div class="mc-value">${Math.round(state.stats.energy)}/100</div>
+      </div>
+      <div class="menu-section-label">Weekly Passive Sources</div>
+      <div class="mini-card" style="padding:6px 14px;">
+        <div class="mc-sub" style="margin-bottom:8px;">These apply every week regardless of activities. Activities add on top.</div>
+        ${valid.length ? valid.join('') : '<div class="rl-name" style="color:var(--ink-soft);">No passive sources right now.</div>'}
+      </div>`;
+  }
+
+  function openMoodModal(){
+    els.sectionModalTitle.textContent = 'Mood';
+    els.sectionModalBody.innerHTML = renderMoodBreakdown();
+    els.menuBackdrop.classList.remove('hidden');
+    void els.menuBackdrop.offsetWidth;
+    els.menuBackdrop.classList.add('show');
+    els.sectionModal.classList.remove('hidden');
+    void els.sectionModal.offsetWidth;
+    els.sectionModal.classList.add('show');
+  }
+
+  function openEnergyModal(){
+    els.sectionModalTitle.textContent = 'Energy';
+    els.sectionModalBody.innerHTML = renderEnergyBreakdown();
+    els.menuBackdrop.classList.remove('hidden');
+    void els.menuBackdrop.offsetWidth;
+    els.menuBackdrop.classList.add('show');
+    els.sectionModal.classList.remove('hidden');
+    void els.sectionModal.offsetWidth;
+    els.sectionModal.classList.add('show');
+  }
+
   function openHealthModal(){
     els.sectionModalTitle.textContent = 'Health';
-    els.sectionModalBody.innerHTML = renderHealthPane();
+        els.sectionModalBody.innerHTML = renderHealthPane();
     els.menuBackdrop.classList.remove('hidden');
     void els.menuBackdrop.offsetWidth;
     els.menuBackdrop.classList.add('show');
@@ -5460,6 +7128,7 @@
   function openFinancesModal(){
     els.sectionModalTitle.textContent = 'Finances';
     els.sectionModalBody.innerHTML = renderFinancesPane();
+    wireFinancesPaneListeners();
     els.menuBackdrop.classList.remove('hidden');
     void els.menuBackdrop.offsetWidth;
     els.menuBackdrop.classList.add('show');
@@ -5538,6 +7207,16 @@
 
   els.endWeekBtn.addEventListener('click', currentEndTurnHandler);
   els.simTurnBtn.addEventListener('click', currentSimTurnHandler);
+  els.simYearBtn.addEventListener('click', ()=>{
+    showConfirmPopup({
+      title:'Sim a full year?',
+      body:'This will run 52 weeks automatically using your current activity selections. Your stats can change a lot — make sure your picks are set.',
+      yesLabel:'Sim Year',
+      noLabel:'Cancel',
+      onYes: simAdultYear,
+      onNo: null,
+    });
+  });
   els.menuFab.addEventListener('click', toggleMenu);
   els.journalFab.addEventListener('click', toggleJournalModal);
   els.menuBackdrop.addEventListener('click', closeMenu);
@@ -5555,6 +7234,12 @@
 
   document.querySelectorAll('.health-stat-tap').forEach(el=>{
     el.addEventListener('click', openHealthModal);
+  });
+  document.querySelectorAll('.mood-stat-tap').forEach(el=>{
+    el.addEventListener('click', openMoodModal);
+  });
+  document.querySelectorAll('.energy-stat-tap').forEach(el=>{
+    el.addEventListener('click', openEnergyModal);
   });
   els.schoolMoneyBox.addEventListener('click', openFinancesModal);
   els.youngMoneyBox.addEventListener('click', openFinancesModal);

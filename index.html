@@ -317,6 +317,61 @@
   }
   .spec-picker-list .choice-card{ cursor:pointer; }
 
+  /* ---- Spec chooser (Pick a Sport / Pick a Hobby) ---- */
+  .activity.spec-chooser{
+    flex-direction:column;
+    align-items:stretch;
+    gap:0;
+    padding:0;
+    overflow:hidden;
+  }
+  .spec-chooser-head{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:11px 14px;
+  }
+  .spec-chooser-head .check{ flex-shrink:0; }
+  .spec-chooser-head .name{ flex:1; font-weight:700; font-size:14px; }
+  .spec-chooser-chevron{
+    font-size:13px;
+    color:var(--ink-soft);
+    transition:transform .2s ease;
+    flex-shrink:0;
+  }
+  .spec-chooser.open .spec-chooser-chevron{ transform:rotate(180deg); }
+
+  /* Chosen state — once a spec is picked, show like a normal card */
+  .spec-chooser.chosen .spec-chooser-head{ padding:11px 14px; }
+
+  /* Pill grid for sport/hobby options */
+  .spec-expand{
+    padding:8px 12px 12px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+    border-top:1px solid var(--rule);
+    background:var(--paper);
+  }
+  .spec-expand-pill{
+    padding:6px 13px;
+    border-radius:20px;
+    background:var(--card-bg);
+    border:1.5px solid var(--rule);
+    font-family:'Inter',sans-serif;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--ink);
+    cursor:pointer;
+    transition:background .12s, border-color .12s;
+    white-space:nowrap;
+  }
+  .spec-expand-pill:active{
+    background:var(--ink);
+    color:var(--card-bg);
+    border-color:var(--ink);
+  }
+
   /* ---------- New Year full-screen toast ---------- */
   #newYearToast{
     position:fixed;
@@ -583,15 +638,6 @@
     margin:0;
     color:var(--ink);
   }
-  #sectionModalClose{
-    width:28px; height:28px;
-    border-radius:50%;
-    background:var(--paper-dim);
-    border:none;
-    font-size:13px;
-    color:var(--ink-soft);
-    flex-shrink:0;
-  }
   .section-modal-body{
     flex:1;
     overflow-y:auto;
@@ -716,6 +762,26 @@
     cursor:pointer;
   }
   .money-box:active{ transform:scale(0.96); }
+  .pay-bills-btn{
+    position:absolute;
+    top:36px; left:0;
+    background:var(--paper-dim);
+    color:var(--ink);
+    border:1.5px solid var(--rule);
+    border-radius:var(--card-radius);
+    padding:4px 10px;
+    font-family:'Inter',sans-serif;
+    font-weight:700;
+    font-size:11px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .pay-bills-btn.done{
+    background:var(--money);
+    color:var(--card-bg);
+    border-color:var(--money);
+  }
+  .pay-bills-btn:active{ transform:scale(0.96); }
   .masthead .kicker{
     font-family:'JetBrains Mono',monospace;
     font-size:10px;
@@ -763,6 +829,14 @@
   }
   .health-stat-tap{ cursor:pointer; }
   .health-stat-tap:active{ transform:scale(0.96); }
+  .mood-stat-tap{ cursor:pointer; }
+  .mood-stat-tap:active{ transform:scale(0.96); }
+  .energy-stat-tap{ cursor:pointer; }
+  .energy-stat-tap:active{ transform:scale(0.96); }
+  .social-stat-tap{ cursor:pointer; }
+  .social-stat-tap:active{ transform:scale(0.96); }
+  .skill-stat-tap{ cursor:pointer; }
+  .skill-stat-tap:active{ transform:scale(0.96); }
   .stat .icon{
     display:block;
     margin:0 auto 4px;
@@ -855,25 +929,29 @@
   }
   .start-stage-stop{
     position:absolute;
-    top:-19px;
+    top:-22px;
     transform:translateX(-50%);
-    width:30px; height:30px;
+    width:36px; height:36px;
     border-radius:50%;
     background:var(--card-bg);
     border:2px solid var(--rule);
     cursor:pointer;
     display:flex; align-items:center; justify-content:center;
+    transition:border-color .15s, background .15s, transform .1s;
   }
+  .start-stage-stop:active{ transform:translateX(-50%) scale(0.9); }
   .start-stage-stop.active{
     background:var(--ink);
     border-color:var(--ink);
   }
-  .start-stage-stop .dot{
-    width:8px; height:8px;
-    border-radius:50%;
-    background:var(--ink-soft);
+  .start-stage-stop .stage-icon{
+    font-size:17px;
+    line-height:1;
+    filter:grayscale(0.3);
   }
-  .start-stage-stop.active .dot{ background:var(--card-bg); }
+  .start-stage-stop.active .stage-icon{
+    filter:none;
+  }
   .start-stage-label{
     text-align:center;
     font-family:'Fraunces',serif;
@@ -897,7 +975,9 @@
     border:var(--card-border-w) solid var(--rule);
     border-radius:var(--card-radius);
     padding:8px;
+    cursor:pointer;
   }
+  .gpa-badge-row:active{ transform:scale(0.97); }
   .gpa-badge-row .gpa-label{
     font-family:'JetBrains Mono',monospace;
     font-size:10px; letter-spacing:.1em; text-transform:uppercase;
@@ -1640,25 +1720,25 @@
         <span class="value" id="youngStatHealth">100</span>
         <div class="bar"><i id="youngBarHealth" style="width:100%"></i></div>
       </div>
-      <div class="stat happy">
+      <div class="stat happy mood-stat-tap" title="What's affecting Mood">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 13.5s1.5 2 4 2 4-2 4-2"/><path d="M8.5 9.5h.01M15.5 9.5h.01"/></svg></span>
         <span class="label">Mood</span>
         <span class="value" id="youngStatHappy">60</span>
         <div class="bar"><i id="youngBarHappy" style="width:60%"></i></div>
       </div>
-      <div class="stat rel">
+      <div class="stat rel social-stat-tap">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="9" r="3"/><circle cx="15.5" cy="9" r="3"/><path d="M3 19c0-2.8 2.5-5 5.5-5 1.4 0 2.6.4 3.5 1.2M21 19c0-2.8-2.5-5-5.5-5-1.4 0-2.6.4-3.5 1.2"/></svg></span>
         <span class="label">Social</span>
         <span class="value" id="youngStatSocial">60</span>
         <div class="bar"><i id="youngBarSocial" style="width:60%"></i></div>
       </div>
-      <div class="stat energy">
+      <div class="stat energy energy-stat-tap" title="What's affecting Energy">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
         <span class="label">Energy</span>
         <span class="value" id="youngStatEnergy">100</span>
         <div class="bar"><i id="youngBarEnergy" style="width:100%"></i></div>
       </div>
-      <div class="stat skill">
+      <div class="stat skill skill-stat-tap">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2 9l10 5 10-5-10-5z"/><path d="M6 11.5V16c0 1 2.5 3 6 3s6-2 6-3v-4.5"/></svg></span>
         <span class="label">Smarts</span>
         <span class="value" id="youngStatSkill">0</span>
@@ -1697,25 +1777,25 @@
         <span class="value" id="schoolStatHealth">100</span>
         <div class="bar"><i id="schoolBarHealth" style="width:100%"></i></div>
       </div>
-      <div class="stat happy">
+      <div class="stat happy mood-stat-tap" title="What's affecting Mood">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 13.5s1.5 2 4 2 4-2 4-2"/><path d="M8.5 9.5h.01M15.5 9.5h.01"/></svg></span>
         <span class="label">Mood</span>
         <span class="value" id="schoolStatHappy">100</span>
         <div class="bar"><i id="schoolBarHappy" style="width:100%"></i></div>
       </div>
-      <div class="stat rel">
+      <div class="stat rel social-stat-tap">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="9" r="3"/><circle cx="15.5" cy="9" r="3"/><path d="M3 19c0-2.8 2.5-5 5.5-5 1.4 0 2.6.4 3.5 1.2M21 19c0-2.8-2.5-5-5.5-5-1.4 0-2.6.4-3.5 1.2"/></svg></span>
         <span class="label">Social</span>
         <span class="value" id="schoolStatSocial">100</span>
         <div class="bar"><i id="schoolBarSocial" style="width:100%"></i></div>
       </div>
-      <div class="stat energy">
+      <div class="stat energy energy-stat-tap" title="What's affecting Energy">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
         <span class="label">Energy</span>
         <span class="value" id="schoolStatEnergy">100</span>
         <div class="bar"><i id="schoolBarEnergy" style="width:100%"></i></div>
       </div>
-      <div class="stat skill">
+      <div class="stat skill skill-stat-tap">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2 9l10 5 10-5-10-5z"/><path d="M6 11.5V16c0 1 2.5 3 6 3s6-2 6-3v-4.5"/></svg></span>
         <span class="label">Smarts</span>
         <span class="value" id="schoolStatSkill">0</span>
@@ -1790,25 +1870,25 @@
         <span class="value" id="collegeStatHealth">100</span>
         <div class="bar"><i id="collegeBarHealth" style="width:100%"></i></div>
       </div>
-      <div class="stat happy">
+      <div class="stat happy mood-stat-tap" title="What's affecting Mood">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 13.5s1.5 2 4 2 4-2 4-2"/><path d="M8.5 9.5h.01M15.5 9.5h.01"/></svg></span>
         <span class="label">Mood</span>
         <span class="value" id="collegeStatHappy">100</span>
         <div class="bar"><i id="collegeBarHappy" style="width:100%"></i></div>
       </div>
-      <div class="stat rel">
+      <div class="stat rel social-stat-tap">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="9" r="3"/><circle cx="15.5" cy="9" r="3"/><path d="M3 19c0-2.8 2.5-5 5.5-5 1.4 0 2.6.4 3.5 1.2M21 19c0-2.8-2.5-5-5.5-5-1.4 0-2.6.4-3.5 1.2"/></svg></span>
         <span class="label">Social</span>
         <span class="value" id="collegeStatRel">100</span>
         <div class="bar"><i id="collegeBarSocial" style="width:100%"></i></div>
       </div>
-      <div class="stat energy">
+      <div class="stat energy energy-stat-tap" title="What's affecting Energy">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
         <span class="label">Energy</span>
         <span class="value" id="collegeStatEnergy">100</span>
         <div class="bar"><i id="collegeBarEnergy" style="width:100%"></i></div>
       </div>
-      <div class="stat skill">
+      <div class="stat skill skill-stat-tap">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2 9l10 5 10-5-10-5z"/><path d="M6 11.5V16c0 1 2.5 3 6 3s6-2 6-3v-4.5"/></svg></span>
         <span class="label">Smarts</span>
         <span class="value" id="collegeStatSkill">0</span>
@@ -1832,6 +1912,7 @@
 
     <div class="masthead">
       <button class="money-box" id="adultMoneyBox">Money: <span id="adultMoneyBoxValue">$0</span></button>
+      <button class="pay-bills-btn" id="payBillsBtn">Pay Bills</button>
       <div class="kicker">YouSim</div>
       <h1 id="ageHeader">Age 18</h1>
       <div class="dateline" id="weekHeader">Week 1</div>
@@ -1850,7 +1931,7 @@
         <span class="value" id="statHappy">100</span>
         <div class="bar"><i id="barHappy" style="width:100%"></i></div>
       </div>
-      <div class="stat rel">
+      <div class="stat rel social-stat-tap">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.5" cy="9" r="3"/><circle cx="15.5" cy="9" r="3"/><path d="M3 19c0-2.8 2.5-5 5.5-5 1.4 0 2.6.4 3.5 1.2M21 19c0-2.8-2.5-5-5.5-5-1.4 0-2.6.4-3.5 1.2"/></svg></span>
         <span class="label">Social</span>
         <span class="value" id="statSocial">100</span>
@@ -1862,7 +1943,7 @@
         <span class="value" id="statEnergy">100</span>
         <div class="bar"><i id="barEnergy" style="width:100%"></i></div>
       </div>
-      <div class="stat skill">
+      <div class="stat skill skill-stat-tap">
         <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 2 9l10 5 10-5-10-5z"/><path d="M6 11.5V16c0 1 2.5 3 6 3s6-2 6-3v-4.5"/></svg></span>
         <span class="label">Smarts</span>
         <span class="value" id="statSkill">0</span>
@@ -1932,8 +2013,8 @@
 
 <div id="newYearToast" class="hidden">
   <div class="nyt-content">
-    <div class="nyt-year" id="newYearToastYear">2024</div>
-    <div class="nyt-label">New Year</div>
+    <div class="nyt-year" id="newYearToastYear">16</div>
+    <div class="nyt-label">Happy New Year</div>
   </div>
 </div>
 
@@ -1942,7 +2023,6 @@
 <div id="sectionModal" class="hidden">
   <div class="section-modal-head">
     <h3 id="sectionModalTitle">Menu</h3>
-    <button id="sectionModalClose" title="Close">✕</button>
   </div>
   <div class="section-modal-body" id="sectionModalBody"></div>
 </div>
@@ -2006,13 +2086,10 @@
       effects:{happy:4, energy:3},
       eventChance:0.04, eventPool:'meditate' },
 
-    // Chores / Life Admin
-    { id:'bills', category:'Life Admin', name:'Pay Bills / Budget', cost:15,
-      effects:{energy:-2},
-      eventChance:0.04, eventPool:'bills', isAdmin:true },
-    { id:'errands', category:'Life Admin', name:'Errands', cost:10,
+    { id:'errands', category:'Self-Care', name:'Errands', cost:10,
       effects:{energy:-3},
-      eventChance:0.04, eventPool:'errands', isAdmin:true },
+      eventChance:0.04, eventPool:'errands',
+      desc:'If skipped for a full month: −1 to all stats.' },
   ];
 
   const EVENT_POOLS = {
@@ -2554,15 +2631,15 @@
     els.specPickerModal.classList.remove('show');
   }
 
-  function showNewYearToast(year){
-    els.newYearToastYear.textContent = year;
+  function showNewYearToast(age){
+    els.newYearToastYear.textContent = `Year ${age}`;
     els.newYearToast.classList.remove('hidden');
     void els.newYearToast.offsetWidth;
     els.newYearToast.classList.add('show');
     setTimeout(()=>{
       els.newYearToast.classList.remove('show');
-      setTimeout(()=> els.newYearToast.classList.add('hidden'), 400);
-    }, 1800);
+      setTimeout(()=> els.newYearToast.classList.add('hidden'), 350);
+    }, 1200);
   }
 
   // Called whenever a practice-type activity is worked (Sports/Team Practice,
@@ -2807,14 +2884,22 @@
       effects:{ skill:6, energy:-3 }, gpaEffect:5,
       eventChance:0.05, eventPool:'tutoring', wealthGate:['middle','wealthy'] },
 
+    { id:'sports', category:'Free Time', name:'Pick a Sport', cost:25,
+      effects:{ health:7, happy:4, energy:-8 },
+      eventChance:0.10, eventPool:'sports',
+      specKind:'sport', isSpecChooser:true },
+    { id:'hobby_school', category:'Free Time', name:'Pick a Hobby', cost:15,
+      effects:{ happy:5, skill:1, energy:2 },
+      eventChance:0.05, eventPool:'hobby_school',
+      specKind:'hobby', isSpecChooser:true },
     { id:'play', category:'Free Time', name:'Play / Hang Out with Friends', cost:25,
       effects:{ happy:8, social:6, energy:-5 }, gpaEffect:-1,
       eventChance:0.12, eventPool:'play' },
-    { id:'sports', category:'Free Time', name:'Sports / Team Practice', cost:25,
-      effects:{ health:7, happy:4, energy:-8 },
+    { id:'pickup_game', category:'Free Time', name:'Pickup Game', cost:25,
+      effects:{ health:5, happy:4, energy:-10 },
       eventChance:0.10, eventPool:'sports' },
-    { id:'hobby_school', category:'Free Time', name:'Hobby / Creative Time', cost:15,
-      effects:{ happy:5, skill:1, energy:2 },
+    { id:'creative_thinking', category:'Free Time', name:'Creative Thinking', cost:15,
+      effects:{ happy:5, skill:1, energy:2, social:-8 },
       eventChance:0.05, eventPool:'hobby_school' },
     { id:'coach_session_school', category:'Free Time', name:'Work with a Coach', cost:25,
       effects:{ happy:2, energy:-6 },
@@ -2978,6 +3063,10 @@
     { id:'campus_exercise', category:'Health', name:'Exercise', cost:15,
       effects:{ health:8, energy:-6, happy:3 },
       eventChance:0.06, eventPool:'campus_exercise' },
+    { id:'errands', category:'Campus Life', name:'Errands', cost:10,
+      effects:{ energy:-3 },
+      eventChance:0.04, eventPool:'errands',
+      desc:'If skipped for a full month: −1 to all stats.' },
   ];
 
   const COLLEGE_EVENT_POOLS = {
@@ -3558,7 +3647,6 @@
     menuIconColumn:document.getElementById('menuIconColumn'),
     sectionModal:document.getElementById('sectionModal'),
     sectionModalTitle:document.getElementById('sectionModalTitle'),
-    sectionModalClose:document.getElementById('sectionModalClose'),
     confirmPopup:document.getElementById('confirmPopup'),
     confirmPopupTitle:document.getElementById('confirmPopupTitle'),
     confirmPopupBody:document.getElementById('confirmPopupBody'),
@@ -3598,6 +3686,7 @@
     collegeMoneyBox:document.getElementById('collegeMoneyBox'),
     collegeMoneyBoxValue:document.getElementById('collegeMoneyBoxValue'),
     adultMoneyBox:document.getElementById('adultMoneyBox'),
+    payBillsBtn:document.getElementById('payBillsBtn'),
     adultMoneyBoxValue:document.getElementById('adultMoneyBoxValue'),
     gradUltimatumScreen:document.getElementById('gradUltimatumScreen'),
     gpaSummaryCard:document.getElementById('gpaSummaryCard'),
@@ -3657,7 +3746,6 @@
     'Self-Care': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6.5-4.35-9-8.5C1.2 9.5 2.8 6 6.2 6c2 0 3.4 1.2 4.1 2.4M12 21s6.5-4.35 9-8.5c1.8-3 .2-6.5-3.2-6.5-2 0-3.4 1.2-4.1 2.4"/><path d="M12 4v4"/></svg>`,
     'Social': STAT_ICONS.rel,
     'Personal Growth': STAT_ICONS.skill,
-    'Life Admin': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
     'School': STAT_ICONS.skill,
     'Academics': STAT_ICONS.skill,
     'Free Time': STAT_ICONS.happy,
@@ -3672,7 +3760,6 @@
     'Self-Care': '--energy',
     'Social': '--rel',
     'Personal Growth': '--skill',
-    'Life Admin': '--ink',
     'School': '--skill',
     'Academics': '--skill',
     'Free Time': '--happy',
@@ -3878,10 +3965,10 @@
   }
 
   const START_STAGES = [
-    { id:'birth', name:'Birth', age:0 },
-    { id:'grade_school', name:'Grade School', age:6 },
-    { id:'high_school', name:'High School', age:14 },
-    { id:'adult', name:'Adult', age:18 },
+    { id:'birth',       name:'Birth',       age:0,  icon:'👶' },
+    { id:'grade_school',name:'Grade School', age:6,  icon:'🧒' },
+    { id:'high_school', name:'High School',  age:14, icon:'🧑' },
+    { id:'adult',       name:'Adult',        age:18, icon:'🧑‍💼' },
   ];
 
   function renderStartStageSlider(){
@@ -3893,7 +3980,7 @@
 
     els.startStageStops.innerHTML = START_STAGES.map((s,i)=>{
       const stopPct = (i / (START_STAGES.length-1)) * 100;
-      return `<div class="start-stage-stop ${s.id===state.startStage?'active':''}" data-stage="${s.id}" style="left:${stopPct}%"><span class="dot"></span></div>`;
+      return `<div class="start-stage-stop ${s.id===state.startStage?'active':''}" data-stage="${s.id}" style="left:${stopPct}%"><span class="stage-icon">${s.icon}</span></div>`;
     }).join('');
 
     els.startStageStops.querySelectorAll('.start-stage-stop').forEach(stopEl=>{
@@ -4294,14 +4381,41 @@
 
       let displayName = a.name;
       let extraInfo = '';
-      if (a.id === 'sports' && state.specializations && state.specializations.sport){
-        displayName = `Sports — ${state.specializations.sport.name}`;
-        extraInfo = `<div class="effects" style="margin-top:1px;">Mastery: ${Math.round(state.specializations.sport.level)}/100</div>`;
+      let specExpandHtml = '';
+      let isSpecChooserCard = false;
+
+      if (a.isSpecChooser){
+        isSpecChooserCard = true;
+        const kind = a.specKind;
+        const spec = state.specializations && state.specializations[kind];
+        const isOpen = state.expandedSpecPicker === a.id;
+        const pool = kind === 'sport' ? SPORT_OPTIONS : HOBBY_OPTIONS;
+        const chosen = !!spec;
+
+        if (chosen){
+          displayName = `${kind === 'sport' ? 'Sport' : 'Hobby'} — ${spec.name}`;
+          extraInfo = `<div class="effects" style="margin-top:1px;">Mastery: ${Math.round(spec.level)}/100</div>`;
+        }
+
+        const pillsHtml = isOpen ? `<div class="spec-expand">${pool.map(o=>`<div class="spec-expand-pill" data-pick-spec="${kind}" data-spec-id="${o.id}">${o.name}</div>`).join('')}</div>` : '';
+
+        paneHtml += `
+          <div class="activity cat-tinted spec-chooser ${chosen?'chosen':''} ${isOpen?'open':''} ${isSelected?'selected':''} ${disabledAdd&&!isOpen?'disabled':''} ${locked?'locked':''}" data-id="${a.id}" style="--cat-color:var(${activeColorVar})">
+            <div class="spec-chooser-head">
+              <div class="check">${isSelected?'✓':''}</div>
+              <div class="info" style="flex:1;">
+                <div class="name">${displayName}</div>
+                ${chosen ? `<div class="effects">${effectsString(a.effects)}</div>${extraInfo}` : `<div class="effects" style="font-size:11.5px; color:var(--ink-soft);">Choose once — builds mastery, unlocks career track</div>`}
+              </div>
+              ${n>0 ? `<button class="repeat-minus" data-id="${a.id}">−</button><span class="repeat-count">×${n}</span>` : ''}
+              ${lockTag || `<div class="cost">${a.cost}h</div>`}
+              <span class="spec-chooser-chevron">${!chosen ? '▾' : ''}</span>
+            </div>
+            ${pillsHtml}
+          </div>`;
+        return; // skip normal card render
       }
-      if (a.id === 'hobby_school' && state.specializations && state.specializations.hobby){
-        displayName = `Hobby — ${state.specializations.hobby.name}`;
-        extraInfo = `<div class="effects" style="margin-top:1px;">Mastery: ${Math.round(state.specializations.hobby.level)}/100</div>`;
-      }
+
       if (a.id === 'coach_session_school'){
         const sport = state.specializations?.sport, hobby = state.specializations?.hobby;
         const lead = (sport && hobby) ? (sport.level >= hobby.level ? sport : hobby) : (sport || hobby);
@@ -4314,6 +4428,7 @@
           <div class="info">
             <div class="name">${displayName}${a.mandatory?' (required)':''}</div>
             <div class="effects">${effectsString(a.effects)}</div>
+            ${a.desc ? `<div class="effects" style="margin-top:2px; font-size:11px; opacity:.7;">${a.desc}</div>` : ''}
             ${extraInfo}
           </div>
           ${n>0 ? `<button class="repeat-minus" data-id="${a.id}">−</button><span class="repeat-count">×${n}</span>` : ''}
@@ -4336,27 +4451,49 @@
 
     els.schoolActivityList.querySelectorAll('.activity').forEach(el=>{
       el.addEventListener('click', (e)=>{
-        if (e.target.closest('.repeat-minus')) return;
-        if (el.classList.contains('disabled') || el.classList.contains('locked')) return;
+        if (e.target.closest('.repeat-minus') || e.target.closest('.spec-expand-pill')) return;
+        if (el.classList.contains('locked')) return;
         const id = el.dataset.id;
+        const a = SCHOOL_ACTIVITIES.find(x=>x.id===id);
         ensureSpecializationsInit();
-        if (id === 'sports' && !state.specializations.sport){
-          openSpecPicker('sport', ()=>{
-            state.selected.push(id);
+
+        // Spec chooser cards toggle their expansion; if already chosen, add to selection
+        if (a && a.isSpecChooser){
+          const spec = state.specializations[a.specKind];
+          if (spec){
+            // Already picked — add to selection like a normal card
+            if (!el.classList.contains('disabled')){
+              state.selected.push(id);
+              renderSchoolActivities();
+              renderSchoolBudget();
+            }
+          } else {
+            // Toggle the inline picker open/closed
+            state.expandedSpecPicker = state.expandedSpecPicker === id ? null : id;
             renderSchoolActivities();
-            renderSchoolBudget();
-          });
+          }
           return;
         }
-        if (id === 'hobby_school' && !state.specializations.hobby){
-          openSpecPicker('hobby', ()=>{
-            state.selected.push(id);
-            renderSchoolActivities();
-            renderSchoolBudget();
-          });
-          return;
-        }
+
+        if (el.classList.contains('disabled')) return;
+        state.expandedSpecPicker = null;
         state.selected.push(id);
+        renderSchoolActivities();
+        renderSchoolBudget();
+      });
+    });
+
+    // Spec pill picks
+    els.schoolActivityList.querySelectorAll('[data-pick-spec]').forEach(pill=>{
+      pill.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        const kind = pill.dataset.pickSpec;
+        const specId = pill.dataset.specId;
+        pickSpecialization(kind, specId);
+        state.expandedSpecPicker = null;
+        // Find the parent chooser activity id
+        const chooserId = kind === 'sport' ? 'sports' : 'hobby_school';
+        state.selected.push(chooserId);
         renderSchoolActivities();
         renderSchoolBudget();
       });
@@ -4481,7 +4618,7 @@
     state.month += 1;
     if ((state.month-1) % 12 === 0){
       state.age += 1;
-      showNewYearToast(2000 + state.age);
+      showNewYearToast(state.age);
       // New school year — truancy record wipes clean
       state.truancyMisses = 0;
       state.suspended = false;
@@ -5012,6 +5149,7 @@
       applyEffects(state.stats, a.effects);
       logLines.push(a.name);
       if (id === 'campus_social') rollFriendActivityOutcome(eventLines);
+      if (id === 'errands') state.errandsDoneThisMonth = true;
       if (id === 'campus_club' && state.specializations && state.specializations.hobby) practiceSpecialization('hobby', eventLines);
       if (id === 'campus_exercise' && state.specializations && state.specializations.sport) practiceSpecialization('sport', eventLines);
       if (Math.random() < a.eventChance){
@@ -5065,6 +5203,15 @@
     appendRecapEntry(els.collegeRecapBox, summary, eventLines);
 
     carryOverCollegeSelections();
+
+    // Monthly errands penalty (college phase)
+    if (!state.errandsDoneThisMonth){
+      const STATS_HIT = ['health','happy','social','energy','skill'];
+      STATS_HIT.forEach(k => state.stats[k] = clamp(state.stats[k] - 1));
+      eventLines.push({text:'You let errands pile up all month — everything feels a bit off.', tone:'neg', effects:{}});
+    }
+    state.errandsDoneThisMonth = false;
+
     state.collegeMonth += 1;
 
     if (state.stats.health <= 0){
@@ -5083,10 +5230,10 @@
         state.stats.money -= retakeFee;
         appendRecapEntry(els.collegeRecapBox, `You didn't pass this year — you'll need to retake it. A retake fee of $${retakeFee} was charged, but it doesn't add extra time.`, []);
         state.age += 1;
-        showNewYearToast(2000 + state.age);
+        showNewYearToast(state.age);
       } else {
         state.age += 1;
-        showNewYearToast(2000 + state.age);
+        showNewYearToast(state.age);
         state.collegeYear += 1;
         if (state.collegeYear > major.years){
           finishCollege();
@@ -5280,7 +5427,7 @@
           <div class="check">${isSelected?'✓':''}</div>
           <div class="info">
             <div class="name">${displayName}</div>
-            <div class="effects">${effectsString(a.effects)}${a.isAdmin?' · prevents penalties':''}</div>
+            <div class="effects">${effectsString(a.effects)}</div>
           </div>
           ${n>0 ? `<button class="repeat-minus" data-id="${a.id}">−</button><span class="repeat-count">×${n}</span>` : ''}
           ${lockTag || `<div class="cost">${a.cost}h</div>`}
@@ -5328,6 +5475,7 @@
     renderStats();
     renderBudget();
     renderActivities();
+    syncPayBillsBtn();
   }
 
   // ---------------- Game logic ----------------
@@ -5367,6 +5515,7 @@
       logLines.push(a.name);
 
       if (id === 'friends') rollFriendActivityOutcome(eventLines);
+      if (id === 'errands') state.errandsDoneThisMonth = true;
       if (id === 'call_parents'){
         spendTimeWithParent('mom', randInt(5,9));
         spendTimeWithParent('dad', randInt(5,9));
@@ -5480,6 +5629,8 @@
 
     // Passive weekly decay (life costs energy & a little money even doing nothing extra)
     state.stats.energy = clamp(state.stats.energy - 3);
+    state.stats.social = clamp(state.stats.social - 3);
+    state.stats.skill  = clamp(state.stats.skill  - 1);
     state.stats.money -= 60; // baseline cost of living
 
     // Relationships: passive closeness decay for friends/partner/spouse/kids,
@@ -5537,9 +5688,21 @@
 
     // Advance time
     state.week += 1;
+
+    // Monthly boundary (every 4 weeks) — check errands penalty
+    if ((state.week - 1) % 4 === 0 && state.week > 1){
+      if (!state.errandsDoneThisMonth){
+        const STATS_HIT = ['health','happy','social','energy','skill'];
+        STATS_HIT.forEach(k => state.stats[k] = clamp(state.stats[k] - 1));
+        eventLines.push({text:'You let errands pile up all month — everything feels a bit off.', tone:'neg', effects:{}});
+      }
+      state.errandsDoneThisMonth = false;
+      state.billsDoneThisMonth = false;
+    }
+
     if ((state.week-1) % 52 === 0){
       state.age += 1;
-      showNewYearToast(2000 + state.age);
+      showNewYearToast(state.age);
     }
     carryOverAdultSelections();
 
@@ -5571,6 +5734,7 @@
     if (spent === 0 || spent > BUDGET_MAX) return;
     let months = 0;
     while (months < 12){
+      state.errandsDoneThisMonth = true; // auto-handled when simming a full year
       simAdultMonth();
       months += 1;
       if (state.gameOver) break;
@@ -5702,6 +5866,8 @@
       relationships:[], pendingDateOffers:[], relationshipsView:'status',
       specializations:{ sport:null, hobby:null },
       loans:[], loanCooldownWeeks:0, hasCar:false,
+      expandedSpecPicker:null,
+      billsDoneThisMonth:false, errandsDoneThisMonth:false,
     };
 
     els.submitBar.classList.add('hidden');
@@ -5752,6 +5918,8 @@
       relationships:[], pendingDateOffers:[], relationshipsView:'status',
       specializations:{ sport:null, hobby:null },
       loans:[], loanCooldownWeeks:0, hasCar:false,
+      expandedSpecPicker:null,
+      billsDoneThisMonth:false, errandsDoneThisMonth:false,
     };
 
     els.submitBar.classList.add('hidden');
@@ -7030,7 +7198,8 @@
     }
     if (state.chronicCondition)
       rows.push(statBreakdownRow('Chronic condition', -3, state.chronicCondition.id.replace(/_/g,' ')+' — ongoing mood impact.'));
-    rows.push(statBreakdownRow('Skipping Life Admin', -2, "If Life Admin isn't done this week."));
+    if (!state.errandsDoneThisMonth)
+      rows.push(statBreakdownRow('Errands not done yet', -1, 'End of month penalty if skipped all month.'));
     const valid = rows.filter(r=>r.length>0);
     return `
       <div class="mini-card">
@@ -7087,6 +7256,181 @@
       <div class="mini-card" style="padding:6px 14px;">
         <div class="mc-sub" style="margin-bottom:8px;">These apply every week regardless of activities. Activities add on top.</div>
         ${valid.length ? valid.join('') : '<div class="rl-name" style="color:var(--ink-soft);">No passive sources right now.</div>'}
+      </div>`;
+  }
+
+  function renderGpaBreakdown(){
+    const gpa = (state.stats.gpa / 25).toFixed(2);
+    const phase = state.phase;
+    const major = state.collegeMajor
+      ? (COLLEGE_MAJORS.find(m=>m.id===state.collegeMajor) || null)
+      : null;
+
+    let html = `
+      <div class="mini-card">
+        <div class="mc-label">Current GPA</div>
+        <div class="mc-value">${gpa} / 4.00</div>
+        <div class="mc-sub">Below 1.50 and you ${phase==='college'?'fail the year':'won\'t graduate'}.</div>
+      </div>`;
+
+    if (phase === 'school'){
+      const weightFull = state.age >= GPA_HIGH_SCHOOL_START_AGE;
+      const weight = weightFull ? 1.0 : 0.25;
+
+      // Build rows only for activities currently in state.selected that have a gpaEffect
+      const activeRows = [];
+      const countOf = id => state.selected.filter(x=>x===id).length;
+
+      SCHOOL_ACTIVITIES.forEach(a=>{
+        if (!a.gpaEffect) return;
+        const n = countOf(a.id);
+        if (!n) return;
+        const raw = a.gpaEffect * n;
+        const weighted = Math.round((raw * weight / 25) * 100) / 100;
+        const cls = weighted >= 0 ? 'pos' : 'neg';
+        const sign = weighted >= 0 ? '+' : '';
+        activeRows.push(`<div class="menu-row-line">
+          <div class="rl-name">${a.name}${n>1?` ×${n}`:''}</div>
+          <div class="rl-amt ${cls}">${sign}${weighted.toFixed(2)}/mo</div>
+        </div>`);
+      });
+
+      // Truancy/suspension flags
+      if (state.suspended){
+        const val = Math.round((-4 * weight / 25) * 100) / 100;
+        activeRows.push(`<div class="menu-row-line">
+          <div class="rl-name">Suspended this month</div>
+          <div class="rl-amt neg">${val}/mo</div>
+        </div>`);
+      }
+
+      if (!activeRows.length){
+        html += `<div class="menu-section-label">GPA Impact This Month</div>
+          <div class="mini-card"><div class="mc-sub">No activities selected that affect GPA. Add School, Homework, or Tutoring.</div></div>`;
+      } else {
+        // Total
+        let total = 0;
+        SCHOOL_ACTIVITIES.forEach(a=>{ if (a.gpaEffect) total += a.gpaEffect * countOf(a.id) * weight; });
+        if (state.suspended) total -= 4 * weight;
+        total = Math.round((total / 25) * 100) / 100;
+        const totalCls = total >= 0 ? 'pos' : 'neg';
+        const totalSign = total >= 0 ? '+' : '';
+
+        html += `<div class="menu-section-label">GPA Impact This Month</div>
+          <div class="mini-card" style="padding:6px 14px;">
+            ${activeRows.join('')}
+            <div class="fin-divider" style="margin:6px 0;"></div>
+            <div class="menu-row-line">
+              <div class="rl-name" style="font-weight:700;">Total this month</div>
+              <div class="rl-amt ${totalCls}" style="font-weight:700;">${totalSign}${total}</div>
+            </div>
+            ${!weightFull ? `<div class="mc-sub" style="margin-top:6px;">Effects reduced to ×0.25 until age ${GPA_HIGH_SCHOOL_START_AGE} — GPA locks in from then on.</div>` : ''}
+          </div>`;
+      }
+
+    } else if (phase === 'college'){
+      const studied = collegeStudyHoursSoFar();
+      const target = major ? collegeStudyTarget(major) : 0;
+      const gpaDelta = target ? ((studied - target) / target) * 8 : 0;
+      const deltaRounded = Math.round((gpaDelta / 25) * 100) / 100;
+      const deltaCls = deltaRounded >= 0 ? 'pos' : 'neg';
+      const deltaSign = deltaRounded >= 0 ? '+' : '';
+
+      // Active study activities
+      const studyRows = [];
+      COLLEGE_ACTIVITIES.forEach(a=>{
+        if (!a.studyHours) return;
+        const n = state.selected.filter(x=>x===a.id).length;
+        if (!n) return;
+        studyRows.push(`<div class="menu-row-line">
+          <div class="rl-name">${a.name}${n>1?` ×${n}`:''}</div>
+          <div class="rl-amt">${a.studyHours * n} hrs</div>
+        </div>`);
+      });
+
+      html += `<div class="menu-section-label">Study Progress This Month</div>
+        <div class="mini-card" style="padding:6px 14px;">
+          ${studyRows.length ? studyRows.join('') : '<div class="mc-sub">No study activities selected.</div>'}
+          <div class="fin-divider" style="margin:6px 0;"></div>
+          <div class="menu-row-line">
+            <div class="rl-name">Total studied</div>
+            <div class="rl-amt">${studied} hrs</div>
+          </div>
+          <div class="menu-row-line">
+            <div class="rl-name">Target (${major ? major.name : '—'})</div>
+            <div class="rl-amt">${target} hrs</div>
+          </div>
+          <div class="fin-divider" style="margin:6px 0;"></div>
+          <div class="menu-row-line">
+            <div class="rl-name" style="font-weight:700;">GPA shift this month</div>
+            <div class="rl-amt ${deltaCls}" style="font-weight:700;">${deltaSign}${deltaRounded}</div>
+          </div>
+          <div class="mc-sub" style="margin-top:6px;">${studied < target ? 'Behind target — GPA will drop. Add Study Sessions or Tutoring.' : studied > target ? 'Ahead of target — GPA will climb.' : 'On target — GPA holds steady.'}</div>
+        </div>`;
+    }
+
+    return html;
+  }
+
+  function renderSocialBreakdown(){
+    const rows = [];
+    rows.push(statBreakdownRow('Passive isolation', -3, 'Social fades each week without upkeep.'));
+    if (state.heldJob){
+      const job = currentJob();
+      if (job && (job.careerTrack === 'service' || job.careerTrack === 'education' || job.careerTrack === 'healthcare'))
+        rows.push(statBreakdownRow(`Working (${job.name})`, 1, 'People-facing work keeps social up a little.'));
+    }
+    const partner = currentPartner();
+    if (partner && (partner.type === 'dating' || partner.type === 'spouse'))
+      rows.push(statBreakdownRow(`In a relationship (${partner.name})`, partner.rel >= 50 ? 2 : 0, partner.rel >= 50 ? 'Being close with someone helps.' : ''));
+    const friends = friendsList();
+    if (friends.length)
+      rows.push(statBreakdownRow(`${friends.length} close friend${friends.length>1?'s':''}`, friends.length, 'Each maintained friendship adds a little.'));
+    if (state.housing && state.housing.kind === 'homeless')
+      rows.push(statBreakdownRow('Homeless', -3, 'Social isolation from having no stable home.'));
+    if (state.parents){
+      ['mom','dad'].forEach(key=>{
+        const p = state.parents[key];
+        if (p && p.rel >= 60) rows.push(statBreakdownRow(`Close with ${p.name}`, 1, 'Good family ties help.'));
+      });
+    }
+    const valid = rows.filter(r=>r.length>0);
+    return `
+      <div class="mini-card">
+        <div class="mc-label">Current Social</div>
+        <div class="mc-value">${Math.round(state.stats.social)}/100</div>
+      </div>
+      <div class="menu-section-label">Weekly Passive Sources</div>
+      <div class="mini-card" style="padding:6px 14px;">
+        <div class="mc-sub" style="margin-bottom:8px;">Social decays -3/wk without upkeep. Hang Out, Date Night, and Call Parents push it back up.</div>
+        ${valid.join('')}
+      </div>`;
+  }
+
+  function renderSmartsBreakdown(){
+    const rows = [];
+    rows.push(statBreakdownRow('Mental decay', -1, 'Smarts fade slightly each week without use.'));
+    if (state.heldJob){
+      const job = currentJob();
+      if (job && ['tech','business','law','education','healthcare'].includes(job.careerTrack))
+        rows.push(statBreakdownRow(`Working (${job.name})`, 1, 'Mentally stimulating work slows the fade.'));
+    }
+    if (state.phase === 'school')
+      rows.push(statBreakdownRow('In school', 3, 'Attending school keeps Smarts climbing.'));
+    if (state.phase === 'college')
+      rows.push(statBreakdownRow('In college', 3, 'College keeps Smarts actively building.'));
+    if (state.chronicCondition && state.chronicCondition.id === 'insomnia')
+      rows.push(statBreakdownRow('Insomnia', -2, 'Poor sleep hurts cognitive performance.'));
+    const valid = rows.filter(r=>r.length>0);
+    return `
+      <div class="mini-card">
+        <div class="mc-label">Current Smarts</div>
+        <div class="mc-value">${Math.round(state.stats.skill)}/100</div>
+      </div>
+      <div class="menu-section-label">Weekly Passive Sources</div>
+      <div class="mini-card" style="padding:6px 14px;">
+        <div class="mc-sub" style="margin-bottom:8px;">Smarts decay -1/wk. Study, Hobby Time, and mentally engaging work push it back up.</div>
+        ${valid.join('')}
       </div>`;
   }
 
@@ -7230,21 +7574,65 @@
     closeConfirmPopup();
     if (fn) fn();
   });
-  els.sectionModalClose.addEventListener('click', closeSectionModal);
 
+  function toggleStatModal(title, renderFn, wireFn){
+    const isOpen = els.sectionModal.classList.contains('show') && els.sectionModalTitle.textContent === title;
+    if (isOpen){
+      closeSectionModal();
+      els.menuBackdrop.classList.remove('show');
+    } else {
+      els.sectionModalTitle.textContent = title;
+      els.sectionModalBody.innerHTML = renderFn();
+      if (wireFn) wireFn();
+      els.menuBackdrop.classList.remove('hidden');
+      void els.menuBackdrop.offsetWidth;
+      els.menuBackdrop.classList.add('show');
+      els.sectionModal.classList.remove('hidden');
+      void els.sectionModal.offsetWidth;
+      els.sectionModal.classList.add('show');
+    }
+  }
+
+  document.querySelectorAll('.gpa-badge-row').forEach(el=>{
+    el.addEventListener('click', ()=> toggleStatModal('GPA', renderGpaBreakdown));
+  });
   document.querySelectorAll('.health-stat-tap').forEach(el=>{
-    el.addEventListener('click', openHealthModal);
+    el.addEventListener('click', ()=> toggleStatModal('Health', renderHealthPane));
+  });
+  document.querySelectorAll('.social-stat-tap').forEach(el=>{
+    el.addEventListener('click', ()=> toggleStatModal('Social', renderSocialBreakdown));
+  });
+  document.querySelectorAll('.skill-stat-tap').forEach(el=>{
+    el.addEventListener('click', ()=> toggleStatModal('Smarts', renderSmartsBreakdown));
   });
   document.querySelectorAll('.mood-stat-tap').forEach(el=>{
-    el.addEventListener('click', openMoodModal);
+    el.addEventListener('click', ()=> toggleStatModal('Mood', renderMoodBreakdown));
   });
   document.querySelectorAll('.energy-stat-tap').forEach(el=>{
-    el.addEventListener('click', openEnergyModal);
+    el.addEventListener('click', ()=> toggleStatModal('Energy', renderEnergyBreakdown));
   });
-  els.schoolMoneyBox.addEventListener('click', openFinancesModal);
-  els.youngMoneyBox.addEventListener('click', openFinancesModal);
-  els.collegeMoneyBox.addEventListener('click', openFinancesModal);
-  els.adultMoneyBox.addEventListener('click', openFinancesModal);
+  els.schoolMoneyBox.addEventListener('click', ()=> toggleStatModal('Finances', renderFinancesPane, wireFinancesPaneListeners));
+  els.youngMoneyBox.addEventListener('click', ()=> toggleStatModal('Finances', renderFinancesPane, wireFinancesPaneListeners));
+  els.collegeMoneyBox.addEventListener('click', ()=> toggleStatModal('Finances', renderFinancesPane, wireFinancesPaneListeners));
+  els.adultMoneyBox.addEventListener('click', ()=> toggleStatModal('Finances', renderFinancesPane, wireFinancesPaneListeners));
+
+  function syncPayBillsBtn(){
+    if (!els.payBillsBtn) return;
+    const done = state.billsDoneThisMonth;
+    els.payBillsBtn.textContent = done ? '✓ Bills Paid' : 'Pay Bills';
+    els.payBillsBtn.classList.toggle('done', done);
+    els.payBillsBtn.disabled = done;
+  }
+
+  els.payBillsBtn.addEventListener('click', ()=>{
+    if (state.billsDoneThisMonth) return;
+    const cost = 60; // flat monthly bill cost
+    state.stats.money -= cost;
+    state.billsDoneThisMonth = true;
+    addJournalEntry('Paid the monthly bills.', []);
+    syncPayBillsBtn();
+    renderStats();
+  });
   els.skipToAdultBtn.addEventListener('click', skipToHighSchool);
   els.enrollCollegeBtn.addEventListener('click', enrollInCollege);
   els.skipCollegeBtn.addEventListener('click', skipCollege);
